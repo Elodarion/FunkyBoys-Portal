@@ -456,8 +456,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.1', BUILD = 31;
+const VERSION = '2.2', BUILD = 32;
 const CHANGELOG = [
+  { v:'2.2', datum:'2026-11-15', punkte:['Teamausstattung und Merch zeigt jetzt auch die Größen der Tänzer'] },
   { v:'2.1', datum:'2026-11-15', punkte:['Neue Rubrik Teamausstattung und Merch für Shirts, Hosen, Trainingsanzüge und Jacken mit Anzahl, Wert und Status','Auftrittszeiten werden mit Minuten und Sekunden getrennt eingegeben, das geht auch mit der Zahlentastatur am Handy'] },
   { v:'2.0', datum:'2026-11-15', punkte:['Echtbetrieb: Anmeldung mit E-Mail und Passwort, gemeinsame Daten für alle in Firebase','Finanzen werden auf dem Server geschützt: Beiträge und Buchungen sehen nur Admin und Kasse, alle anderen die Summen und ihren eigenen Beitrag','Als App aufs Handy installierbar (Zum Startbildschirm hinzufügen)'] },
   { v:'1.12', datum:'2026-11-15', punkte:['Start im Echtbetrieb: alle Beispieleinträge sind entfernt (Kostüme, Requisiten, Tanz, Sponsoren, Beiträge, Pinnwand, Abstimmung, Social Media, Kalender)','Kasse startet mit 10 Euro Startguthaben','Training bleibt nur als Sonntagsserie 11 bis 13 Uhr bis 21.03.2027'] },
@@ -1017,11 +1018,13 @@ const SEC = {
     const cls = { 'In Planung':'', Bestellt:'warn', 'In Zustellung':'warn', 'Ausgehändigt':'good', Retoure:'bad' }, val = x => (+x.anzahl || 0) * (+x.wert || 0);
     const total = D.merch.filter(x => x.status !== 'Retoure').reduce((a, x) => a + val(x), 0);
     const kp = MERCH_ST.map(st => { const l = D.merch.filter(x => x.status === st); return `<div class="kpi"><small>${st}</small><b>${l.reduce((a, x) => a + (+x.anzahl || 0), 0)} Stück</b><small>${eur(l.reduce((a, x) => a + val(x), 0))}</small></div>`; }).join('');
-    return head('Teamausstattung & Merch', 'Shirts, Hosen, Trainingsanzüge und Jacken mit dem Funky-Boys-Logo: Planung, Bestellstand und Wert.', addBtn('merch', '+ Ausstattungsteil')) +
+    return head('Teamausstattung & Merch', 'Shirts, Hosen, Trainingsanzüge und Jacken mit dem Funky-Boys-Logo: Planung, Bestellstand, Wert und Größen.', addBtn('merch', '+ Ausstattungsteil')) +
       `<div class="kpis">${kp}</div>
       <div class="panel"><div class="ph"><h3>Anschaffungen</h3><span class="amt">Gesamtwert ohne Retouren ${eur(total)}</span></div>
         ${rows(D.merch, x => `<div class="row"><div class="grow"><b>${esc(x.artikel)}</b><div class="sub">${esc(x.kat || '')}${x.kat ? ' · ' : ''}${+x.anzahl || 0} × ${eur(x.wert)}${x.notiz ? ' · ' + esc(x.notiz) : ''}</div></div>
-          <span class="pill ${cls[x.status] || ''}">${esc(x.status)}</span><span class="amt">${eur(val(x))}</span>${editBtn('merch', x.id)}</div>`, 'Noch keine Anschaffungen geplant.')}</div>`;
+          <span class="pill ${cls[x.status] || ''}">${esc(x.status)}</span><span class="amt">${eur(val(x))}</span>${editBtn('merch', x.id)}</div>`, 'Noch keine Anschaffungen geplant.')}</div>
+      <div class="panel"><div class="ph"><h3>Größen der Tänzer</h3><a href="#mitglieder">bei Mitgliedern pflegen</a></div>
+        ${rows(D.members.filter(m => TANZT(m.rolle)), m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}</div><span class="sub">${m.groessen ? esc(m.groessen) : 'noch nicht eingetragen'}</span></div>`, '')}</div>`;
   },
   requisiten() {
     const cls = { Fertig:'good', 'In Arbeit':'warn', 'Reparatur nötig':'bad' };
