@@ -142,13 +142,22 @@
   .sess::after { content:""; flex:1; border-top:3px double var(--hi); }
   .mon { font-family:var(--display); font-weight:700; font-size:16px; color:var(--accent); margin:4px 0 -6px 2px; }
   .list { display:flex; flex-direction:column; gap:14px; }
-  .calgrid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+  .calgrid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden; }
   .calhd { background:var(--soft); text-align:center; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--faint); padding:6px 0; }
   .calday { background:var(--card); min-height:78px; padding:4px 5px; display:flex; flex-direction:column; gap:3px; font-size:12px; }
   .calday.out { background:var(--soft); color:var(--faint); } .calday.today { outline:2px solid var(--hi); outline-offset:-2px; }
   .calnum { font-weight:700; font-size:12px; }
   .calbig .calday { min-height:104px; } .calbig .calday:hover { background:var(--soft); } .calbig .calchip { padding:3px 5px; } .calmore { font-size:11px; font-weight:700; color:var(--accent); cursor:pointer; }
   .calchip { background:var(--accent-bg); color:var(--accent); border-radius:3px; padding:1px 5px; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .calmonthlist { display:none; margin-top:14px; }
+  @media (max-width:640px) {
+    .calbig .calday { min-height:60px; padding:3px 2px; gap:2px; align-items:center; }
+    .calbig .calnum { font-size:12px; }
+    .calbig .calchip { align-self:stretch; font-size:0; line-height:0; height:9px; min-height:9px; padding:0; border-radius:3px; }
+    .calbig .calmore { font-size:10px; }
+    .calhd { font-size:10px; letter-spacing:0; }
+    .calmonthlist { display:block; }
+  }
   .caltab { border-collapse:collapse; width:100%; font-size:13px; min-width:560px; }
   .caltab th, .caltab td { border:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top; }
   .caltab thead th { background:var(--soft); font-size:12px; text-transform:uppercase; letter-spacing:.3px; color:var(--faint); }
@@ -467,8 +476,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.7', BUILD = 37;
+const VERSION = '2.8', BUILD = 38;
 const CHANGELOG = [
+  { v:'2.8', datum:'2026-11-15', punkte:['Kalender am Handy: gleich breite Spalten, Termine als farbige Balken und darunter eine Liste der Termine des Monats'] },
   { v:'2.7', datum:'2026-11-15', punkte:['Die Auftritts-Suche ist online: Der tägliche Suchlauf legt neue Funde ab, sie lassen sich mit einem Tipp in die Auftrittsliste übernehmen'] },
   { v:'2.6', datum:'2026-11-15', punkte:['Im Monatsraster erscheinen jetzt auch Zahlungen, die oben bei den Beiträgen erfasst wurden, als bezahlte Monate'] },
   { v:'2.5', datum:'2026-11-15', punkte:['Monatsraster bei den Beiträgen: bezahlte Monate pro Person einfach antippen'] },
@@ -878,12 +888,14 @@ function calMonat() {
   gridStart.setDate(1 - (first.getDay() + 6) % 7);
   const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`, today = todayISO(), add = can('kalender');
   const cells = Array.from({ length:42 }, (_, i) => { const d = new Date(gridStart); d.setDate(gridStart.getDate() + i); return d; });
+  const monthList = []; for (let n = 1, last = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0).getDate(); n <= last; n++) { const i2 = `${anchor.getFullYear()}-${pad(anchor.getMonth() + 1)}-${pad(n)}`; dayItems(i2).forEach(x => monthList.push([i2, x])); }
   const chip = x => `<span class="calchip" data-act="calChip" data-k="${x.k}" data-id="${esc(x.id)}" title="${esc(x.title)}" style="${x.solid ? 'background:' + x.col + ';color:#fff;font-weight:700' : 'background:' + x.col + '22;color:' + x.col + ';border:1px solid ' + x.col + '66'};cursor:pointer">${esc(x.label)}</span>`;
   return `<div class="scroll"><div class="calgrid calbig">${['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(w => `<div class="calhd">${w}</div>`).join('')}
     ${cells.map(d => { const i = iso(d), its = dayItems(i), open = UI.calMore === i, show = open ? its : its.slice(0, 3);
       return `<div class="calday${d.getMonth() === anchor.getMonth() ? '' : ' out'}${i === today ? ' today' : ''}" ${add ? `data-act="calDay" data-d="${i}" style="cursor:pointer"` : ''}><span class="calnum">${d.getDate()}</span>${show.map(chip).join('')}${its.length > 3 ? `<span class="calmore" data-act="calMore" data-d="${open ? '' : i}">${open ? 'weniger' : '+' + (its.length - 3) + ' mehr'}</span>` : ''}</div>`; }).join('')}
   </div></div>
-  <p class="sub" style="margin-top:4px">Auf einen Tag tippen, um dort eine Abwesenheit einzutragen. Auf einen Eintrag tippen, um ihn zu öffnen (ändern darf nur, wer ihn angelegt hat, und der Admin).</p>`;
+  <p class="sub" style="margin-top:4px">Auf einen Tag tippen, um dort eine Abwesenheit einzutragen. Auf einen Eintrag tippen, um ihn zu öffnen (ändern darf nur, wer ihn angelegt hat, und der Admin).</p>
+  <div class="calmonthlist"><h3 style="margin:0 0 6px;font-size:16px">Termine im ${MON[anchor.getMonth()]}</h3>${rows(monthList, calRow, 'In diesem Monat ist nichts eingetragen.')}</div>`;
 }
 function calZeitstrahl() {
   const days = Array.from({ length:14 }, (_, i) => addDays(UI.calAnchor, i)), members = calMembers();
