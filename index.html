@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2e1d12">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Funky Boys">
+<title>Funky Boys Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Zilla+Slab:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: klassisches Portal. Feste Kopfleiste mit Wappen und Motto, links gruppierte Rubriken, rechts Arbeitsfläche aus
+     ruhigen, umrandeten Karten. Farben, Schrift und Zierde hängen am Motto der Session (data-motto am html-Element). */
+  :root {
+    --bar:#2e1d12; --bar-ink:#f6ead3; --prime:#5b3a22; --accent:#a8472a; --accent-bg:#f3dfd3; --hi:#c8962e; --hi-ink:#2e1d12;
+    --paper:#efe4cf; --card:#fffaf0; --soft:#f6eedd; --line:#d9c7a6; --ink:#2a1c12; --muted:#6a563f; --faint:#7a664a;
+    --good:#2f7d50; --good-bg:#e2f0e6; --warn:#a86407; --warn-bg:#fbeed9; --bad:#b93a32; --bad-bg:#f8e4e2;
+    --display:'Zilla Slab', Georgia, 'Times New Roman', serif; --mark:'Rye', 'Zilla Slab', Georgia, serif;
+    --ui:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --orn:"★"; --bar-tex:repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 2px, transparent 2px 96px);
+    color-scheme:light;
+  }
+  :root[data-motto="rotweiss"] { --bar:#8f1823; --bar-ink:#ffffff; --prime:#a51c2a; --accent:#a51c2a; --accent-bg:#f9e1e3; --hi:#c9a227; --hi-ink:#2a1414;
+    --paper:#f6f3f0; --card:#ffffff; --soft:#f6f1ee; --line:#e2d9d3; --ink:#231a1a; --muted:#5d5050; --faint:#7d7070;
+    --display:Georgia, 'Times New Roman', serif; --mark:Georgia, 'Times New Roman', serif; --orn:""; --bar-tex:none; }
+  :root[data-motto="schlicht"] { --bar:#1f2d3d; --bar-ink:#ffffff; --prime:#24384f; --accent:#2b5d8a; --accent-bg:#dfeaf4; --hi:#2b5d8a; --hi-ink:#ffffff;
+    --paper:#f1f3f5; --card:#ffffff; --soft:#f5f7f9; --line:#d7dce2; --ink:#1c2530; --muted:#55606d; --faint:#6f7b88;
+    --display:Georgia, 'Times New Roman', serif; --mark:Georgia, 'Times New Roman', serif; --orn:""; --bar-tex:none; }
+  :root[data-motto="planer"] { --bar:#3a1748; --bar-ink:#fbf5e8; --prime:#4a1f5c; --accent:#7a3ea6; --accent-bg:#ece0f4; --hi:#d4a017; --hi-ink:#3a1748;
+    --paper:#f7f1e4; --card:#fffdf8; --soft:#faf6ec; --line:#e6dcc6; --ink:#2b2013; --muted:#6b5c42; --faint:#7d6d52;
+    --display:Georgia, 'Times New Roman', serif; --mark:Georgia, 'Times New Roman', serif; --orn:""; --bar-tex:none; }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--ui); font-size:15px; line-height:1.45; }
+  a { color:var(--accent); }
+  h1,h2,h3 { font-family:var(--display); text-wrap:balance; margin:0; color:var(--ink); font-weight:700; }
+  h2 { font-size:26px; } h3 { font-size:18px; }
+  button, input, select, textarea { font-family:inherit; }
+  :focus-visible { outline:3px solid var(--hi); outline-offset:2px; }
+  [hidden] { display:none !important; }
+
+  .top { background-color:var(--bar); background-image:var(--bar-tex); color:var(--bar-ink); padding:12px 20px; border-bottom:4px double var(--hi); }
+  .top-in { max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:10px 20px; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:12px; color:inherit; text-decoration:none; min-width:0; }
+  .badge { flex:0 0 46px; height:46px; border-radius:50%; border:2px solid var(--hi); color:var(--hi); display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; font-size:17px; }
+  .badge svg { width:28px; height:28px; fill:currentColor; }
+  .brand b { display:block; font-family:var(--mark); font-size:25px; font-weight:400; line-height:1.15; letter-spacing:.5px; }
+  .brand small { display:block; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--hi); font-weight:700; overflow-wrap:anywhere; }
+  .who { display:flex; flex-direction:column; gap:3px; font-size:12px; color:var(--bar-ink); opacity:.95; }
+  .who select { min-height:40px; border-radius:4px; border:1px solid var(--hi); background:var(--bar); color:var(--bar-ink); padding:6px 10px; font-size:15px; max-width:100%; }
+  .note { background:var(--soft); border-bottom:1px solid var(--line); color:var(--muted); font-size:13px; padding:8px 20px; }
+  .note div { max-width:1200px; margin:0 auto; }
+
+  .shell { max-width:1200px; margin:0 auto; padding:22px 20px 48px; display:grid; grid-template-columns:220px minmax(0,1fr); gap:26px; align-items:start; }
+  nav { display:flex; flex-direction:column; background:var(--card); border:1px solid var(--line); border-radius:6px; padding:6px; position:sticky; top:12px; }
+  nav a { text-decoration:none; color:var(--ink); padding:8px 12px; border-radius:4px; }
+  nav a:hover { background:var(--soft); }
+  nav a.on { background:var(--prime); color:#fff; font-weight:700; }
+  nav .grp { font-family:var(--display); font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); padding:12px 12px 4px; font-weight:700; border-top:1px solid var(--line); margin-top:6px; }
+  nav .grp:first-child { border-top:none; margin-top:0; padding-top:6px; }
+  nav a.par { background:var(--soft); font-weight:700; }
+  nav a.sub { padding-left:28px; font-size:14px; }
+  nav a.sub::before { content:"↳ "; opacity:.7; }
+  main { display:flex; flex-direction:column; gap:18px; min-width:0; }
+  .tabs { display:flex; flex-wrap:wrap; gap:4px; border-bottom:1px solid var(--line); }
+  .tabs a { text-decoration:none; color:var(--muted); font-weight:700; padding:10px 14px; border-bottom:3px solid transparent; margin-bottom:-1px; }
+  .tabs a.on { color:var(--ink); border-bottom-color:var(--hi); }
+
+  .head { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:flex-end; justify-content:space-between; padding-bottom:12px; border-bottom:3px double var(--line); }
+  .head h2 { flex:1 1 auto; }
+  .head .crumb { flex-basis:100%; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); font-weight:700; }
+  .head p { margin:0; color:var(--muted); font-size:14px; flex-basis:100%; max-width:65ch; }
+  .hero { background-color:var(--bar); background-image:var(--bar-tex); color:var(--bar-ink); border:4px double var(--hi); border-radius:6px; padding:20px 22px; display:flex; flex-direction:column; gap:4px; }
+  .hero small { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--hi); font-weight:700; }
+  .hero b { font-family:var(--mark); font-weight:400; font-size:32px; line-height:1.15; overflow-wrap:anywhere; }
+  .hero span { font-size:15px; }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:18px; display:flex; flex-direction:column; gap:12px; min-width:0; }
+  .panel > .ph { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--line); }
+  .panel > .ph h3::before { content:var(--orn); color:var(--hi); margin-right:8px; font-size:.8em; }
+  .cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; }
+  .kpi { background:var(--card); border:1px solid var(--line); border-top:3px solid var(--hi); border-radius:6px; padding:12px 14px; }
+  .kpi small { display:block; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--faint); font-weight:700; }
+  .kpi b { display:block; font-family:var(--display); font-size:23px; font-variant-numeric:tabular-nums; color:var(--ink); overflow-wrap:anywhere; }
+  .kpi span { font-size:13px; color:var(--muted); }
+
+  .rows { display:flex; flex-direction:column; }
+  .row { display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center; padding:10px 0; border-top:1px solid var(--line); }
+  .row:first-child { border-top:none; padding-top:0; }
+  .row .grow { flex:1 1 180px; min-width:0; overflow-wrap:anywhere; }
+  .row .sub { font-size:13px; color:var(--muted); }
+  .amt { font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap; }
+  .amt.in { color:var(--good); } .amt.out { color:var(--bad); }
+  .pill { font-size:11px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; padding:3px 8px; border-radius:3px; background:var(--soft); border:1px solid var(--line); color:var(--muted); white-space:nowrap; }
+  .pill.good { background:var(--good-bg); color:var(--good); border-color:transparent; } .pill.warn { background:var(--warn-bg); color:var(--warn); border-color:transparent; }
+  .pill.bad { background:var(--bad-bg); color:var(--bad); border-color:transparent; } .pill.vio { background:var(--accent-bg); color:var(--accent); border-color:transparent; }
+  .demo { font-size:10px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; padding:2px 6px; border-radius:3px; border:1px dashed var(--faint); color:var(--faint); white-space:nowrap; margin-left:6px; }
+  .empty { color:var(--faint); padding:6px 0; }
+  .row select.st { width:auto; min-height:34px; padding:4px 8px; font-size:14px; }
+
+  .btn { min-height:40px; padding:8px 14px; border-radius:4px; border:1px solid var(--line); background:var(--soft); color:var(--ink); font-weight:700; font-size:14px; cursor:pointer; }
+  .btn:hover { border-color:var(--accent); }
+  .btn.pri { background:var(--hi); border-color:var(--hi); color:var(--hi-ink); }
+  .btn.dark, .btn.on { background:var(--prime); border-color:var(--prime); color:#fff; }
+  .btn.sm { min-height:34px; padding:5px 10px; font-size:13px; }
+  .btn.yes.on { background:var(--good); border-color:var(--good); } .btn.no.on { background:var(--bad); border-color:var(--bad); }
+  .btn:disabled { opacity:.75; cursor:default; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  input[type=text], input[type=number], input[type=date], input[type=time], input[type=search], select, textarea {
+    width:100%; border:1px solid var(--line); background:var(--card); border-radius:4px; padding:10px 12px; font-size:16px; color:var(--ink); min-height:44px; }
+  label.f { display:flex; flex-direction:column; gap:4px; font-size:12px; font-weight:700; color:var(--muted); }
+  .chk { display:flex; gap:8px; align-items:center; font-size:14px; color:var(--muted); cursor:pointer; }
+  .chk input { width:20px; height:20px; accent-color:var(--accent); }
+
+  .ev { display:flex; background:var(--card); border:1px solid var(--line); border-radius:6px; overflow:hidden; border-left:6px solid var(--faint); }
+  .ev.past { opacity:.6; }
+  .ev .d { flex:0 0 74px; background:var(--soft); border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 4px; }
+  .ev .d i { font-style:normal; font-size:11px; font-weight:700; color:var(--faint); text-transform:uppercase; }
+  .ev .d b { font-family:var(--display); font-size:26px; line-height:1.1; } .ev .d u { text-decoration:none; font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; }
+  .ev .b { flex:1; min-width:0; padding:14px 16px; display:flex; flex-direction:column; gap:8px; overflow-wrap:anywhere; }
+  .ev .t { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .ev .t strong { font-family:var(--display); font-size:18px; }
+  .ev .m { display:flex; flex-wrap:wrap; gap:4px 18px; font-size:13px; color:var(--muted); }
+  .ev .m span b { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--faint); margin-right:4px; }
+  .ev .n { font-size:13px; color:var(--muted); background:var(--soft); border-radius:4px; padding:8px 10px; }
+  .sess { display:flex; align-items:center; gap:14px; margin-top:10px; }
+  .sess span { font-family:var(--display); font-weight:700; font-size:14px; letter-spacing:1.5px; text-transform:uppercase; color:#fff; background:var(--prime); padding:6px 14px; border-radius:3px; }
+  .sess::after { content:""; flex:1; border-top:3px double var(--hi); }
+  .mon { font-family:var(--display); font-weight:700; font-size:16px; color:var(--accent); margin:4px 0 -6px 2px; }
+  .list { display:flex; flex-direction:column; gap:14px; }
+  .calgrid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+  .calhd { background:var(--soft); text-align:center; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--faint); padding:6px 0; }
+  .calday { background:var(--card); min-height:78px; padding:4px 5px; display:flex; flex-direction:column; gap:3px; font-size:12px; }
+  .calday.out { background:var(--soft); color:var(--faint); } .calday.today { outline:2px solid var(--hi); outline-offset:-2px; }
+  .calnum { font-weight:700; font-size:12px; }
+  .calbig .calday { min-height:104px; } .calbig .calday:hover { background:var(--soft); } .calbig .calchip { padding:3px 5px; } .calmore { font-size:11px; font-weight:700; color:var(--accent); cursor:pointer; }
+  .calchip { background:var(--accent-bg); color:var(--accent); border-radius:3px; padding:1px 5px; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .caltab { border-collapse:collapse; width:100%; font-size:13px; min-width:560px; }
+  .caltab th, .caltab td { border:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top; }
+  .caltab thead th { background:var(--soft); font-size:12px; text-transform:uppercase; letter-spacing:.3px; color:var(--faint); }
+  .caltab td.busy { background:var(--bad-bg); text-align:center; color:var(--bad); font-weight:700; }
+  .bugbtn { position:fixed; left:16px; bottom:16px; z-index:40; width:48px; height:48px; border-radius:50%; border:2px solid var(--hi); background:var(--bar); color:var(--hi); cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(20,14,8,.35); padding:0; }
+  .bugbtn:hover { background:var(--prime); }
+  .bugbtn svg, .bell svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .tools { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+  .bell { position:relative; min-width:44px; min-height:44px; border-radius:4px; border:1px solid var(--hi); background:transparent; color:var(--bar-ink); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; }
+  .bell b { position:absolute; top:-7px; right:-7px; min-width:20px; height:20px; border-radius:10px; background:var(--accent); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; padding:0 5px; }
+  .cnt { display:inline-block; margin-left:6px; min-width:18px; padding:0 5px; border-radius:9px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; text-align:center; }
+  .upd { background:var(--warn-bg); color:var(--warn); border-bottom:2px solid var(--warn); padding:10px 20px; font-weight:700; display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; justify-content:center; }
+  ul.log { margin:0; padding-left:20px; display:flex; flex-direction:column; gap:6px; }
+
+  .bar { height:10px; background:var(--soft); border:1px solid var(--line); border-radius:3px; overflow:hidden; flex:1 1 100%; }
+  .bar i { display:block; height:100%; background:var(--accent); }
+  .bar i.over { background:var(--bad); }
+  .scroll { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; font-size:14px; }
+  th, td { text-align:left; padding:8px 10px; border-top:1px solid var(--line); white-space:nowrap; }
+  th { font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--faint); border-top:none; }
+  td.c, th.c { text-align:center; }
+
+  .overlay { position:fixed; inset:0; background:rgba(20,14,8,.55); display:flex; align-items:flex-start; justify-content:center; padding:24px 12px; overflow-y:auto; z-index:50; }
+  .box { background:var(--card); border:1px solid var(--line); border-top:4px solid var(--hi); border-radius:6px; padding:22px; width:100%; max-width:520px; box-shadow:0 20px 50px rgba(20,14,8,.35); display:flex; flex-direction:column; gap:12px; }
+  .box .acts { display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+  .box .acts .btn { flex:1 1 120px; }
+  .err { color:var(--bad); font-weight:700; font-size:13px; }
+  .two { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; }
+  ol.steps { margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px; max-width:65ch; }
+
+  @media (max-width:820px) {
+    .shell { grid-template-columns:minmax(0,1fr); padding:14px 16px 40px; gap:14px; }
+    nav { position:static; flex-direction:row; overflow-x:auto; gap:4px; }
+    nav a { white-space:nowrap; padding:9px 14px; }
+    nav .grp, nav a.sub { display:none; }
+    nav a.par { background:var(--prime); color:#fff; }
+    .ev .d { flex-basis:60px; }
+    .brand b { font-size:21px; } .hero b { font-size:26px; }
+  }
+  @media (prefers-reduced-motion:no-preference) { .overlay { animation:fade .15s ease-out; } @keyframes fade { from { opacity:0; } to { opacity:1; } } }
+.gate { position:fixed; inset:0; background:#2e1d12; z-index:100; display:flex; align-items:center; justify-content:center; padding:16px; overflow:auto; }
+  .gate[hidden], .syncerr[hidden] { display:none; }
+  .gbox { background:#fff; color:#222; max-width:440px; width:100%; border-radius:10px; padding:22px; display:flex; flex-direction:column; gap:12px; }
+  .gbox h2 { margin:0; } .gbox p { margin:0; font-size:15px; line-height:1.5; }
+  .gl { display:flex; flex-direction:column; gap:4px; font-size:14px; font-weight:700; }
+  .gl input, .gl select { padding:10px; border:1px solid #bbb; border-radius:6px; font-size:16px; }
+  .gerr { color:#a3352a; font-size:14px; min-height:18px; } .gacts { display:flex; gap:8px; flex-wrap:wrap; }
+  .gl2 { background:none; border:0; color:#2a2788; text-decoration:underline; cursor:pointer; align-self:flex-start; font-size:14px; padding:0; }
+  .syncerr { position:fixed; left:12px; right:12px; bottom:70px; background:#a3352a; color:#fff; padding:10px 12px; border-radius:8px; z-index:90; font-size:14px; }
+</style>
+</head>
+<body>
+<div id="gate" class="gate" hidden></div><div id="syncErr" class="syncerr" hidden role="alert"></div>
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#start"><span class="badge" id="badge" aria-hidden="true"></span><span><b>Funky Boys</b><small id="mottoLine"></small></span></a>
+    <div class="tools">
+      <button class="bell" id="bell" data-act="bellOpen" aria-label="Benachrichtigungen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17v-6a6 6 0 0 1 12 0v6l1.5 2h-15zM10 21h4"/></svg><b id="bellCnt" hidden>0</b></button>
+      <span class="who" id="whoBox"><span id="whoName"></span> <button class="btn sm" data-act="logout">Abmelden</button></span>
+    </div>
+  </div>
+</header>
+<div class="upd" id="upd" hidden role="status"><span id="updTxt"></span><button class="btn sm" data-act="reload">Jetzt aktualisieren</button></div>
+<div class="note"><div><a href="#versionen">Version <span id="verLine"></span></a></div></div>
+
+<div class="shell">
+  <nav id="nav" aria-label="Rubriken"></nav>
+  <main id="main"></main>
+</div>
+
+<button class="bugbtn" id="bugBtn" data-act="bugOpen" aria-label="Fehler melden" title="Fehler melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7a3 3 0 0 1 6 0"/><rect x="7" y="7" width="10" height="13" rx="5"/><path d="M12 7v13M3 9l4 2M3 15l4-2M21 9l-4 2M21 15l-4-2M4 20l3-2M20 20l-3-2"/></svg></button>
+<div id="dlg" class="overlay" hidden><div class="box" id="dlgBox" role="dialog" aria-modal="true"></div></div>
+
+<script>
+/* ---------- Stammdaten ---------- */
+const RAW_EVENTS = [];
+function convEvent(r) {
+  const [dp, tp] = r.beginn.split(' '); const [d, m, y] = dp.split('.');
+  return { id:r.id, name:r.name, art:r.art, datum:`${y}-${m}-${d}`, zeit:(tp && tp !== '00:00') ? tp : '', ende:r.ende ? r.ende.split(' ')[1] : '',
+    standort:r.standort, maps:r.maps || '', inhaber:r.inhaber, status:r.status, gebuehr:r.gebuehr, notizen:r.notizen };
+}
+/* Veranstalter-Datenbank für die nächste Session: ein Eintrag je Verein oder Tanzgruppe, mit Ansprechperson */
+function vmSeed() { return []; }
+const TR_SERIEN0 = [];
+function trGen(s) { const out = []; if (!s.von || !s.bis) return out; const p2 = n => (n < 10 ? '0' : '') + n, d = new Date(s.von + 'T12:00:00');
+  for (let n = 0; n < 400; n++, d.setDate(d.getDate() + 1)) { const iso = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()); if (iso > s.bis) break;
+    if ((d.getDay() + 6) % 7 === +s.wochentag) out.push({ id:s.id + '_' + iso, serie:s.id, datum:iso, zeit:s.zeit, zeitBis:s.zeitBis, ort:s.ort, thema:s.thema }); }
+  return out; }
+const trZeit = t => t.zeit ? t.zeit + (t.zeitBis ? '–' + t.zeitBis : '') + ' Uhr' : '';
+/* Produktivstart: Beispieldaten raus, Kasse beginnt mit 10 Euro */
+function goLive(d) {
+  for (const k of Object.keys(d)) if (Array.isArray(d[k])) d[k] = d[k].filter(x => !(x && x.demo));
+  d.buchungen = d.buchungen.filter(b => !['b1', 'b2', 'b3'].includes(b.id));
+  if (!d.buchungen.some(b => b.id === 'b0')) d.buchungen.unshift({ id:'b0', typ:'E', kat:'Sonstiges', betrag:10, text:'Startguthaben Kasse', datum:'2026-11-15' });
+  d.live = true; return d;
+}
+const seed = () => goLive(seed0());
+function seed0() {
+  const dancers = [];
+  return {
+    me:'m1',
+    sponsoren:[ { id:'sp1', name:'Beispiel-Sponsor', betrag:100, datum:'2026-10-05', art:'Geldspende', status:'Eingegangen', kontakt:'', notiz:'', demo:true } ],
+    veranstalter:vmSeed(), sucheDone:{}, rechte:null, extra:{}, gratuliert:{}, seedIds:RAW_EVENTS.map(e => e.id),
+    absender:'',
+    motto:{ farbwelt:'western', titel:'Cowboys / Western', session:'' },
+    members:[],
+    events: RAW_EVENTS.map(convEvent),
+    zusagen:{},
+    buchungen:[
+      { id:'b1', typ:'A', kat:'Anmeldegebühren', betrag:25, text:'Schlicher Danzenacht 13.11.2026', datum:'' },
+      { id:'b2', typ:'A', kat:'Anmeldegebühren', betrag:150, text:'Männerballett Meisterschaft Güsten (100 € kommen zurück)', datum:'' },
+      { id:'b3', typ:'A', kat:'Anmeldegebühren', betrag:50, text:'Männerballetttunier Freialdenhoven', datum:'' },
+      { id:'b4', typ:'A', kat:'Kostüme', betrag:144, text:'8 Cowboyhüte', datum:'2026-10-12', demo:true },
+      { id:'b5', typ:'A', kat:'Requisiten', betrag:35, text:'Strohballen-Attrappe', datum:'2026-10-20', demo:true },
+      { id:'b6', typ:'E', kat:'Zuschuss Verein', betrag:200, text:'Zuschuss TSG', datum:'2026-09-01', demo:true } ],
+    budget:{ 'Anmeldegebühren':250, 'Kostüme':600, 'Requisiten':150, 'Training':100, 'Fahrt & Verpflegung':100, 'Sonstiges':100 },
+    beitraege:[
+      { id:'bt1', mid:'m1', zeitraum:'Session 2026/27', betrag:60, modus:'einmalig', von:'2026-09-01', rate:0, zahlungen:[{ datum:'2026-09-11', betrag:60, quelle:'manuell' }], demo:true },
+      { id:'bt2', mid:'m2', zeitraum:'Session 2026/27', betrag:60, modus:'einmalig', von:'2026-09-01', rate:0, zahlungen:[{ datum:'2026-09-12', betrag:60, quelle:'manuell' }], demo:true },
+      { id:'bt3', mid:'m3', zeitraum:'Session 2026/27', betrag:60, modus:'dauerauftrag', von:'2026-09-01', rate:10, zahlungen:[{ datum:'2026-09-05', betrag:10, quelle:'manuell' }, { datum:'2026-10-05', betrag:10, quelle:'manuell' }, { datum:'2026-11-05', betrag:10, quelle:'manuell' }], demo:true },
+      { id:'bt4', mid:'m4', zeitraum:'Session 2026/27', betrag:60, modus:'einmalig', von:'2026-09-01', rate:0, zahlungen:[{ datum:'2026-09-14', betrag:60, quelle:'manuell' }], demo:true },
+      { id:'bt5', mid:'m5', zeitraum:'Session 2026/27', betrag:60, modus:'dauerauftrag', von:'2026-09-01', rate:10, zahlungen:[{ datum:'2026-09-06', betrag:10, quelle:'manuell' }], demo:true },
+      { id:'bt6', mid:'m6', zeitraum:'Session 2026/27', betrag:60, modus:'einmalig', von:'2026-10-01', rate:0, zahlungen:[], demo:true },
+      { id:'bt7', mid:'m7', zeitraum:'Session 2026/27', betrag:60, modus:'einmalig', von:'2026-10-01', rate:0, zahlungen:[], demo:true }
+    ],
+    kostueme:[
+      { id:'k1', teil:'Cowboyhut', anzahl:8, preis:18, status:'Geliefert', notiz:'', demo:true },
+      { id:'k2', teil:'Weste', anzahl:8, preis:25, status:'Bestellt', notiz:'', demo:true },
+      { id:'k3', teil:'Halstuch', anzahl:8, preis:4, status:'Idee', notiz:'Farbe per Abstimmung', demo:true } ],
+    tanz:[
+      { id:'d1', titel:'Aufmarsch', art:'Choreo-Teil', status:'Steht', notiz:'', demo:true },
+      { id:'d2', titel:'Hauptteil Saloon', art:'Choreo-Teil', status:'In Arbeit', notiz:'', demo:true },
+      { id:'d3', titel:'Musikschnitt Session 2026/27', art:'Musik', status:'In Arbeit', notiz:'', demo:true } ],
+    zeiten:{ aufmarsch:'', tanz:'', abmarsch:'' },
+    requisiten:[
+      { id:'r1', name:'Saloon-Schwingtür', anzahl:1, wo:'', zustand:'In Arbeit', notiz:'', demo:true },
+      { id:'r2', name:'Lasso', anzahl:8, wo:'', zustand:'Fertig', notiz:'', demo:true } ],
+    trSerien:TR_SERIEN0, trainings:TR_SERIEN0.flatMap(trGen),
+    anwesend:{},
+    feedback:[ { id:'fb1', titel:'Dunkles Farbschema als Option', text:'Abends am Handy wäre ein dunkles Design angenehmer.', von:'m3', ts:0, status:'Neu', stimmen:{ m3:1 }, demo:true } ],
+    bugs:[], seen:{},
+    kalender:[
+      { id:'kl1', mid:'m5', titel:'Fußballspiel (Liga)', typ:'wiederkehrend', wochentag:'5', von:'2026-11-01', bis:'', notiz:'Spielt meist samstags, genaue Zeit ändert sich wöchentlich.', quelle:'manuell', demo:true },
+      { id:'kl2', mid:'m6', titel:'Urlaub', typ:'zeitraum', von:'2026-12-22', bis:'2027-01-02', wochentag:'', notiz:'', quelle:'manuell', demo:true }
+    ],
+    aufgaben:[],
+    posts:[ { id:'p1', titel:'Willkommen im Portal', text:'Hier landen ab jetzt alle Infos der Gruppe an einer Stelle.', von:'m1', datum:'2026-11-14', demo:true } ],
+    umfragen:[ { id:'u1', frage:'Welche Farbe fürs Halstuch?', opts:['Rot','Schwarz','Sand'], stimmen:{}, von:'m1', demo:true } ],
+    dateien:[ { id:'f1', ordner:'Anmeldungen', name:'Anmeldeformular_Funky_Boys.docx', size:0, von:'m1', datum:'2026-07-08', demo:true } ],
+    mails:[],
+    social:[
+      { id:'so1', datum:'2026-11-18', plattform:'Instagram', format:'Reel', thema:'Countdown Tetz: kurzer Ausschnitt aus der Probe', status:'Freigegeben', wer:'m1', text:'', demo:true },
+      { id:'so2', datum:'2026-11-21', plattform:'Instagram', format:'Story', thema:'Rückblick auf den Auftritt bei den Fidelen Brüdern Tetz', status:'Vorschlag', wer:'m1', text:'', demo:true },
+      { id:'so3', datum:'2027-01-10', plattform:'Instagram', format:'Beitrag', thema:'Ankündigung Männerballett Meisterschaft Güsten', status:'Vorschlag', wer:'m1', text:'', demo:true } ]
+  };
+}
+
+/* ---------- Speicher: Firestore, gemeinsam für alle ---------- */
+const FIN_KEYS = ['buchungen', 'beitraege'];
+const LOCAL_KEYS = ['me', 'live', 'seedIds', 'finpub'];
+function blank() { const d = seed0(); for (const k of Object.keys(d)) if (Array.isArray(d[k])) d[k] = []; d.me = ''; d.budget = {}; d.absender = ''; d.seedIds = []; d.finpub = null; return d; }
+function load() { return blank(); }
+let D = load();
+const J = v => JSON.stringify(v === undefined ? null : v), jclone = v => JSON.parse(J(v));
+const CS = { user:null, info:null, base:{}, timer:null, ready:false, flushing:false, again:false, unsubs:[], ownSent:{}, allowedSent:{}, err:'' };
+const hasFin = () => !CS.info || !!CS.info.fin;
+const syncKeys = () => Object.keys(blank()).filter(k => !LOCAL_KEYS.includes(k) && (hasFin() || !FIN_KEYS.includes(k)));
+const docPath = k => (FIN_KEYS.includes(k) ? 'fin/' : 'data/') + k;
+const idArr = a => Array.isArray(a) && a.every(x => x && typeof x === 'object' && x.id != null);
+const isObj = o => o && typeof o === 'object' && !Array.isArray(o);
+/* Eigene Änderungen (Vergleich base -> cur) auf den Serverstand legen, ohne fremde Änderungen zu überschreiben */
+function mergeInto(sv, bs, cr) {
+  if (Array.isArray(cr) && idArr(cr) && (bs == null || idArr(bs)) && (sv == null || idArr(sv))) {
+    let out = Array.isArray(sv) ? sv.slice() : [];
+    const b = new Map((bs || []).map(x => [x.id, J(x)])), c = new Set(cr.map(x => x.id));
+    out = out.filter(x => !(b.has(x.id) && !c.has(x.id)));
+    for (const x of cr) { if (b.get(x.id) === J(x)) continue; const i = out.findIndex(y => y.id === x.id); if (i >= 0) out[i] = x; else out.push(x); }
+    return out;
+  }
+  if (isObj(cr) && (bs == null || isObj(bs)) && (sv == null || isObj(sv))) {
+    const out = Object.assign({}, sv || {}), b = bs || {};
+    for (const k of Object.keys(b)) if (!(k in cr)) delete out[k];
+    for (const k of Object.keys(cr)) if (J(cr[k]) !== J(b[k])) out[k] = cr[k];
+    return out;
+  }
+  return cr;
+}
+function save() { if (!CS.ready) return; clearTimeout(CS.timer); CS.timer = setTimeout(flush, 400); }
+function syncMsg(t) { const el = $('syncErr'); if (!el) return; el.textContent = t || ''; el.hidden = !t; }
+async function flush() {
+  CS.timer = null;
+  if (!CS.ready) return;
+  if (CS.flushing) { CS.again = true; return; }
+  CS.flushing = true;
+  try {
+    const keys = syncKeys().filter(k => J(D[k]) !== J(CS.base[k]));
+    for (const k of keys) {
+      const cur = jclone(D[k]), bs = CS.base[k];
+      const merged = await CLOUD.update(docPath(k), v => mergeInto(v, bs, cur));
+      CS.base[k] = jclone(merged);
+      if (J(D[k]) === J(cur)) D[k] = merged; else CS.again = true;
+    }
+    if (can('verwaltung') && keys.some(k => ['members', 'extra', 'rechte'].includes(k))) await syncAllowed();
+    if (hasFin() && keys.some(k => ['buchungen', 'beitraege', 'sponsoren', 'budget'].includes(k))) await publishFin();
+    syncMsg('');
+    if (keys.length && $('dlg').hidden) render();
+  } catch (e) { syncMsg('Speichern gerade nicht möglich (' + (e && e.code || e && e.message || e) + '). Deine Änderung wird beim nächsten Versuch nachgeholt.'); CS.again = false; setTimeout(save, 8000); }
+  CS.flushing = false;
+  if (CS.again) { CS.again = false; save(); }
+}
+const flushNow = async () => { clearTimeout(CS.timer); CS.again = false; let n = 0; while ((CS.flushing || syncKeys().some(k => J(D[k]) !== J(CS.base[k]))) && n++ < 40) { if (!CS.flushing) await flush(); else await new Promise(r => setTimeout(r, 100)); } };
+async function publishFin() {
+  const f = fin();
+  await CLOUD.set('data/finpub', { j:J({ einOhne:f.ein - f.spons, aus:f.aus, beitr:f.beitr, offen:f.offen, kat:f.kat }) });
+  const byM = {}; D.members.forEach(m => { byM[m.id] = []; }); D.beitraege.forEach(b => (byM[b.mid] = byM[b.mid] || []).push(b));
+  for (const mid of Object.keys(byM)) { const j = J(byM[mid]); if (CS.ownSent[mid] !== j) { await CLOUD.set('own/' + mid, { j }); CS.ownSent[mid] = j; } }
+}
+async function syncAllowed() {
+  const want = {};
+  D.members.forEach(m => { const e = (m.email || '').trim().toLowerCase(); if (!e) return;
+    const fin = ['beitraege', 'buchungen'].some(k => roleCan(k, m.rolle) || extraOf(m.id).includes(k));
+    want[e] = { mid:m.id, rolle:m.rolle, adm:m.rolle === 'admin', fin }; });
+  for (const e of Object.keys(want)) { const j = J(want[e]); if (CS.allowedSent[e] !== j) { await CLOUD.set('allowed/' + e, want[e]); CS.allowedSent[e] = j; } }
+  for (const e of Object.keys(CS.allowedSent)) if (!want[e]) { await CLOUD.del('allowed/' + e); delete CS.allowedSent[e]; }
+  return Object.keys(want).length;
+}
+let rerT = null;
+const rerender = () => { clearTimeout(rerT); rerT = setTimeout(() => { if (CS.ready && $('dlg').hidden && !document.querySelector('#main input:focus, #main textarea:focus')) render(); }, 150); };
+function onDoc(k, snap) {
+  const val = snap && snap.exists ? JSON.parse(snap.data.j) : null;
+  if (val == null) { if (!(k in CS.base)) CS.base[k] = jclone(D[k]); }
+  else {
+    const dirty = (k in CS.base) && J(D[k]) !== J(CS.base[k]);
+    D[k] = dirty ? mergeInto(val, CS.base[k], D[k]) : val;
+    CS.base[k] = jclone(val);
+  }
+  CS.pending.delete(k); checkReady();
+}
+function checkReady() { if (!CS.ready && CS.pending.size === 0) { CS.ready = true; afterReady(); } else if (CS.ready) rerender(); }
+function stopSync() { CS.unsubs.forEach(u => { try { u(); } catch (e) {} }); CS.unsubs = []; CS.ready = false; CS.base = {}; CS.ownSent = {}; CS.allowedSent = {}; }
+function startSync(info) {
+  CS.info = info; const keys = syncKeys(); CS.pending = new Set([...keys, 'finpub']);
+  if (!hasFin()) CS.pending.add('own');
+  const fail = (k, e) => { CS.pending.delete(k); if (!(k in CS.base)) CS.base[k] = jclone(D[k]); if (e && e.code !== 'permission-denied') syncMsg('Verbindung gestört (' + (e.code || e.message) + ').'); checkReady(); };
+  keys.forEach(k => CS.unsubs.push(CLOUD.listen(docPath(k), s => onDoc(k, s), e => fail(k, e))));
+  CS.unsubs.push(CLOUD.listen('data/finpub', s => { D.finpub = s && s.exists ? JSON.parse(s.data.j) : null; CS.pending.delete('finpub'); checkReady(); }, e => fail('finpub', e)));
+  if (!hasFin() && info.mid) CS.unsubs.push(CLOUD.listen('own/' + info.mid, s => { D.beitraege = s && s.exists ? JSON.parse(s.data.j) : []; CS.pending.delete('own'); checkReady(); }, e => fail('own', e)));
+  else CS.pending.delete('own');
+}
+async function afterReady() {
+  hideGate();
+  if (!D.members.length) return info_empty();
+  if (CS.info.mid) D.me = CS.info.mid;
+  if (!mem(D.me)) return gateShow('<h2>Kein Mitglied zugeordnet</h2><p>Dein Login ist keinem Mitglied zugeordnet. Bitte den Admin, deine E-Mail-Adresse beim Mitglied einzutragen.</p><button class="btn" data-act="logout">Abmelden</button>');
+  if (can('verwaltung')) { try { (await CLOUD.listIds('allowed')).forEach(x => { CS.allowedSent[x.id] = J(x.data); }); } catch (e) {} }
+  if (hasFin() && can('verwaltung')) { try { await publishFin(); } catch (e) {} }
+  route();
+}
+function info_empty() {
+  if (!CS.info.adm) return gateShow('<h2>Portal wird eingerichtet</h2><p>Die Gruppendaten sind noch nicht eingespielt. Bitte später noch einmal versuchen.</p><button class="btn" data-act="logout">Abmelden</button>');
+  gateShow(`<h2>Startdaten einspielen</h2><p>Das Portal ist noch leer. Wähle die Startdatei (seed-private.json), die du von Claude bekommen hast, und sag, welches Mitglied du bist. Deine Anmelde-Adresse (${esc(CS.user.email)}) wird bei diesem Mitglied eingetragen.</p>
+    <input type="file" id="seedFile" accept=".json,application/json"><label class="gl">Ich bin<select id="seedMe"><option value="">erst Datei wählen</option></select></label>
+    <div id="seedMsg" role="status"></div><button class="btn dark" data-act="seedGo" id="seedGo" disabled>Einspielen</button> <button class="btn" data-act="logout">Abmelden</button>`);
+}
+/* ---------- Anmeldung ---------- */
+function gateShow(html) { const g = $('gate'); g.innerHTML = '<div class="gbox">' + html + '</div>'; g.hidden = false; document.body.style.overflow = 'hidden'; }
+function hideGate() { $('gate').hidden = true; document.body.style.overflow = ''; }
+function gateLogin(msg) {
+  gateShow(`<h2>Funky Boys Portal</h2><p>Melde dich mit deiner E-Mail-Adresse an. Beim ersten Mal auf „Konto anlegen“ tippen, du bekommst dann eine Mail zum Bestätigen.</p>
+    <label class="gl">E-Mail<input id="gMail" type="email" autocomplete="username" inputmode="email"></label>
+    <label class="gl">Passwort<input id="gPw" type="password" autocomplete="current-password"></label>
+    <div id="gErr" class="gerr" role="alert">${esc(msg || '')}</div>
+    <div class="gacts"><button class="btn dark" data-act="gIn">Anmelden</button><button class="btn" data-act="gUp">Konto anlegen</button></div>
+    <button class="gl2" data-act="gReset">Passwort vergessen</button>`);
+}
+function gateVerify(user, msg) {
+  gateShow(`<h2>E-Mail bestätigen</h2><p>Wir haben eine Mail an <b>${esc(user.email)}</b> geschickt. Tippe darin auf den Link. Schau auch im Spam-Ordner nach. Danach hier auf „Ich habe bestätigt“.</p>
+    <div id="gErr" class="gerr" role="alert">${esc(msg || '')}</div>
+    <div class="gacts"><button class="btn dark" data-act="gDone">Ich habe bestätigt</button><button class="btn" data-act="gResend">Mail erneut senden</button></div><button class="gl2" data-act="logout">Abmelden</button>`);
+}
+const gErr = t => { const e = $('gErr'); if (e) e.textContent = t; };
+const AUTHERR = { 'auth/invalid-credential':'E-Mail oder Passwort stimmt nicht.', 'auth/invalid-email':'Bitte eine gültige E-Mail-Adresse eingeben.', 'auth/user-not-found':'Zu dieser E-Mail gibt es noch kein Konto.', 'auth/wrong-password':'E-Mail oder Passwort stimmt nicht.', 'auth/email-already-in-use':'Zu dieser E-Mail gibt es schon ein Konto. Bitte anmelden oder „Passwort vergessen“ nutzen.', 'auth/weak-password':'Das Passwort braucht mindestens 6 Zeichen.', 'auth/too-many-requests':'Zu viele Versuche. Bitte ein paar Minuten warten.', 'auth/network-request-failed':'Keine Verbindung. Bitte Internet prüfen.', 'auth/missing-password':'Bitte ein Passwort eingeben.' };
+const authMsg = e => AUTHERR[e && e.code] || ('Das hat nicht geklappt (' + ((e && e.code) || (e && e.message) || e) + ').');
+async function onAuth(user) {
+  stopSync(); CS.user = user; CS.info = null; D = blank();
+  if (!user) return gateLogin();
+  if (!user.emailVerified) return gateVerify(user);
+  gateShow('<h2>Einen Moment …</h2><p>Deine Daten werden geladen.</p>');
+  const mail = (user.email || '').toLowerCase();
+  try {
+    let info = null;
+    const a = await CLOUD.get('allowed/' + mail);
+    if (a.exists) info = a.data;
+    else { try { await CLOUD.get('data/members'); info = { adm:true, fin:true, mid:'', rolle:'admin' }; } catch (e) { info = null; } }
+    if (!info) return gateShow(`<h2>Noch nicht freigeschaltet</h2><p>Die Adresse <b>${esc(user.email)}</b> ist beim Portal nicht hinterlegt. Bitte den Admin, sie bei deinem Namen unter Mitglieder einzutragen. Danach kannst du dich neu anmelden.</p><button class="btn" data-act="logout">Abmelden</button>`);
+    startSync(info);
+  } catch (e) { gateShow(`<h2>Verbindung nicht möglich</h2><p>${esc(authMsg(e))}</p><button class="btn dark" data-act="reloadPage">Neu laden</button> <button class="btn" data-act="logout">Abmelden</button>`); }
+}
+function appBoot() {
+  if (CS.booted) return; CS.booted = true;
+  if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js'); } catch (e) {} }
+  checkVersion(); setInterval(checkVersion, 300000); document.addEventListener('visibilitychange', () => { if (!document.hidden) checkVersion(); });
+  CLOUD.onAuth(onAuth);
+}
+async function checkVersion() {
+  try { const r = await fetch('version.json?t=' + Date.now(), { cache:'no-store' }); const v = await r.json(); if (v && +v.build > BUILD) { $('updTxt').textContent = 'Neue Version ' + (v.version || '') + ' ist da. Bitte einmal aktualisieren, damit alles zusammenpasst.'; $('upd').hidden = false; } } catch (e) {}
+}
+const MOTTOS = { western:{ n:'Western (Leder, Sand, Sheriffstern)', greet:'Howdy' }, rotweiss:{ n:'Rot-Weiß (Vereinsfarben)', greet:'Hallo' }, schlicht:{ n:'Schlicht (Blau-Grau)', greet:'Hallo' }, planer:{ n:'Lila-Gold (wie der Auftrittsplaner)', greet:'Hallo' } };
+const STAR = '<svg viewBox="0 0 24 24"><path d="M12 1.5l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 8.8l7.1-.7z"/></svg>';
+function applyMotto() {
+  const m = D.motto, k = MOTTOS[m.farbwelt] ? m.farbwelt : 'western';
+  if (document.documentElement) document.documentElement.setAttribute('data-motto', k);
+  $('badge').innerHTML = k === 'western' ? STAR : 'FB';
+  $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
+}
+const VERSION = '2.0', BUILD = 30;
+const CHANGELOG = [
+  { v:'2.0', datum:'2026-11-15', punkte:['Echtbetrieb: Anmeldung mit E-Mail und Passwort, gemeinsame Daten für alle in Firebase','Finanzen werden auf dem Server geschützt: Beiträge und Buchungen sehen nur Admin und Kasse, alle anderen die Summen und ihren eigenen Beitrag','Als App aufs Handy installierbar (Zum Startbildschirm hinzufügen)'] },
+  { v:'1.12', datum:'2026-11-15', punkte:['Start im Echtbetrieb: alle Beispieleinträge sind entfernt (Kostüme, Requisiten, Tanz, Sponsoren, Beiträge, Pinnwand, Abstimmung, Social Media, Kalender)','Kasse startet mit 10 Euro Startguthaben','Training bleibt nur als Sonntagsserie 11 bis 13 Uhr bis 21.03.2027'] },
+  { v:'1.11', datum:'2026-11-15', punkte:['Finanzen, Beiträge, Buchungen und Sponsoren: Ändern dürfen ausschließlich Admin und Kasse, alle anderen Rollen sehen nur Summen, Budget, Spenden und den eigenen Beitrag'] },
+  { v:'1.10', datum:'2026-11-15', punkte:['Finanzen: Summen, Budget und Sponsoren sehen alle, Beiträge nur den eigenen Stand','Die Liste aller Zahlungen und der Punkt Buchungen sind nur für Admin und Kasse sichtbar'] },
+  { v:'1.9', datum:'2026-11-15', punkte:['Der Kalender öffnet direkt in der Monatsansicht, wie im Betriebsratsportal','Heute ist markiert, Tage haben bis zu drei Einträge und „+ mehr“, ein Tipp auf den Tag legt dort eine Abwesenheit an','Jedes Mitglied hat seine Farbe, Training und Auftritte stehen für alle im Kalender','„Nur meine“, Filter für Abwesenheiten, Training und Auftritte, Nächste Termine unter der Ansicht'] },
+  { v:'1.8', datum:'2026-11-15', punkte:['Training gilt für die ganze Gruppe: Admin und Trainerinnen legen Termine an, ändern und löschen sie','Wöchentliche Trainingsserie in einem Schritt (z. B. jeden Sonntag 11 bis 13 Uhr bis 21.03.2027), Serie später ändern oder beenden','Training erscheint im Kalender bei allen (Liste, Woche, Monat, Zeitstrahl)','Kalender-Termine kann nur ändern oder löschen, wer sie selbst eingetragen hat, plus der Admin'] },
+  { v:'1.7', datum:'2026-11-15', punkte:['„Vormerken“ trägt immer die Jahreszahl der nächsten Session (jetzt 2027/28, nächstes Jahr automatisch 2028/29)','Die laufende Session stellt sich automatisch um, jeweils zum August; im Feld unter Verwaltung nur etwas eintragen, wenn es abweichen soll'] },
+  { v:'1.6', datum:'2026-11-15', punkte:['Neue Unterrubrik „Vormerken“ unter Auftritte: Veranstalter-Datenbank für die nächste Session, ein Eintrag je Verein oder Tanzgruppe mit Ansprechperson','Anmeldung für die nächste Session direkt aus der Datenbank vorbereiten, einzeln oder für alle Vorgemerkten mit E-Mail auf einmal','Treffer aus der Auftritts-Suche lassen sich fürs nächste Jahr vormerken'] },
+  { v:'1.5', datum:'2026-11-15', punkte:['Fehler melden: Käfer-Knopf unten links, merkt sich die Rubrik, aus der du ihn drückst','Neue Rubrik „Feedback & Fehler“: Vorschläge machen, alle stimmen ab, der Admin setzt Stände und macht Aufgaben daraus','Versionshinweise (diese Seite) und Hinweis zum Aktualisieren, sobald eine neue Version online ist','Benachrichtigungen: Glocke oben, Zähler bei Pinnwand und Aufgaben, Block „Neu für dich“ auf der Startseite'] },
+  { v:'1.4', datum:'2026-11-15', punkte:['Beiträge mit Dauerauftrag oder Einmalzahlung, Stand je Mitglied (bezahlt, im Plan, offen, im Rückstand) und Übersicht','Zahlungen einzeln erfassen oder aus Excel, CSV oder PDF importieren'] },
+  { v:'1.3', datum:'2026-11-15', punkte:['Gemeinsamer Kalender: Kalender, Arbeitswoche, Monat und Zeitstrahl, mit Filter nach Person','Einzeltermine, Zeiträume und wiederkehrende Termine, Spielpläne per PDF einlesen','Echte Tänzernamen eingetragen'] },
+  { v:'1.2', datum:'', punkte:['Sponsoren fließen in die Finanzen ein','Geburtstage auf der Startseite und Glückwunsch beim Login','Rechte-Tabelle und Zusatzrechte vom Admin einstellbar, Rolle Betreuerin','E-Mail-Vorlagen ziehen Motto, Tänzerzahl und Zeiten aus dem Portal'] },
+  { v:'1.1', datum:'', punkte:['Auftritts-Suche mit täglichem Suchlauf','Social Media mit Freigabe durch Trainerinnen','Rollen Kostüme und Requisiten, Layout nach Session-Motto'] },
+  { v:'1.0', datum:'', punkte:['Erstes Portal: Auftrittsplaner, Finanzen, Kostüme, Tanz, Requisiten, Training, Pinnwand, Aufgaben, Dateien, Postfach'] }
+];
+const UI = { fbTab:'ideen', sec:'start', q:'', filter:'all', past:false, mailTo:'', vmFilter:'all', vmMsg:'', calView:'monat', calAnchor:'', calMid:'', calMine:false, calHide:{}, calMore:'' };
+
+/* ---------- Helfer ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const eur = n => new Intl.NumberFormat('de-DE', { style:'currency', currency:'EUR' }).format(n || 0);
+const DOW = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+const MON = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const pad = n => String(n).padStart(2, '0');
+function todayISO() { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+function dObj(iso) { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); }
+function fmtDate(iso) { if (!iso) return 'ohne Datum'; const d = dObj(iso); return `${DOW[d.getDay()]}, ${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`; }
+function addDays(iso, n) { const d = dObj(iso); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+function mondayOf(iso) { const d = dObj(iso); const diff = (d.getDay() + 6) % 7; d.setDate(d.getDate() - diff); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+const wdFromJS = j => (j + 6) % 7;
+function occursOn(e, iso) {
+  if (e.typ === 'zeitraum') return (!e.von || iso >= e.von) && (!e.bis || iso <= e.bis);
+  if (e.typ === 'wiederkehrend') { if (e.wochentag === '' || e.wochentag == null) return false; if (wdFromJS(dObj(iso).getDay()) !== +e.wochentag) return false; if (e.von && iso < e.von) return false; if (e.bis && iso > e.bis) return false; return true; }
+  return e.datum === iso;
+}
+function calEntries(iso) { let l = D.kalender.filter(e => occursOn(e, iso)); if (UI.calMine) l = l.filter(e => e.mid === D.me); else if (UI.calMid) l = l.filter(e => e.mid === UI.calMid); return l; }
+const MCOL = ['#2A5CAA', '#B5471F', '#2E7D4F', '#7A3E9D', '#B08400', '#0F7C8C', '#A3352A', '#5D6B1F', '#6B4E2E'];
+const mcol = id => MCOL[Math.max(0, D.members.findIndex(m => m.id === id)) % MCOL.length];
+const calMembers = () => UI.calMine ? D.members.filter(m => m.id === D.me) : UI.calMid ? D.members.filter(m => m.id === UI.calMid) : D.members;
+const CAL_KINDS = [['abw', 'Abwesenheiten'], ['tr', 'Training'], ['ev', 'Auftritte']];
+function dayItems(iso) {
+  const out = [];
+  if (!UI.calHide.tr) trOn(iso).forEach(t => out.push({ k:'tr', id:t.id, label:'Training ' + (t.zeit || ''), title:'Training ' + trZeit(t) + (t.ort ? ', ' + t.ort : ''), col:'#2E7D4F', solid:true }));
+  if (!UI.calHide.ev) D.events.filter(e => e.datum === iso).forEach(e => out.push({ k:'ev', id:e.id, label:(e.zeit ? e.zeit + ' ' : '') + e.name, title:'Auftritt: ' + e.name, col:'#B5471F', solid:true }));
+  if (!UI.calHide.abw) calEntries(iso).forEach(e => out.push({ k:'kl', id:e.id, label:mname(e.mid).split(' ')[0] + ': ' + e.titel, title:mname(e.mid) + ': ' + e.titel, col:mcol(e.mid) }));
+  return out;
+}
+const uid = p => p + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36);
+const mem = id => D.members.find(m => m.id === id);
+const mname = id => (mem(id) || {}).name || 'Unbekannt';
+const me = () => mem(D.me) || D.members[0];
+const ROLES = { admin:'Admin', trainerin:'Trainerin', auftritte:'Auftritte', kasse:'Kasse', kostuem:'Kostüme', requisit:'Requisiten', betreuer:'Betreuerin', taenzer:'Tänzer' };
+const ALL = Object.keys(ROLES), MIT_ROLLE = ALL.filter(r => r !== 'taenzer'), TANZT = r => r !== 'trainerin' && r !== 'betreuer';
+const CAN = { events:['admin','trainerin','auftritte'], buchungen:['admin','kasse'], beitraege:['admin','kasse'], kostueme:['admin','trainerin','kostuem','betreuer'], tanz:['admin','trainerin'],
+  requisiten:['admin','trainerin','requisit'], trainings:['admin','trainerin'], members:['admin'], aufgaben:MIT_ROLLE, posts:ALL, umfragen:ALL, dateien:['admin','trainerin'],
+  postfach:['admin','trainerin'], verwaltung:['admin'], social:ALL.filter(r => r !== 'betreuer'), socialOk:['trainerin'] };
+CAN.fremde = ['admin','trainerin']; CAN.sponsoren = ['admin','kasse']; CAN.kalender = ALL;
+const RIGHTS = [['Auftritte bearbeiten','events'],['Pinnwand und Abstimmungen','posts'],['Aufgaben anlegen','aufgaben'],['Kalender: eigene Termine eintragen','kalender'],['Fremde Aufgaben und Abstimmungen ändern','fremde'],['Dateien hochladen','dateien'],['Buchungen und Budget','buchungen'],['Beiträge aller sehen und pflegen','beitraege'],['Sponsoren pflegen','sponsoren'],
+  ['Kostüme pflegen','kostueme'],['Requisiten pflegen','requisiten'],['Tanz bearbeiten','tanz'],['Training und Anwesenheit','trainings'],['Social-Media-Posts vorschlagen','social'],['Social-Media-Posts freigeben','socialOk'],['Mails im Namen der Gruppe','postfach'],['Mitglieder pflegen','members']];
+const FIX = (k, r) => r === 'admin' && (k === 'members' || k === 'verwaltung');   // der Admin kann sich nicht selbst aussperren
+const roleCan = (k, r) => FIX(k, r) || ((D.rechte && D.rechte[k]) || CAN[k]).includes(r);
+const extraOf = id => (D.extra && D.extra[id]) || [];
+const can = a => roleCan(a, me().rolle) || extraOf(D.me).includes(a);
+const lead = () => can('fremde');
+const mayEditTask = a => lead() || a.von === D.me, mayTickTask = a => mayEditTask(a) || a.wer === D.me;
+const mayEditCal = e => lead() || e.mid === D.me;
+const demo = x => x.demo ? ' <span class="demo">Beispiel</span>' : '';
+function secs(s) { const m = /^(\d{1,2}):(\d{2})$/.exec((s || '').trim()); return m ? +m[1] * 60 + +m[2] : null; }
+function mmss(t) { return Math.floor(t / 60) + ':' + pad(t % 60); }
+
+/* ---------- Geburtstage ---------- */
+function bday(iso) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return null;
+  const mo = +iso.slice(5, 7), da = +iso.slice(8, 10), t = dObj(todayISO());
+  const mk = y => { const d = new Date(y, mo - 1, da); if (d.getMonth() !== mo - 1) d.setDate(0); return d; };   // 29.02. in Nicht-Schaltjahren: 28.02.
+  let d = mk(t.getFullYear()); if (d < t) d = mk(t.getFullYear() + 1);
+  return { days:Math.round((d - t) / 864e5), label:pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' };
+}
+function bdayPanel() {
+  const withDate = D.members.filter(m => bday(m.geburt));
+  const soon = withDate.map(m => ({ m, b:bday(m.geburt) })).filter(x => x.b.days <= 30).sort((a, b) => a.b.days - b.b.days);
+  return `<div class="panel"><div class="ph"><h3>Anstehende Geburtstage</h3><a href="#mitglieder">Mitglieder</a></div>
+    ${!withDate.length ? '<div class="empty">Noch keine Geburtsdaten eingetragen.</div>' : rows(soon, x => `<div class="row"><div class="grow"><b>${esc(x.m.name)}</b><div class="sub">${x.b.label}</div></div>
+      <span class="pill ${x.b.days === 0 ? 'good' : x.b.days <= 7 ? 'warn' : ''}">${x.b.days === 0 ? 'heute' : x.b.days === 1 ? 'morgen' : 'in ' + x.b.days + ' Tagen'}</span></div>`, 'In den nächsten 30 Tagen hat niemand Geburtstag.')}</div>`;
+}
+const hasBday = () => { const b = bday(me().geburt); return !!b && b.days === 0; };
+function gratulieren() {
+  if (!hasBday() || D.gratuliert[D.me] === todayISO() || !$('dlg').hidden) return;
+  D.gratuliert[D.me] = todayISO(); save();
+  openDlg(`<div style="text-align:center;color:var(--hi);font-size:34px;line-height:1" aria-hidden="true">★ ★ ★</div><h3 style="text-align:center;font-size:24px">Alles Gute zum Geburtstag, ${esc(me().name.split(' ')[0])}!</h3>
+    <div style="text-align:center">Die Funky Boys wünschen dir einen großartigen Tag. Lass dich feiern!</div><div class="acts"><button class="btn dark" data-act="close">Danke</button></div>`);
+}
+
+/* ---------- Termine ---------- */
+function statusInfo(raw) {
+  const s = (raw || '').toLowerCase();
+  if (s.includes('nein') || s.includes('nicht möglich') || s.includes('absag')) return { b:'declined', l:'Abgesagt', c:'bad', col:'#c1443c' };
+  if (s.includes('vorangemeldet')) return { b:'pending', l:'Vorangemeldet', c:'warn', col:'#d98a12' };
+  if (s.includes('angefragt')) return { b:'pending', l:'Angefragt', c:'warn', col:'#d98a12' };
+  if (s.includes('bestätigt')) return { b:'confirmed', l:'Bestätigt', c:'good', col:'#2f8f5b' };
+  if (s.includes('angemeldet')) return { b:'confirmed', l:s.includes('kg') ? 'Angemeldet (über KG)' : 'Angemeldet', c:'good', col:'#2f8f5b' };
+  return { b:'pending', l:raw || 'Offen', c:'', col:'#8a7a5e' };
+}
+function season(iso) { const d = dObj(iso); const y = d.getMonth() >= 7 ? d.getFullYear() : d.getFullYear() - 1; return y + '/' + String(y + 1).slice(2); }
+const isPast = e => e.datum < todayISO();
+const sortedEvents = () => [...D.events].sort((a, b) => (a.datum + (a.zeit || '00:00')).localeCompare(b.datum + (b.zeit || '00:00')));
+const upcoming = () => sortedEvents().filter(e => !isPast(e) && statusInfo(e.status).b !== 'declined');
+const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const mapsUrl = q => IS_IOS ? 'https://maps.apple.com/?q=' + encodeURIComponent(q) : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+function linkify(s) {
+  return esc(s).replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+    .replace(/([\w.+-]+@[\w-]+(?:\.[\w-]+)+)/g, '<a href="mailto:$1">$1</a>');
+}
+function zCount(e) { const z = D.zusagen[e.id] || {}; let ja = 0, nein = 0; D.members.forEach(m => { if (z[m.id] === 'ja') ja++; else if (z[m.id] === 'nein') nein++; }); return { ja, nein, offen:D.members.length - ja - nein }; }
+function evCard(e) {
+  const st = statusInfo(e.status), d = dObj(e.datum), past = isPast(e), z = zCount(e), mine = (D.zusagen[e.id] || {})[D.me];
+  return `<div class="ev ${past ? 'past' : ''}" style="border-left-color:${st.col}">
+    <div class="d"><i>${DOW[d.getDay()]}</i><b>${d.getDate()}</b><u>${MON[d.getMonth()].slice(0, 3)}</u>${e.zeit ? `<i>${esc(e.zeit)}</i>` : ''}</div>
+    <div class="b">
+      <div class="t"><strong>${esc(e.name)}</strong>${e.art ? `<span class="pill vio">${esc(e.art)}</span>` : ''}<span class="pill ${st.c}">${esc(st.l)}</span>
+        ${can('events') ? `<button class="btn sm" style="margin-left:auto" data-act="edit" data-col="events" data-id="${e.id}">Bearbeiten</button>` : ''}</div>
+      <div class="m">${e.standort ? `<span><b>Ort</b><a href="${esc(mapsUrl(e.maps || e.standort))}" target="_blank" rel="noopener">${esc(e.standort)}</a></span>` : ''}
+        ${e.zeit && e.ende ? `<span><b>Zeit</b>${esc(e.zeit)} bis ${esc(e.ende)} Uhr</span>` : ''}
+        ${e.inhaber ? `<span><b>Kontakt</b>${linkify(e.inhaber)}</span>` : ''}${e.gebuehr ? `<span><b>Gebühr</b>${esc(e.gebuehr)}</span>` : ''}</div>
+      ${e.notizen ? `<div class="n">${esc(e.notizen)}</div>` : ''}
+      ${!past && st.b !== 'declined' ? `<div class="chips"><span class="sub" style="font-size:13px;color:var(--muted)">Dabei ${z.ja} · Absage ${z.nein} · offen ${z.offen}</span>
+        <button class="btn sm yes ${mine === 'ja' ? 'on' : ''}" data-act="zusage" data-id="${e.id}" data-v="ja">Ich bin dabei</button>
+        <button class="btn sm no ${mine === 'nein' ? 'on' : ''}" data-act="zusage" data-id="${e.id}" data-v="nein">Ich kann nicht</button></div>` : ''}
+    </div></div>`;
+}
+function evListHTML() {
+  const q = UI.q.trim().toLowerCase(), all = sortedEvents();
+  const f = all.filter(e => (UI.past || !isPast(e)) && (UI.filter === 'all' || statusInfo(e.status).b === UI.filter) &&
+    (!q || `${e.name} ${e.standort} ${e.inhaber} ${e.notizen}`.toLowerCase().includes(q)));
+  let h = `<div class="sub" style="color:var(--muted);font-size:13px">${f.length} von ${all.length} Terminen${UI.past ? '' : ' (vergangene ausgeblendet)'}</div>`;
+  if (!f.length) return h + '<div class="empty">Keine Termine gefunden. Suche oder Filter anpassen.</div>';
+  let ls = null, lm = null;
+  f.forEach(e => {
+    const s = season(e.datum), mk = e.datum.slice(0, 7);
+    if (s !== ls) { h += `<div class="sess"><span>Session ${s}</span></div>`; ls = s; lm = null; }
+    if (mk !== lm) { const d = dObj(e.datum); h += `<div class="mon">${MON[d.getMonth()]} ${d.getFullYear()}</div>`; lm = mk; }
+    h += evCard(e);
+  });
+  return h;
+}
+
+/* ---------- Auftritts-Suche (Treffer kommen aus der Datenbank, gefüllt vom wöchentlichen Suchlauf) ---------- */
+const SUCHE = { state:'laden', funde:[], status:null };
+const GENERIC = ['männerballett','maennerballett','turnier','tunier','showtanz','showtanzturnier','meisterschaft','karneval','wettstreit','sitzung','festzelt'];
+const toks = s => String(s || '').toLowerCase().split(/[^a-zäöüß0-9]+/).filter(w => w.length > 3 && !GENERIC.includes(w));
+function imPlaner(f) { const a = toks(f.name + ' ' + f.ort + ' ' + (f.veranstalter || '')); return D.events.some(e => e.datum === f.datum && toks(e.name + ' ' + e.standort).some(w => a.includes(w))); }
+const sameDay = f => D.events.filter(e => e.datum === f.datum && statusInfo(e.status).b !== 'declined').map(e => e.name);
+function funde() { const t = todayISO(); return SUCHE.funde.filter(f => f && f.name && /^\d{4}-\d{2}-\d{2}$/.test(f.datum || '') && f.datum >= t && (+f.fahrzeit || 0) <= 60 && (D.sucheDone[f.id] === 'uebernommen' || !imPlaner(f))).sort((a, b) => a.datum.localeCompare(b.datum)); }
+async function startDb() { SUCHE.state = 'weg'; }
+
+/* ---------- Finanzen ---------- */
+const KAT_A = ['Anmeldegebühren','Kostüme','Requisiten','Training','Fahrt & Verpflegung','Sonstiges'];
+const KAT_E = ['Preisgeld','Gage','Zuschuss Verein','Sonstiges'];   // Sponsoring kommt aus der Rubrik Sponsoren
+const spGeld = () => D.sponsoren.filter(x => x.art !== 'Sachspende' && x.status === 'Eingegangen');
+function beitragZahlt(b) { return (b.zahlungen || []).reduce((s, z) => s + (+z.betrag || 0), 0); }
+function beitragInfo(b) {
+  const sum = beitragZahlt(b), betrag = +b.betrag || 0, rest = Math.max(0, betrag - sum);
+  if (betrag > 0 && sum >= betrag) return { sum, rest:0, status:'bezahlt', label:'Komplett bezahlt', cls:'good' };
+  if (b.modus === 'dauerauftrag') {
+    let monate = 0;
+    if (b.von) { const st = dObj(b.von), t = new Date(); monate = (t.getFullYear() - st.getFullYear()) * 12 + (t.getMonth() - st.getMonth()) + 1; monate = Math.max(0, Math.min(12, monate)); }
+    const rate = +b.rate || (betrag / 12 || 0), erwartet = Math.min(betrag, rate * monate);
+    if (sum + 0.01 < erwartet) return { sum, rest, status:'rueckstand', label:'Im Rückstand', cls:'bad' };
+    return { sum, rest, status:'aktuell', label:'Dauerauftrag im Plan', cls:'good' };
+  }
+  if (b.von && todayISO() > b.von) return { sum, rest, status:'rueckstand', label:'Im Rückstand', cls:'bad' };
+  return { sum, rest, status:'offen', label:'Offen', cls:'warn' };
+}
+function fin() {
+  const sum = a => a.reduce((s, x) => s + (+x.betrag || 0), 0);
+  if (!hasFin()) { const p = D.finpub || { einOhne:0, aus:0, beitr:0, offen:0, kat:{} }, spons = sum(spGeld()), ein = p.einOhne + spons; return { ein, aus:p.aus, saldo:ein - p.aus, beitr:p.beitr, offen:p.offen, kat:p.kat || {}, spons }; }
+  const beitr = D.beitraege.reduce((s, b) => s + beitragZahlt(b), 0), offen = D.beitraege.reduce((s, b) => s + beitragInfo(b).rest, 0);
+  const spons = sum(spGeld()), ein = sum(D.buchungen.filter(b => b.typ === 'E')) + beitr + spons, aus = sum(D.buchungen.filter(b => b.typ === 'A'));
+  const kat = {}; D.buchungen.filter(b => b.typ === 'A').forEach(b => { kat[b.kat] = (kat[b.kat] || 0) + (+b.betrag || 0); });
+  return { ein, aus, saldo:ein - aus, beitr, offen, kat, spons };
+}
+
+/* ---------- Kontakte aus den Terminen ---------- */
+function kontakte() {
+  const map = {};
+  D.events.forEach(e => {
+    if (!e.inhaber) return;
+    const mail = (e.inhaber.match(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/) || [''])[0], url = (e.inhaber.match(/https?:\/\/[^\s)]+/) || [''])[0];
+    let name = e.inhaber.replace(/\(.*?\)/g, '').trim(); if (name === mail) name = '';
+    const k = (name || mail).toLowerCase(); if (!k) return;
+    const c = map[k] || (map[k] = { name, mail:'', url:'', events:[] });
+    if (mail) c.mail = mail; if (url) c.url = url; if (!c.events.includes(e.name)) c.events.push(e.name);
+  });
+  return Object.values(map).sort((a, b) => (a.name || a.mail).localeCompare(b.name || b.mail));
+}
+
+/* ---------- Vormerken: Veranstalter-Datenbank für die nächste Session ---------- */
+const VM_MON = ['November','Dezember','Januar','Februar','März','offen'];
+const VM_STAND = ['Vormerken','Entwurf fertig','Angefragt','Zugesagt','Abgesagt','Nicht interessant'];
+function sess() { const m = /^(\d{4})/.exec(D.motto.session || ''); return m ? D.motto.session : season(todayISO()); }   // leer = automatisch die laufende Session
+function nextSess() { const y = parseInt(sess(), 10); return (y + 1) + '/' + String(y + 2).slice(2); }
+function vmYear(mon) { const y = parseInt(sess(), 10); return isNaN(y) || mon === 'offen' ? '' : ' ' + (mon === 'November' || mon === 'Dezember' ? y + 1 : y + 2); }
+const vmToks = s => toks(s).filter(w => !/ballett|turnier|tunier|tanz|sitzung|dance|karneval|meister|verein/.test(w));
+const vmHas = f => { const a = vmToks((f.veranstalter || '') + ' ' + f.name); return D.veranstalter.some(v => vmToks(v.verein + ' ' + (v.veranstaltung || '')).some(w => a.includes(w))); };
+function vmText(v) {
+  const d = tplData({ inhaber:v.person || '', datum:todayISO(), zeit:'' }), ns = nextSess(), was = v.veranstaltung ? '„' + v.veranstaltung + '“' : 'eurer Veranstaltung';
+  return { an:v.email || '', betreff:'Funky Boys – Auftritt in der Session ' + ns + (v.veranstaltung ? ' – ' + v.veranstaltung : ''),
+    text:`${d.anrede},\n\nwir sind die Funky Boys, eine Tanzgruppe der TSG Rot-Weiße Funken Güsten e.V., und planen gerade unsere Auftritte für die Session ${ns}. Bei ${was} wären wir sehr gerne dabei.\n\nSteht euer Termin schon fest, und ab wann nehmt ihr Anmeldungen an? Dann halten wir uns den Abend direkt frei.\n\nDas Wichtigste zu uns:\n` +
+      [`- Tänzer: ${d.taenzer}` + (d.trainer || d.betreuer ? ', dazu ' + [d.trainer ? d.trainer + ' Trainerinnen' : '', d.betreuer ? d.betreuer + ' Betreuerinnen' : ''].filter(Boolean).join(' und ') : ''), ...d.zeilen, '- Musik: bringen wir auf einem eigenen USB-Stick mit'].join('\n') +
+      `\n\nWenn ihr vorab noch etwas von uns braucht, meldet euch gerne bei uns.\n\n${d.gruss}` };
+}
+
+/* ---------- Formulare ---------- */
+const memOpts = () => D.members.map(m => [m.id, m.name]);
+const C = {
+  events:{ t:'Termin', f:[ { k:'name', l:'Name des Termins', req:1 }, { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Uhrzeit', t:'time' }, { k:'ende', l:'Ende', t:'time' },
+    { k:'art', l:'Art', t:'select', o:['','Tunier','Showtanz'] }, { k:'status', l:'Status', t:'select', o:['Angefragt','Vorangemeldet','Angemeldet','Bestätigt','Nein'] },
+    { k:'standort', l:'Standort' }, { k:'maps', l:'Adresse für Karte (optional)' }, { k:'inhaber', l:'Kontakt / Ansprechpartner' }, { k:'gebuehr', l:'Anmeldegebühr' }, { k:'notizen', l:'Notizen', t:'area' } ] },
+  buchungen:{ t:'Buchung', f:[ { k:'typ', l:'Art', t:'select', o:[['A','Ausgabe'],['E','Einnahme']] }, { k:'betrag', l:'Betrag in €', t:'number', req:1 }, { k:'text', l:'Wofür', req:1 },
+    { k:'kat', l:'Kategorie', t:'select', o:[...KAT_A, ...KAT_E.filter(k => !KAT_A.includes(k))] }, { k:'datum', l:'Datum', t:'date' } ] },
+  beitraege:{ t:'Beitrag', f:[ { k:'mid', l:'Mitglied', t:'select', o:memOpts }, { k:'zeitraum', l:'Zeitraum', req:1 }, { k:'betrag', l:'Jahresbeitrag in €', t:'number', req:1 },
+    { k:'modus', l:'Zahlweise', t:'select', o:[['einmalig','Einmalzahlung'],['dauerauftrag','Dauerauftrag (monatlich)']] },
+    { k:'rate', l:'Monatsrate in € (nur Dauerauftrag, leer = Jahresbeitrag/12)', t:'number' },
+    { k:'von', l:'Fällig ab / Start des Dauerauftrags', t:'date' } ] },
+  sponsoren:{ t:'Spende', f:[ { k:'name', l:'Wer spendet', req:1 }, { k:'betrag', l:'Betrag bzw. Wert in €', t:'number', req:1 }, { k:'datum', l:'Wann', t:'date' },
+    { k:'art', l:'Art', t:'select', o:['Geldspende','Sachspende'] }, { k:'status', l:'Stand', t:'select', o:['Eingegangen','Zugesagt'] }, { k:'kontakt', l:'Ansprechpartner / Kontakt' }, { k:'notiz', l:'Notiz (z. B. Gegenleistung, Spendenquittung)', t:'area' } ] },
+  kostueme:{ t:'Kostümteil', f:[ { k:'teil', l:'Teil', req:1 }, { k:'anzahl', l:'Anzahl', t:'number' }, { k:'preis', l:'Preis pro Stück in €', t:'number' },
+    { k:'status', l:'Status', t:'select', o:['Idee','Bestellt','Geliefert','Angepasst'] }, { k:'notiz', l:'Notiz', t:'area' } ] },
+  tanz:{ t:'Tanz-Baustein', f:[ { k:'titel', l:'Titel', req:1 }, { k:'art', l:'Art', t:'select', o:['Choreo-Teil','Musik','Aufstellung','Video'] },
+    { k:'status', l:'Status', t:'select', o:['Idee','In Arbeit','Steht'] }, { k:'notiz', l:'Notiz oder Link', t:'area' } ] },
+  requisiten:{ t:'Requisit', f:[ { k:'name', l:'Bezeichnung', req:1 }, { k:'anzahl', l:'Anzahl', t:'number' }, { k:'wo', l:'Lagerort / wer hat es' },
+    { k:'zustand', l:'Zustand', t:'select', o:['Idee','In Arbeit','Fertig','Reparatur nötig'] }, { k:'notiz', l:'Notiz (z. B. Transport)', t:'area' } ] },
+  trainings:{ t:'Training', f:[ { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Von (Uhrzeit)', t:'time' }, { k:'zeitBis', l:'Bis (Uhrzeit)', t:'time' }, { k:'ort', l:'Ort' }, { k:'thema', l:'Thema' } ] },
+  members:{ t:'Mitglied', f:[ { k:'name', l:'Name', req:1 }, { k:'rolle', l:'Rolle', t:'select', o:Object.entries(ROLES) }, { k:'geburt', l:'Geburtsdatum', t:'date' }, { k:'telefon', l:'Telefon' }, { k:'email', l:'E-Mail' },
+    { k:'groessen', l:'Größen (Hut, Hemd, Hose, Schuh)' }, { k:'notfall', l:'Notfallkontakt' } ] },
+  aufgaben:{ t:'Aufgabe', f:[ { k:'titel', l:'Was ist zu tun', req:1 }, { k:'bereich', l:'Bereich', t:'select', o:['Auftritte','Finanzen','Kostüme','Tanz','Requisiten','Training','Sonstiges'] },
+    { k:'wer', l:'Wer', t:'select', o:memOpts }, { k:'bis', l:'Bis wann', t:'date' } ] },
+  posts:{ t:'Beitrag an der Pinnwand', f:[ { k:'titel', l:'Überschrift', req:1 }, { k:'text', l:'Text', t:'area' } ] },
+  social:{ t:'Post', f:[ { k:'datum', l:'Datum', t:'date', req:1 }, { k:'thema', l:'Thema', req:1 }, { k:'plattform', l:'Plattform', t:'select', o:['Instagram','TikTok','Facebook','WhatsApp'] },
+    { k:'format', l:'Format', t:'select', o:['Reel','Story','Beitrag','Karussell'] },
+    { k:'wer', l:'Wer kümmert sich', t:'select', o:memOpts }, { k:'text', l:'Text und Hashtags', t:'area' } ] },
+  veranstalter:{ t:'Veranstalter', f:[ { k:'verein', l:'Verein oder Tanzgruppe', req:1 }, { k:'veranstaltung', l:'Veranstaltung' }, { k:'monat', l:'Üblicher Monat', t:'select', o:VM_MON },
+    { k:'ort', l:'Ort / Halle' }, { k:'art', l:'Art', t:'select', o:['Turnier','Showtanz','Gastauftritt'] }, { k:'person', l:'Ansprechperson (nur Name)' }, { k:'email', l:'E-Mail' }, { k:'telefon', l:'Telefon' },
+    { k:'web', l:'Webseite oder Instagram' }, { k:'gebuehr', l:'Startgeld' }, { k:'stand', l:'Stand für die nächste Session', t:'select', o:VM_STAND }, { k:'notiz', l:'Notizen (Erfahrung, Termin dieser Session, Anmeldeweg)', t:'area' } ] },
+  umfragen:{ t:'Abstimmung', f:[ { k:'frage', l:'Frage', req:1 }, { k:'opts', l:'Antworten, mit Komma getrennt', t:'list', req:1 } ] },
+  feedback:{ t:'Vorschlag', f:[ { k:'titel', l:'Was sollen wir ändern oder ergänzen', req:1 }, { k:'text', l:'Genauer beschrieben', t:'area' },
+    { k:'status', l:'Stand (nur Admin)', t:'select', adm:1, o:['Neu','Geplant','In Arbeit','Umgesetzt','Abgelehnt'] } ] },
+  bugs:{ t:'Fehlermeldung', f:[ { k:'titel', l:'Kurz: was ist das Problem', req:1 }, { k:'bereich', l:'In welcher Rubrik', t:'select', o:() => [...NAV.filter(n => n[0]).map(n => n[1]), 'Sonstiges'] },
+    { k:'text', l:'Was ist passiert, was hättest du erwartet', t:'area' }, { k:'status', l:'Stand (nur Admin)', t:'select', adm:1, o:['Offen','In Arbeit','Behoben','Abgelehnt'] } ] },
+  kalender:{ t:'Termin / Abwesenheit', f:[
+    { k:'mid', l:'Wer', t:'select', o:() => lead() ? memOpts() : [[D.me, mname(D.me)]] },
+    { k:'titel', l:'Was (z. B. Fußballspiel, Urlaub)', req:1 },
+    { k:'typ', l:'Art', t:'select', o:[['einzel','Einzelner Tag'],['zeitraum','Zeitraum'],['wiederkehrend','Wiederkehrend']] },
+    { k:'datum', l:'Datum (bei einzelnem Termin)', t:'date' },
+    { k:'von', l:'Von (bei Zeitraum oder Start der Wiederholung)', t:'date' },
+    { k:'bis', l:'Bis (bei Zeitraum oder Ende der Wiederholung, sonst leer lassen)', t:'date' },
+    { k:'wochentag', l:'Wochentag (bei wiederkehrend)', t:'select', o:[['','–'],['0','Montag'],['1','Dienstag'],['2','Mittwoch'],['3','Donnerstag'],['4','Freitag'],['5','Samstag'],['6','Sonntag']] },
+    { k:'notiz', l:'Notiz', t:'area' }
+  ] }
+};
+let FORM = null;
+const fieldsOf = cfg => cfg.f.filter(f => !f.adm || can('verwaltung'));
+function openDlg(html) { $('dlgBox').innerHTML = html; $('dlg').hidden = false; document.body.style.overflow = 'hidden'; const f = $('dlgBox').querySelector('input,select,textarea,button'); if (f) f.focus(); }
+function closeDlg() { $('dlg').hidden = true; document.body.style.overflow = ''; FORM = null; }
+function fieldHTML(f, v) {
+  const id = 'f_' + f.k, val = v == null ? '' : v;
+  if (f.t === 'select') {
+    let o = (typeof f.o === 'function' ? f.o() : f.o).map(x => Array.isArray(x) ? x : [x, x || 'keine']);
+    if (val !== '' && !o.some(x => x[0] === val)) o = [[val, val], ...o];
+    return `<label class="f" for="${id}">${f.l}<select id="${id}">${o.map(x => `<option value="${esc(x[0])}" ${x[0] === val ? 'selected' : ''}>${esc(x[1])}</option>`).join('')}</select></label>`;
+  }
+  if (f.t === 'area') return `<label class="f" for="${id}">${f.l}<textarea id="${id}" rows="3">${esc(val)}</textarea></label>`;
+  const type = { number:'number', date:'date', time:'time' }[f.t] || 'text';
+  return `<label class="f" for="${id}">${f.l}${f.req ? ' *' : ''}<input id="${id}" type="${type}" ${type === 'number' ? 'step="0.01" min="0" inputmode="decimal"' : ''} value="${esc(Array.isArray(val) ? val.join(', ') : val)}"></label>`;
+}
+function mayOpen(col, id) { if (['buchungen', 'beitraege', 'sponsoren'].includes(col)) return can(col); if (col === 'trainings') return can('trainings'); if (col === 'kalender') { if (!can('kalender')) return false; const e = id && D.kalender.find(x => x.id === id); return !e || mayEditCal(e); } return true; }
+function openEdit(col, id, preset) {
+  if (!mayOpen(col, id)) return;
+  const cfg = C[col], item = id ? D[col].find(x => x.id === id) : null;
+  FORM = { col, id };
+  openDlg(`<h3>${item ? cfg.t + ' bearbeiten' : cfg.t + ' anlegen'}</h3>${fieldsOf(cfg).map(f => fieldHTML(f, item ? item[f.k] : (preset || {})[f.k])).join('')}
+    <div class="err" id="fErr" hidden></div>
+    <div class="acts"><button class="btn dark" data-act="saveForm">Speichern</button><button class="btn" data-act="close">Abbrechen</button>
+    ${item ? '<button class="btn" data-act="delForm" style="color:var(--bad)">Löschen</button>' : ''}</div>`);
+}
+function saveForm() {
+  if (!mayOpen(FORM.col, FORM.id)) { closeDlg(); return; }
+  const cfg = C[FORM.col], rec = {};
+  for (const f of fieldsOf(cfg)) {
+    let v = $('f_' + f.k).value.trim();
+    if (f.t === 'number') v = v === '' ? '' : parseFloat(v.replace(',', '.'));
+    if (f.t === 'list') v = v.split(',').map(s => s.trim()).filter(Boolean);
+    if (f.req && (v === '' || (Array.isArray(v) && v.length < 2) || (f.t === 'number' && isNaN(v)))) {
+      $('fErr').textContent = f.t === 'list' ? 'Bitte mindestens zwei Antworten angeben.' : `Bitte „${f.l}“ ausfüllen.`; $('fErr').hidden = false; return;
+    }
+    rec[f.k] = v;
+  }
+  if (FORM.id) { const it = D[FORM.col].find(x => x.id === FORM.id); Object.assign(it, rec); delete it.demo; }
+  else {
+    const it = Object.assign({ id:uid(FORM.col[0]) }, rec);
+    if (FORM.col === 'posts') { it.von = D.me; it.datum = todayISO(); }
+    if (FORM.col === 'umfragen') { it.stimmen = {}; it.von = D.me; }
+    if (FORM.col === 'aufgaben') { it.done = false; it.von = D.me; }
+    if (FORM.col === 'social') it.status = 'Vorschlag';
+    if (FORM.col === 'kalender') { it.quelle = it.quelle || 'manuell'; if (!lead()) it.mid = D.me; }
+    if (FORM.col === 'beitraege') it.zahlungen = it.zahlungen || [];
+    if (['posts', 'umfragen', 'aufgaben', 'feedback', 'bugs'].includes(FORM.col)) it.ts = Date.now();
+    if (FORM.col === 'feedback') { it.von = D.me; it.stimmen = {}; it.status = it.status || 'Neu'; }
+    if (FORM.col === 'bugs') { it.von = D.me; it.status = it.status || 'Offen'; it.rolle = ROLES[me().rolle]; it.browser = (navigator.userAgent || '').slice(0, 110); }
+    D[FORM.col].push(it);
+  }
+  save(); closeDlg(); render();
+}
+function askConfirm(text, yes) {
+  openDlg(`<h3>Sicher?</h3><div>${esc(text)}</div><div class="acts"><button class="btn dark" id="cYes">Ja, löschen</button><button class="btn" data-act="close">Abbrechen</button></div>`);
+  $('cYes').onclick = () => { yes(); save(); closeDlg(); render(); };
+}
+
+/* ---------- Rubriken ---------- */
+const NAV = [ ['', 'Überblick'], ['start','Start'], ['pinnwand','Pinnwand'], ['aufgaben','Aufgaben'], ['kalender','Kalender'],
+  ['', 'Planung'], ['auftritte','Auftritte'], ['suche','Suche','auftritte'], ['vormerken','Vormerken','auftritte'], ['finanzen','Finanzen'], ['sponsoren','Sponsoren'], ['kostueme','Kostüme'], ['tanz','Tanz'], ['requisiten','Requisiten'], ['training','Training'], ['trainerinnen','Trainerinnen'], ['social','Social Media'],
+  ['', 'Gruppe'], ['mitglieder','Mitglieder'], ['kontakte','Veranstalter'], ['dateien','Dateien'], ['feedback','Feedback & Fehler'], ['versionen','Versionen'], ['postfach','Postfach'], ['verwaltung','Verwaltung'] ];
+const hiddenSec = s => (s === 'postfach' && !can('postfach')) || (s === 'verwaltung' && !can('verwaltung'));
+const grpOf = s => { let g = ''; for (const n of NAV) { if (!n[0]) g = n[1]; else if (n[0] === s) return n[2] ? g + ' · ' + NAV.find(x => x[0] === n[2])[1] : g; } return ''; };
+const evTabs = () => { const n = funde().filter(f => !D.sucheDone[f.id]).length; return `<div class="tabs"><a href="#auftritte" class="${UI.sec === 'auftritte' ? 'on' : ''}">Termine</a><a href="#suche" class="${UI.sec === 'suche' ? 'on' : ''}">Suche nach neuen Auftritten${n ? ' (' + n + ')' : ''}</a><a href="#vormerken" class="${UI.sec === 'vormerken' ? 'on' : ''}">Vormerken ${nextSess()}</a></div>`; };
+const head = (t, p, btn) => `<div class="head"><span class="crumb">${grpOf(UI.sec)}</span><h2>${t}</h2>${btn || ''}${p ? `<p>${p}</p>` : ''}</div>`;
+const addBtn = (col, label) => can(col) ? `<button class="btn pri" data-act="edit" data-col="${col}">${label}</button>` : '';
+const editBtn = (col, id) => can(col) ? `<button class="btn sm" data-act="edit" data-col="${col}" data-id="${id}">Bearbeiten</button>` : '';
+const rows = (items, fn, empty) => items.length ? `<div class="rows">${items.map(fn).join('')}</div>` : `<div class="empty">${empty}</div>`;
+function taskRow(a) {
+  const late = !a.done && a.bis && a.bis < todayISO();
+  return `<div class="row"><label class="chk"><input type="checkbox" data-act="task" data-id="${a.id}" ${a.done ? 'checked' : ''} ${mayTickTask(a) ? '' : 'disabled'} aria-label="Erledigt"></label>
+    <div class="grow" style="${a.done ? 'text-decoration:line-through;color:var(--faint)' : ''}">${esc(a.titel)}<div class="sub">${esc(mname(a.wer))}${a.bis ? ' · bis ' + fmtDate(a.bis) : ''}${a.von && a.von !== a.wer ? ' · angelegt von ' + esc(mname(a.von)) : ''}</div></div>
+    <span class="pill">${esc(a.bereich)}</span>${late ? '<span class="pill bad">überfällig</span>' : ''}${mayEditTask(a) ? `<button class="btn sm" data-act="edit" data-col="aufgaben" data-id="${a.id}">Bearbeiten</button>` : ''}</div>`;
+}
+function myBeitrag() {
+  const mine = D.beitraege.filter(b => b.mid === D.me);
+  if (!mine.length) return { b:'–', s:'kein Beitrag hinterlegt' };
+  const infos = mine.map(beitragInfo), restSum = infos.reduce((s, i) => s + i.rest, 0);
+  if (restSum <= 0) return { b:'bezahlt', s:mine.map(b => b.zeitraum).join(', ') };
+  return { b:eur(restSum), s:infos.some(i => i.status === 'rueckstand') ? 'im Rückstand' : 'noch offen' };
+}
+function calWeekLabel() { const mon = mondayOf(UI.calAnchor); return 'Woche vom ' + fmtDate(mon).slice(4) + ' bis ' + fmtDate(addDays(mon, 4)).slice(4); }
+function calMonthLabel() { const d = dObj(UI.calAnchor); return MON[d.getMonth()] + ' ' + d.getFullYear(); }
+function calRangeLabel() { return fmtDate(UI.calAnchor).slice(4) + ' bis ' + fmtDate(addDays(UI.calAnchor, 13)).slice(4); }
+const WDN = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+const trOn = iso => D.trainings.filter(t => t.datum === iso);
+function calUpcoming() {
+  let iso = todayISO(); const out = [];
+  for (let i = 0; i < 365 && out.length < 60; i++) { for (const x of dayItems(iso)) out.push([iso, x]); iso = addDays(iso, 1); }
+  return out;
+}
+function calRow([d, x]) {
+  const e = x.k === 'kl' ? D.kalender.find(k => k.id === x.id) : null, ed = x.k === 'tr' ? editBtn('trainings', x.id) : e && mayEditCal(e) ? editBtn('kalender', e.id) : '';
+  const who = x.k === 'tr' ? 'Alle · Training' : x.k === 'ev' ? 'Auftritt' : mname(e.mid), what = x.k === 'kl' ? e.titel + (e.typ === 'wiederkehrend' ? ' (wiederkehrend)' : '') : x.title;
+  return `<div class="row"><span style="width:10px;height:10px;border-radius:50%;background:${x.col};flex:none"></span><div class="grow"><b>${esc(who)}</b><div class="sub">${esc(what)} · ${fmtDate(d)}</div></div>${ed}</div>`;
+}
+const calAgenda = () => rows(calUpcoming().slice(0, 8), calRow, 'In den nächsten Monaten ist nichts eingetragen.');
+const calListe = () => rows(calUpcoming(), calRow, 'In den nächsten Monaten ist nichts eingetragen.');
+function calWoche() {
+  const mon = mondayOf(UI.calAnchor), days = [0, 1, 2, 3, 4].map(n => addDays(mon, n)), members = calMembers();
+  return `<div class="scroll"><table class="caltab"><thead><tr><th>Mitglied</th>${days.map(d => `<th>${DOW[dObj(d).getDay()]} ${fmtDate(d).slice(4)}</th>`).join('')}</tr></thead><tbody>
+    <tr><th>Alle (Training)</th>${days.map(d => `<td>${trOn(d).map(t => `<span class="pill good">${esc(trZeit(t))}</span>`).join('')}</td>`).join('')}</tr>
+    ${members.map(m => `<tr><th>${esc(m.name)}</th>${days.map(d => `<td>${D.kalender.filter(e => e.mid === m.id && occursOn(e, d)).map(e => `<span class="pill" title="${esc(e.titel)}">${esc(e.titel)}</span>`).join('')}</td>`).join('')}</tr>`).join('')}
+  </tbody></table></div>`;
+}
+function calMonat() {
+  const anchor = dObj(UI.calAnchor), first = new Date(anchor.getFullYear(), anchor.getMonth(), 1), gridStart = new Date(first);
+  gridStart.setDate(1 - (first.getDay() + 6) % 7);
+  const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`, today = todayISO(), add = can('kalender');
+  const cells = Array.from({ length:42 }, (_, i) => { const d = new Date(gridStart); d.setDate(gridStart.getDate() + i); return d; });
+  const chip = x => `<span class="calchip" data-act="calChip" data-k="${x.k}" data-id="${esc(x.id)}" title="${esc(x.title)}" style="${x.solid ? 'background:' + x.col + ';color:#fff;font-weight:700' : 'background:' + x.col + '22;color:' + x.col + ';border:1px solid ' + x.col + '66'};cursor:pointer">${esc(x.label)}</span>`;
+  return `<div class="scroll"><div class="calgrid calbig">${['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(w => `<div class="calhd">${w}</div>`).join('')}
+    ${cells.map(d => { const i = iso(d), its = dayItems(i), open = UI.calMore === i, show = open ? its : its.slice(0, 3);
+      return `<div class="calday${d.getMonth() === anchor.getMonth() ? '' : ' out'}${i === today ? ' today' : ''}" ${add ? `data-act="calDay" data-d="${i}" style="cursor:pointer"` : ''}><span class="calnum">${d.getDate()}</span>${show.map(chip).join('')}${its.length > 3 ? `<span class="calmore" data-act="calMore" data-d="${open ? '' : i}">${open ? 'weniger' : '+' + (its.length - 3) + ' mehr'}</span>` : ''}</div>`; }).join('')}
+  </div></div>
+  <p class="sub" style="margin-top:4px">Auf einen Tag tippen, um dort eine Abwesenheit einzutragen. Auf einen Eintrag tippen, um ihn zu öffnen (ändern darf nur, wer ihn angelegt hat, und der Admin).</p>`;
+}
+function calZeitstrahl() {
+  const days = Array.from({ length:14 }, (_, i) => addDays(UI.calAnchor, i)), members = calMembers();
+  return `<div class="scroll"><table class="caltab"><thead><tr><th>Mitglied</th>${days.map(d => `<th>${DOW[dObj(d).getDay()]}<br>${fmtDate(d).slice(4, 10)}</th>`).join('')}</tr></thead><tbody>
+    <tr><th>Alle (Training)</th>${days.map(d => `<td class="${trOn(d).length ? 'busy' : ''}" title="${trOn(d).map(trZeit).join(', ')}">${trOn(d).length ? '●' : ''}</td>`).join('')}</tr>
+    ${members.map(m => `<tr><th>${esc(m.name)}</th>${days.map(d => { const es = D.kalender.filter(e => e.mid === m.id && occursOn(e, d)); return `<td class="${es.length ? 'busy' : ''}" title="${esc(es.map(e => e.titel).join(', '))}">${es.length ? '●' : ''}</td>`; }).join('')}</tr>`).join('')}
+  </tbody></table></div>
+  <p class="sub" style="margin-top:4px">● = an diesem Tag nicht verfügbar. Spalten ohne Punkte eignen sich am besten für Termine oder Teamevents.</p>`;
+}
+const fmtTs = ts => ts ? new Date(ts).toLocaleDateString('de-DE') : '';
+function ensureSeen() {
+  if (!D.seen) D.seen = {}; let ch = false;
+  D.members.forEach(m => { if (!D.seen[m.id]) { D.seen[m.id] = { posts:Date.now(), aufgaben:Date.now() }; ch = true; } });
+  if (ch) save();
+}
+function news() {
+  const s = (D.seen && D.seen[D.me]) || {}, out = [];
+  D.posts.forEach(p => { if (p.ts > (s.posts || 0) && p.von !== D.me) out.push({ sec:'pinnwand', art:'Pinnwand', titel:p.titel, von:p.von, ts:p.ts }); });
+  D.umfragen.forEach(u => { if (u.ts > (s.posts || 0) && u.von !== D.me) out.push({ sec:'pinnwand', art:'Abstimmung', titel:u.frage, von:u.von, ts:u.ts }); });
+  D.aufgaben.forEach(a => { if (a.ts > (s.aufgaben || 0) && a.von !== D.me) out.push({ sec:'aufgaben', art:a.wer === D.me ? 'Aufgabe für dich' : 'Aufgabe', titel:a.titel, von:a.von, ts:a.ts }); });
+  return out.sort((a, b) => b.ts - a.ts);
+}
+function markSeen() {
+  const k = { pinnwand:'posts', aufgaben:'aufgaben' }[UI.sec]; if (!k || !D.seen[D.me]) return;
+  if (!news().some(x => x.sec === UI.sec)) return;
+  D.seen[D.me][k] = Date.now(); save(); renderNav();
+}
+function newsPanel() {
+  const n = news(); if (!n.length) return '';
+  return `<div class="panel"><div class="ph"><h3>Neu für dich</h3><button class="btn sm" data-act="bellRead">Alles gelesen</button></div>
+    ${rows(n.slice(0, 5), x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b><div class="sub">${x.art} · von ${esc(mname(x.von))} · ${fmtTs(x.ts)}</div></div><a href="#${x.sec}">ansehen</a></div>`, '')}</div>`;
+}
+const FB_PILL = { Neu:'vio', Offen:'vio', Geplant:'warn', 'In Arbeit':'warn', Umgesetzt:'good', Behoben:'good', Abgelehnt:'bad' };
+const FB_CLOSED = ['Umgesetzt', 'Abgelehnt', 'Behoben'];
+const SEC = {
+  start() {
+    const up = upcoming(), f = fin(), open = D.aufgaben.filter(a => !a.done), mb = myBeitrag(), nx = up[0], votesOpen = D.umfragen.filter(u => u.stimmen[D.me] === undefined).length;
+    return `<div class="hero"><small>Session ${esc(sess())}</small><b>${esc(D.motto.titel)}</b><span>${(MOTTOS[D.motto.farbwelt] || MOTTOS.western).greet}, ${esc(me().name.split(' ')[0])}. ${hasBday() ? 'Alles Gute zum Geburtstag!' : 'Das Wichtigste auf einen Blick.'}</span></div>
+      ${newsPanel()}
+      <div class="panel"><div class="ph"><h3>Pinnwand</h3><a href="#pinnwand">zur Pinnwand</a></div>
+        ${rows([...D.posts].reverse().slice(0, 2), p => `<div class="row"><div class="grow"><b>${esc(p.titel)}</b>${demo(p)}<div class="sub" style="white-space:pre-wrap">${esc(p.text)}</div></div><span class="sub">${esc(mname(p.von))} · ${fmtDate(p.datum).slice(4)}</span></div>`, 'Noch keine Beiträge.')}
+        ${votesOpen ? `<div class="sub" style="color:var(--muted);font-size:13px">${votesOpen === 1 ? 'Eine Abstimmung wartet' : votesOpen + ' Abstimmungen warten'} noch auf deine Stimme.</div>` : ''}</div>
+      <div class="kpis">
+        <div class="kpi"><small>Nächster Auftritt</small><b>${nx ? esc(nx.name) : 'keiner'}</b><span>${nx ? fmtDate(nx.datum) + (nx.zeit ? ', ' + nx.zeit + ' Uhr' : '') : ''}</span></div>
+        <div class="kpi"><small>Offene Aufgaben</small><b>${open.length}</b><span>${open.filter(a => a.wer === D.me).length} davon bei dir</span></div>
+        <div class="kpi"><small>Kassenstand</small><b>${eur(f.saldo)}</b><span>Einnahmen ${eur(f.ein)} · Ausgaben ${eur(f.aus)}</span></div>
+        <div class="kpi"><small>Mein Beitrag</small><b>${mb.b}</b><span>${esc(mb.s)}</span></div></div>
+      <div class="cols">
+        <div class="panel"><div class="ph"><h3>Nächste Termine</h3><a href="#auftritte">alle Auftritte</a></div>
+          ${rows(up.slice(0, 4), e => `<div class="row"><div class="grow"><b>${esc(e.name)}</b><div class="sub">${fmtDate(e.datum)}${e.zeit ? ', ' + e.zeit + ' Uhr' : ''}${e.standort ? ' · ' + esc(e.standort) : ''}</div></div><span class="pill ${statusInfo(e.status).c}">${esc(statusInfo(e.status).l)}</span></div>`, 'Keine anstehenden Termine.')}</div>
+        <div class="panel"><div class="ph"><h3>Offene Aufgaben</h3><a href="#aufgaben">alle Aufgaben</a></div>${rows(open.slice(0, 4), taskRow, 'Alles erledigt.')}</div>
+        ${bdayPanel()}
+      </div>`;
+  },
+  auftritte() {
+    const chips = [['all','Alle'],['confirmed','Angemeldet'],['pending','Ausstehend'],['declined','Abgesagt']];
+    return head('Auftrittsplanung', 'Euer Planer mit allen Terminen und Turnieren. Neu: Jeder sagt pro Auftritt selbst zu oder ab.', addBtn('events', '+ Neuer Termin')) + evTabs() +
+      `<div class="panel"><input id="evSearch" type="search" placeholder="Suchen (Name, Ort, Ansprechpartner …)" value="${esc(UI.q)}" aria-label="Termine durchsuchen">
+        <div class="chips">${chips.map(c => `<button class="btn sm ${UI.filter === c[0] ? 'on' : ''}" data-act="evFilter" data-v="${c[0]}">${c[1]}</button>`).join('')}
+        <label class="chk"><input type="checkbox" data-act="evPast" ${UI.past ? 'checked' : ''}> vergangene Termine zeigen</label></div></div>
+      <div class="list" id="evList">${evListHTML()}</div>`;
+  },
+  suche() {
+    const all = funde(), neu = all.filter(f => !D.sucheDone[f.id]), alt = all.filter(f => D.sucheDone[f.id]), st = SUCHE.status || {}, ok = can('events');
+    const info = { laden:'Die Treffer werden geladen …', spaet:'Die Treffer sind gerade nicht erreichbar. Sobald die Verbindung steht, erscheinen sie hier.', weg:'Die Suchergebnisse sind in dieser Ansicht nicht erreichbar.' }[SUCHE.state];
+    const row = f => { const clash = sameDay(f), done = D.sucheDone[f.id], src = /^https?:\/\//.test(f.quelle || '') ? f.quelle : '';
+      return `<div class="row"><div class="grow"><b>${esc(f.name)}</b><div class="sub">${fmtDate(f.datum)}${f.zeit ? ', ' + esc(f.zeit) + ' Uhr' : ''} · ${esc(f.ort || 'Ort offen')}${f.veranstalter ? ' · ' + esc(f.veranstalter) : ''}</div>
+        ${f.hinweis ? `<div class="n" style="font-size:13px;background:var(--soft);border-radius:4px;padding:8px 10px;margin-top:6px">${esc(f.hinweis)}</div>` : ''}
+        <div class="sub" style="margin-top:6px">${src ? `<a href="${esc(src)}" target="_blank" rel="noopener">Quelle ansehen</a>` : 'ohne Quelle'}${f.gefunden ? ' · gefunden am ' + fmtDate(f.gefunden).slice(4) : ''}</div></div>
+      <span class="pill vio">${esc(f.art || 'Auftritt')}</span><span class="pill">ca. ${+f.fahrzeit || '?'} Min Fahrt</span>
+      ${clash.length && !done ? `<span class="pill warn">am selben Tag: ${esc(clash[0])}</span>` : ''}${done ? `<span class="pill ${done === 'uebernommen' ? 'good' : ''}">${done === 'uebernommen' ? 'übernommen' : 'ausgeblendet'}</span>` : ''}
+      ${ok && !done ? `<button class="btn sm pri" data-act="fundAdd" data-id="${esc(f.id)}">In die Auftrittsliste</button><button class="btn sm" data-act="fundHide" data-id="${esc(f.id)}">Nicht interessant</button>` : ''}
+      ${vmHas(f) ? '<span class="pill">für ' + nextSess() + ' vorgemerkt</span>' : ok ? `<button class="btn sm" data-act="fundVm" data-id="${esc(f.id)}">Fürs nächste Jahr vormerken</button>` : ''}
+      ${ok && done === 'ignoriert' ? `<button class="btn sm" data-act="fundBack" data-id="${esc(f.id)}">Zurückholen</button>` : ''}</div>`; };
+    return head('Auftritts-Suche', 'Sucht im Netz nach Turnieren und Auftrittsmöglichkeiten, die höchstens eine Stunde Fahrt entfernt sind und noch nicht in eurer Auftrittsliste stehen.') + evTabs() +
+      `<div class="kpis"><div class="kpi"><small>Neue Treffer</small><b>${neu.length}</b><span>noch nicht in der Auftrittsliste</span></div>
+        <div class="kpi"><small>Letzter Suchlauf</small><b>${st.letzterLauf ? fmtDate(st.letzterLauf).slice(4) : 'offen'}</b><span>läuft jeden Morgen automatisch</span></div>
+        <div class="kpi"><small>Suchgebiet</small><b>${+st.maxMinuten || 60} Min</b><span>Fahrt ab ${esc(st.startort || 'Jülich-Güsten')}, geschätzt</span></div></div>
+      <div class="panel"><div class="ph"><h3>Neue Treffer (${neu.length})</h3></div>
+        ${info ? `<div class="empty">${info}</div>` : rows(neu, row, 'Aktuell keine neuen Treffer. Der nächste Suchlauf schaut wieder nach.')}</div>
+      ${alt.length ? `<div class="panel"><div class="ph"><h3>Schon bearbeitet (${alt.length})</h3></div>${rows(alt, row, '')}</div>` : ''}
+      <div class="panel"><div class="ph"><h3>So arbeitet die Suche</h3></div><div style="max-width:65ch;color:var(--muted);font-size:14px">Claude durchsucht einmal am Tag Vereinsseiten, Ausschreibungen und Terminkalender der Region und trägt nur Treffer mit Quelle ein. Die Fahrzeit ist geschätzt, nicht geroutet. Was nur auf Instagram oder Facebook steht, findet die Suche meist nicht.${st.notiz ? '<br><br>' + esc(st.notiz) : ''}</div></div>`;
+  },
+  vormerken() {
+    const ok = can('events'), mail = ok && can('postfach'), ns = nextSess(), all = D.veranstalter, flt = UI.vmFilter;
+    const grp = { offen:v => v.stand === 'Vormerken', lauf:v => v.stand === 'Entwurf fertig' || v.stand === 'Angefragt', fix:v => v.stand === 'Zugesagt', raus:v => v.stand === 'Abgesagt' || v.stand === 'Nicht interessant' };
+    const shown = flt === 'all' ? all : all.filter(grp[flt]), cls = { 'Entwurf fertig':'warn', Angefragt:'warn', Zugesagt:'good', Abgesagt:'bad' };
+    const bulk = all.filter(v => v.stand === 'Vormerken' && v.email).length;
+    const chips = [['all','Alle'],['offen','Vorgemerkt'],['lauf','Angefragt'],['fix','Zugesagt'],['raus','Raus']];
+    const row = v => { const web = /^https?:\/\//.test(v.web || '') ? `<a href="${esc(v.web)}" target="_blank" rel="noopener">Webseite</a>` : (v.web ? esc(v.web) : '');
+      return `<div class="row"><div class="grow"><b>${esc(v.verein)}</b>${v.veranstaltung && v.veranstaltung !== v.verein ? ' · ' + esc(v.veranstaltung) : ''}
+        <div class="sub">${[v.ort, v.gebuehr ? 'Startgeld ' + v.gebuehr : ''].filter(Boolean).map(esc).join(' · ') || 'Ort offen'}</div>
+        <div class="sub"><b>Ansprechperson:</b> ${[v.person ? esc(v.person) : '', v.email ? linkify(v.email) : '', v.telefon ? esc(v.telefon) : '', web].filter(Boolean).join(' · ') || 'noch niemand eingetragen'}</div>
+        ${v.notiz ? `<div class="n" style="font-size:13px;background:var(--soft);border-radius:4px;padding:8px 10px;margin-top:6px">${esc(v.notiz)}</div>` : ''}</div>
+      <span class="pill vio">${esc(v.art || 'Auftritt')}</span>
+      ${ok ? `<select class="st" data-act="vmStand" data-id="${v.id}" aria-label="Stand bei ${esc(v.verein)}">${VM_STAND.map(x => `<option ${x === v.stand ? 'selected' : ''}>${x}</option>`).join('')}</select>` : `<span class="pill ${cls[v.stand] || ''}">${esc(v.stand)}</span>`}
+      ${mail ? `<button class="btn sm pri" data-act="vmMail" data-id="${v.id}">Anmeldung vorbereiten</button>` : ''}${ok ? `<button class="btn sm" data-act="edit" data-col="veranstalter" data-id="${v.id}">Bearbeiten</button>` : ''}</div>`; };
+    return head('Vormerken für ' + ns, 'Eure Veranstalter-Datenbank: ein Eintrag je Verein oder Tanzgruppe mit Ansprechperson, sortiert nach dem üblichen Monat. Auch wer dieses Jahr nicht geklappt hat, bleibt hier für die nächste Session stehen.', ok ? '<button class="btn pri" data-act="edit" data-col="veranstalter">+ Veranstalter</button>' : '') + evTabs() +
+      `<div class="kpis"><div class="kpi"><small>Veranstalter</small><b>${all.length}</b><span>in der Datenbank</span></div>
+        <div class="kpi"><small>Mit E-Mail</small><b>${all.filter(v => v.email).length}</b><span>direkt anschreibbar</span></div>
+        <div class="kpi"><small>Angefragt</small><b>${all.filter(grp.lauf).length}</b><span>Entwurf fertig oder verschickt</span></div>
+        <div class="kpi"><small>Zugesagt</small><b>${all.filter(grp.fix).length}</b><span>für die Session ${ns}</span></div></div>
+      <div class="panel"><div class="ph"><h3>Anmeldungen für ${ns}</h3></div>
+        <div style="max-width:65ch;color:var(--muted);font-size:14px">„Anmeldung vorbereiten“ füllt eine Mail mit Ansprechperson, Tänzerzahl und euren Zeiten und legt sie als Entwurf ins Postfach. Der Stand springt dabei auf „Entwurf fertig“. Im Prototyp wird nichts verschickt.</div>
+        <div class="chips">${chips.map(c => `<button class="btn sm ${flt === c[0] ? 'on' : ''}" data-act="vmFilter" data-v="${c[0]}">${c[1]}</button>`).join('')}
+          ${mail && bulk ? `<button class="btn sm dark" data-act="vmAlle">Entwürfe für alle ${bulk} Vorgemerkten mit E-Mail anlegen</button>` : ''}</div>
+        <div role="status" style="font-size:14px;font-weight:700;color:var(--good)">${esc(UI.vmMsg)}</div></div>` +
+      (shown.length ? VM_MON.map(m => { const it = shown.filter(v => (VM_MON.includes(v.monat) ? v.monat : 'offen') === m).sort((a, b) => a.verein.localeCompare(b.verein));
+        return it.length ? `<div class="panel"><div class="ph"><h3>${m === 'offen' ? 'Monat offen' : m + vmYear(m)} (${it.length})</h3></div>${rows(it, row, '')}</div>` : ''; }).join('')
+        : '<div class="panel"><div class="empty">Mit diesem Filter gibt es keine Einträge.</div></div>');
+  },
+  finanzen() {
+    const f = fin(), full = can('beitraege');
+    const bs = [...D.buchungen, ...spGeld().map(x => ({ sp:true, typ:'E', kat:'Sponsoring', betrag:x.betrag, text:'Sponsor: ' + x.name, datum:x.datum, demo:x.demo }))].sort((a, b) => (b.datum || '0').localeCompare(a.datum || '0'));
+    const bt = full ? D.beitraege : D.beitraege.filter(b => b.mid === D.me);
+    return head('Finanzen', 'Gesamtbeträge und Budget sehen alle. Beiträge siehst du nur für dich selbst, die Liste aller Zahlungen und die einzelnen Buchungen sehen Admin und Kasse.', addBtn('buchungen', '+ Buchung')) +
+      `<div class="kpis"><div class="kpi"><small>Einnahmen</small><b>${eur(f.ein)}</b><span>davon Beiträge ${eur(f.beitr)} · Sponsoren ${eur(f.spons)}</span></div>
+        <div class="kpi"><small>Ausgaben</small><b>${eur(f.aus)}</b><span>${can('buchungen') ? D.buchungen.filter(b => b.typ === 'A').length + ' Buchungen' : 'laut Kasse'}</span></div>
+        <div class="kpi"><small>Kassenstand</small><b>${eur(f.saldo)}</b><span>Einnahmen minus Ausgaben</span></div>
+        <div class="kpi"><small>Beiträge offen</small><b>${eur(f.offen)}</b><span>noch nicht eingegangen</span></div></div>
+      <div class="cols">
+        <div class="panel"><div class="ph"><h3>Ausgaben und Budget je Bereich</h3>${can('buchungen') ? '<button class="btn sm" data-act="budget">Budget ändern</button>' : ''}</div>
+          <div class="rows">${KAT_A.map(k => { const ist = f.kat[k] || 0, bud = +D.budget[k] || 0, w = Math.min(100, Math.max(ist, bud) ? ist / Math.max(ist, bud) * 100 : 0);
+            return `<div class="row"><div class="grow"><b>${k}</b></div><span class="amt">${eur(ist)} <span style="font-weight:400;color:var(--muted)">von ${eur(bud)}</span></span>
+              <div class="bar" role="img" aria-label="${k}: ${eur(ist)} von ${eur(bud)}"><i class="${ist > bud ? 'over' : ''}" style="width:${w}%"></i></div></div>`; }).join('')}</div></div>
+        <div class="panel"><div class="ph"><h3>Beiträge</h3><div class="chips">${full ? '<button class="btn sm" data-act="btImportOpen">Zahlungen importieren</button>' : ''}${addBtn('beitraege', '+ Beitrag')}</div></div>
+          ${full ? (() => { const infos = D.beitraege.map(beitragInfo), cnt = st => infos.filter(i => i.status === st).length, rest = infos.reduce((s, i) => s + i.rest, 0);
+            return `<div class="chips"><span class="pill good">${cnt('bezahlt')} komplett bezahlt</span><span class="pill good">${cnt('aktuell')} im Plan</span><span class="pill warn">${cnt('offen')} offen</span><span class="pill bad">${cnt('rueckstand')} im Rückstand</span><span class="pill">Rest insgesamt ${eur(rest)}</span></div>`; })() : '<div class="sub" style="color:var(--muted);font-size:13px">Du siehst nur deinen eigenen Beitrag. Die Übersicht aller Mitglieder sehen Admin und Kasse.</div>'}
+          ${rows(bt, b => { const info = beitragInfo(b);
+            return `<div class="row"><div class="grow"><b>${esc(mname(b.mid))}</b>${demo(b)}<div class="sub">${esc(b.zeitraum)} · ${b.modus === 'dauerauftrag' ? 'Dauerauftrag' : 'Einmalzahlung'} · ${eur(info.sum)} von ${eur(b.betrag)} bezahlt${info.rest > 0 ? ' · Rest ' + eur(info.rest) : ''}</div></div>
+              <span class="pill ${info.cls}">${info.label}</span>
+              ${full && info.rest > 0 ? `<button class="btn sm" data-act="btPayOpen" data-id="${b.id}">+ Zahlung</button>` : ''}${full ? editBtn('beitraege', b.id) : ''}</div>`; }, 'Für dich ist kein Beitrag hinterlegt.')}</div>
+      </div>
+      ${!can('buchungen') ? '<div class="panel"><div class="ph"><h3>Buchungen</h3></div><div class="sub" style="color:var(--muted);font-size:13px">Die einzelnen Buchungen sehen Admin und Kasse. Die Summen und das Budget oben sind für alle offen.</div></div>' : `<div class="panel"><div class="ph"><h3>Buchungen</h3></div>
+        ${rows(bs, b => `<div class="row"><div class="grow"><b>${esc(b.text)}</b>${demo(b)}<div class="sub">${fmtDate(b.datum)}</div></div><span class="pill">${esc(b.kat)}</span>
+          <span class="amt ${b.typ === 'E' ? 'in' : 'out'}">${b.typ === 'E' ? '+' : '−'} ${eur(b.betrag)}</span>${b.sp ? '<a href="#sponsoren" style="font-size:13px">aus Sponsoren</a>' : editBtn('buchungen', b.id)}</div>`, 'Noch keine Buchungen.')}</div>`}`;
+  },
+  sponsoren() {
+    const sum = a => a.reduce((t, x) => t + (+x.betrag || 0), 0), all = [...D.sponsoren].sort((a, b) => (b.datum || '0').localeCompare(a.datum || '0'));
+    const geld = spGeld(), zug = all.filter(x => x.status !== 'Eingegangen'), sach = all.filter(x => x.art === 'Sachspende' && x.status === 'Eingegangen');
+    const je = {}; all.forEach(x => { const k = x.name.trim(); (je[k] = je[k] || { n:k, t:0, c:0 }).t += x.status === 'Eingegangen' ? (+x.betrag || 0) : 0; je[k].c++; });
+    return head('Sponsoren', 'Wer spendet wie viel und wann. Eingegangene Geldspenden zählen automatisch als Einnahme in den Finanzen.', addBtn('sponsoren', '+ Spende')) +
+      `<div class="kpis"><div class="kpi"><small>Geld eingegangen</small><b>${eur(sum(geld))}</b><span>steht in den Finanzen als Einnahme</span></div>
+        <div class="kpi"><small>Zugesagt, noch offen</small><b>${eur(sum(zug))}</b><span>${zug.length} Zusage${zug.length === 1 ? '' : 'n'}</span></div>
+        <div class="kpi"><small>Sachspenden</small><b>${eur(sum(sach))}</b><span>Wert, zählt nicht zur Kasse</span></div>
+        <div class="kpi"><small>Sponsoren</small><b>${Object.keys(je).length}</b><span>${all.length} Einträge</span></div></div>
+      <div class="panel"><div class="ph"><h3>Spenden</h3><a href="#finanzen">zu den Finanzen</a></div>
+        ${rows(all, x => `<div class="row"><div class="grow"><b>${esc(x.name)}</b>${demo(x)}<div class="sub">${fmtDate(x.datum)}${x.kontakt ? ' · ' + linkify(x.kontakt) : ''}${x.notiz ? ' · ' + esc(x.notiz) : ''}</div></div>
+          <span class="pill ${x.art === 'Sachspende' ? '' : 'vio'}">${esc(x.art || 'Geldspende')}</span><span class="pill ${x.status === 'Eingegangen' ? 'good' : 'warn'}">${esc(x.status || 'Eingegangen')}</span>
+          <span class="amt ${x.status === 'Eingegangen' && x.art !== 'Sachspende' ? 'in' : ''}">${eur(x.betrag)}</span>
+          ${can('sponsoren') && x.status !== 'Eingegangen' ? `<button class="btn sm" data-act="spIn" data-id="${x.id}">Heute eingegangen</button>` : ''}${editBtn('sponsoren', x.id)}</div>`, 'Noch keine Spenden eingetragen.')}</div>
+      <div class="panel"><div class="ph"><h3>Summe je Sponsor</h3></div>
+        ${rows(Object.values(je).sort((a, b) => b.t - a.t), x => `<div class="row"><div class="grow"><b>${esc(x.n)}</b><div class="sub">${x.c} Eintr${x.c === 1 ? 'ag' : 'äge'}</div></div><span class="amt">${eur(x.t)}</span></div>`, 'Noch keine Sponsoren.')}</div>`;
+  },
+  kostueme() {
+    const total = D.kostueme.reduce((s, k) => s + (+k.anzahl || 0) * (+k.preis || 0), 0), cls = { Idee:'', Bestellt:'warn', Geliefert:'good', Angepasst:'good' };
+    const d = D.members.filter(m => TANZT(m.rolle));
+    return head('Kostümplanung', 'Motto der Session: ' + esc(D.motto.titel) + '. Teile, Bestellstand und Kosten.', addBtn('kostueme', '+ Kostümteil')) +
+      `<div class="panel"><div class="ph"><h3>Teile</h3><span class="amt">Summe ${eur(total)}</span></div>
+        ${rows(D.kostueme, k => `<div class="row"><div class="grow"><b>${esc(k.teil)}</b>${demo(k)}<div class="sub">${+k.anzahl || 0} × ${eur(k.preis)}${k.notiz ? ' · ' + esc(k.notiz) : ''}</div></div>
+          <span class="pill ${cls[k.status] || ''}">${esc(k.status)}</span><span class="amt">${eur((+k.anzahl || 0) * (+k.preis || 0))}</span>${editBtn('kostueme', k.id)}</div>`, 'Noch keine Teile angelegt.')}</div>
+      <div class="panel"><div class="ph"><h3>Größen der Tänzer</h3><a href="#mitglieder">bei Mitgliedern pflegen</a></div>
+        ${rows(d, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}</div><span class="sub">${m.groessen ? esc(m.groessen) : 'noch nicht eingetragen'}</span></div>`, '')}</div>`;
+  },
+  tanz() {
+    const z = D.zeiten, t = [secs(z.aufmarsch), secs(z.tanz), secs(z.abmarsch)], sum = t.every(x => x != null) ? mmss(t[0] + t[1] + t[2]) : 'offen';
+    const cls = { Idee:'', 'In Arbeit':'warn', Steht:'good' };
+    return head('Tanzplanung', 'Choreo, Musik und Aufstellungen. Die Zeiten braucht ihr für fast jeden Anmeldebogen.', addBtn('tanz', '+ Baustein')) +
+      `<div class="panel"><div class="ph"><h3>Auftrittszeiten</h3>${can('tanz') ? '<button class="btn sm" data-act="zeiten">Zeiten ändern</button>' : ''}</div>
+        <div class="kpis">${[['Aufmarsch', z.aufmarsch], ['Tanz', z.tanz], ['Abmarsch', z.abmarsch], ['Gesamt', sum === 'offen' ? '' : sum]].map(x => `<div class="kpi"><small>${x[0]}</small><b>${x[1] ? esc(x[1]) + ' min' : 'offen'}</b></div>`).join('')}</div></div>
+      <div class="panel"><div class="ph"><h3>Bausteine</h3></div>
+        ${rows(D.tanz, x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b>${demo(x)}${x.notiz ? `<div class="sub">${linkify(x.notiz)}</div>` : ''}</div><span class="pill vio">${esc(x.art)}</span><span class="pill ${cls[x.status] || ''}">${esc(x.status)}</span>${editBtn('tanz', x.id)}</div>`, 'Noch nichts angelegt.')}</div>`;
+  },
+  requisiten() {
+    const cls = { Fertig:'good', 'In Arbeit':'warn', 'Reparatur nötig':'bad' };
+    return head('Requisitenplanung', 'Was haben wir, wo liegt es, wer bringt es zum Auftritt mit.', addBtn('requisiten', '+ Requisit')) +
+      `<div class="panel">${rows(D.requisiten, r => `<div class="row"><div class="grow"><b>${+r.anzahl || 1} × ${esc(r.name)}</b>${demo(r)}<div class="sub">${r.wo ? esc(r.wo) : 'Lagerort offen'}${r.notiz ? ' · ' + esc(r.notiz) : ''}</div></div>
+        <span class="pill ${cls[r.zustand] || ''}">${esc(r.zustand)}</span>${editBtn('requisiten', r.id)}</div>`, 'Noch keine Requisiten angelegt.')}</div>`;
+  },
+  training() {
+    const ts = [...D.trainings].sort((a, b) => a.datum.localeCompare(b.datum)), edit = can('trainings');
+    return head('Training & Anwesenheit', 'Trainingstermine gelten für die ganze Gruppe und stehen auch im Kalender. Anlegen, ändern und löschen dürfen Admin und Trainerinnen; die Trainerinnen haken ab, wer da war.', edit ? `<div class="chips"><button class="btn pri" data-act="trSerieOpen">+ Wöchentliche Serie</button>${addBtn('trainings', '+ Einzeltermin')}</div>` : '') +
+      (D.trSerien || []).map(sr => { const n = D.trainings.filter(t => t.serie === sr.id).length;
+        return `<div class="panel"><div class="ph"><h3>Serie: jeden ${WDN[+sr.wochentag]} ${sr.zeit ? esc(trZeit(sr)) : ''}</h3>${edit ? `<span class="chips"><button class="btn sm" data-act="trSerieOpen" data-id="${sr.id}">Serie ändern</button><button class="btn sm" data-act="trSerieDel" data-id="${sr.id}" style="color:var(--bad)">Serie beenden</button></span>` : ''}</div>
+          <div class="sub" style="color:var(--muted)">${fmtDate(sr.von)} bis ${fmtDate(sr.bis)} · ${n} Termine${sr.ort ? ' · ' + esc(sr.ort) : ''}${sr.thema ? ' · ' + esc(sr.thema) : ''}. Danach legt ihr hier den neuen Trainingstag fest.</div></div>`; }).join('') +
+      (ts.length ? ts.map(t => { const a = D.anwesend[t.id] || {}, n = D.members.filter(m => a[m.id]).length;
+        return `<div class="panel"><div class="ph"><h3>${fmtDate(t.datum)}${t.zeit ? ', ' + esc(trZeit(t)) : ''}${demo(t)}</h3>${editBtn('trainings', t.id)}</div>
+          <div class="sub" style="color:var(--muted)">${esc(t.ort || 'Ort offen')}${t.thema ? ' · ' + esc(t.thema) : ''} · anwesend ${n} von ${D.members.length}</div>
+          <div class="chips">${D.members.map(m => `<button class="btn sm yes ${a[m.id] ? 'on' : ''}" ${edit ? `data-act="anw" data-id="${t.id}" data-m="${m.id}"` : 'disabled'} aria-pressed="${!!a[m.id]}">${esc(m.name)}</button>`).join('')}</div></div>`; }).join('')
+        : '<div class="panel"><div class="empty">Noch kein Training angelegt.</div></div>');
+  },
+  trainerinnen() {
+    const card = m => `<div class="panel"><div class="ph"><h3>${esc(m.name)}</h3>${editBtn('members', m.id)}</div>
+        <div class="sub" style="color:var(--muted)">Telefon: ${m.telefon ? esc(m.telefon) : 'nicht eingetragen'}<br>E-Mail: ${m.email ? linkify(m.email) : 'nicht eingetragen'}</div></div>`;
+    const grp = (r, t) => { const g = D.members.filter(m => m.rolle === r); return g.length ? `<h3>${t}</h3><div class="cols">${g.map(card).join('')}</div>` : ''; };
+    return head('Trainerinnen und Betreuerinnen', 'Die Trainerinnen bearbeiten Auftritte, Tanz, Kostüme, Requisiten und Training und geben Social-Media-Posts frei. Die Betreuerinnen pflegen die Kostüme mit.') +
+      grp('trainerin', 'Trainerinnen') + grp('betreuer', 'Betreuerinnen');
+  },
+  mitglieder() {
+    return head('Mitglieder', 'Kontakte, Geburtsdatum, Größen und Notfallkontakt. Pflegen darf das der Admin.', addBtn('members', '+ Mitglied')) +
+      `<div class="panel">${rows(D.members, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}<div class="sub">${[m.telefon, m.email].filter(Boolean).map(linkify).join(' · ') || 'Kontakt noch nicht eingetragen'}${m.geburt ? '<br>Geburtstag: ' + (can('members') ? fmtDate(m.geburt).slice(4) : fmtDate(m.geburt).slice(4, 10)) : ''}${m.groessen ? '<br>Größen: ' + esc(m.groessen) : ''}${can('members') && m.notfall ? '<br>Notfall: ' + esc(m.notfall) : ''}</div></div>
+        <span class="pill ${m.rolle === 'admin' ? 'vio' : ''}">${ROLES[m.rolle]}</span>${editBtn('members', m.id)}</div>`, '')}</div>`;
+  },
+  aufgaben() {
+    const open = D.aufgaben.filter(a => !a.done), done = D.aufgaben.filter(a => a.done);
+    return head('Aufgaben', 'Wer macht was bis wann. Anlegen kann, wer eine Rolle hat. Ändern dürfen nur Admin, Trainerinnen und wer die Aufgabe angelegt hat; abhaken darf auch, wem sie zugeteilt ist.', addBtn('aufgaben', '+ Aufgabe')) +
+      `<div class="panel"><div class="ph"><h3>Offen (${open.length})</h3></div>${rows(open, taskRow, 'Alles erledigt.')}</div>
+      ${done.length ? `<div class="panel"><div class="ph"><h3>Erledigt (${done.length})</h3></div>${rows(done, taskRow, '')}</div>` : ''}`;
+  },
+  kalender() {
+    const needsNav = UI.calView !== 'liste';
+    const label = { liste:'', woche:calWeekLabel(), monat:calMonthLabel(), zeitstrahl:calRangeLabel() }[UI.calView];
+    const body = { liste:calListe, woche:calWoche, monat:calMonat, zeitstrahl:calZeitstrahl }[UI.calView]();
+    const cnt = { abw:0, tr:0, ev:0 }, a0 = UI.calAnchor.slice(0, 7);
+    D.kalender.forEach(e => { if (!UI.calMine || e.mid === D.me) { const f = e.typ === 'einzel' ? (e.datum || '').slice(0, 7) === a0 : e.typ === 'zeitraum' ? (e.von || '').slice(0, 7) <= a0 && (e.bis || e.von || '').slice(0, 7) >= a0 : true; if (f) cnt.abw++; } });
+    cnt.tr = D.trainings.filter(t => t.datum.slice(0, 7) === a0).length; cnt.ev = D.events.filter(t => (t.datum || '').slice(0, 7) === a0).length;
+    return head('Kalender', 'Wer ist wann nicht da? Jeder trägt hier seine eigenen Termine ein – Fußballspiele, Urlaub oder wiederkehrende Termine. Training und Auftritte gelten für alle und stehen automatisch drin. So findet ihr leicht freie Tage für Events.',
+      `<div class="chips">${can('kalender') ? '<button class="btn pri" data-act="calAdd">+ Abwesenheit</button>' : ''}${can('trainings') ? '<button class="btn" data-act="trAddDay">+ Training</button>' : ''}<button class="btn" data-act="calPdfOpen">Spielplan als PDF einlesen</button></div>`) +
+      `<div class="panel"><div class="chips">
+        ${needsNav ? `<button class="btn sm" data-act="calNav" data-d="-1" aria-label="zurück">‹</button><button class="btn sm" data-act="calNav" data-d="0">Heute</button><button class="btn sm" data-act="calNav" data-d="1" aria-label="weiter">›</button><b style="margin:0 8px;font-size:17px">${label}</b>` : ''}
+        <label style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:14px"><input type="checkbox" data-act="calMine" ${UI.calMine ? 'checked' : ''}>Nur meine</label>
+        <select data-act="calFilter" aria-label="Nach Person filtern"><option value="">Alle Mitglieder</option>${D.members.map(m => `<option value="${m.id}" ${UI.calMid === m.id ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}</select></div>
+      <div class="chips">
+        <button class="btn sm ${UI.calView === 'monat' ? 'on' : ''}" data-act="calView" data-v="monat">Kalender</button>
+        <button class="btn sm ${UI.calView === 'woche' ? 'on' : ''}" data-act="calView" data-v="woche">Arbeitswoche</button>
+        <button class="btn sm ${UI.calView === 'zeitstrahl' ? 'on' : ''}" data-act="calView" data-v="zeitstrahl">Zeitstrahl</button>
+        <button class="btn sm ${UI.calView === 'liste' ? 'on' : ''}" data-act="calView" data-v="liste">Liste</button>
+        <span class="sub" style="margin-left:auto;align-self:center">Filtern:</span>
+        ${CAL_KINDS.map(k => `<button class="btn sm ${UI.calHide[k[0]] ? '' : 'on'}" data-act="calKind" data-v="${k[0]}" aria-pressed="${!UI.calHide[k[0]]}">${k[1]}${UI.calView === 'monat' ? ' ' + cnt[k[0]] : ''}</button>`).join('')}</div></div>
+      <div class="list">${body}</div>
+      ${UI.calView === 'liste' ? '' : `<div class="panel"><div class="ph"><h3>Nächste Termine</h3></div>${calAgenda()}</div>`}`;
+  },
+  feedback() {
+    const adm = can('verwaltung'), bugs = UI.fbTab === 'bugs', col = bugs ? 'bugs' : 'feedback', mayEdit = x => adm || x.von === D.me;
+    const sorted = [...D[col]].sort((a, b) => (FB_CLOSED.includes(a.status) - FB_CLOSED.includes(b.status)) || (bugs ? 0 : Object.keys(b.stimmen || {}).length - Object.keys(a.stimmen || {}).length) || (b.ts || 0) - (a.ts || 0));
+    const opts = bugs ? ['Offen', 'In Arbeit', 'Behoben', 'Abgelehnt'] : ['Neu', 'Geplant', 'In Arbeit', 'Umgesetzt', 'Abgelehnt'];
+    const admin = x => adm ? `<select data-act="fbStatus" data-col="${col}" data-id="${x.id}" aria-label="Stand">${opts.map(o => `<option ${o === x.status ? 'selected' : ''}>${o}</option>`).join('')}</select>
+      ${x.aufgabe ? '<span class="pill good">Aufgabe angelegt</span>' : `<button class="btn sm" data-act="fbTask" data-col="${col}" data-id="${x.id}">Als Aufgabe</button>`}` : '';
+    const row = x => { const n = Object.keys(x.stimmen || {}).length, voted = !bugs && (x.stimmen || {})[D.me];
+      return `<div class="row">${bugs ? '' : `<button class="btn sm ${voted ? 'on' : ''}" data-act="fbVote" data-id="${x.id}" aria-pressed="${voted ? 'true' : 'false'}" aria-label="Dafür stimmen">▲ ${n}</button>`}
+        <div class="grow"><b>${esc(x.titel)}</b>${demo(x)}${bugs ? ` <span class="pill">${esc(x.bereich || 'Sonstiges')}</span>` : ''}<div class="sub" style="white-space:pre-wrap">${esc(x.text || '')}</div>
+          <div class="sub">${esc(mname(x.von))} · ${fmtTs(x.ts)}${bugs && adm && x.rolle ? ' · ' + esc(x.rolle) : ''}${bugs && adm && x.browser ? '<br>' + esc(x.browser) : ''}</div></div>
+        <span class="pill ${FB_PILL[x.status] || ''}">${esc(x.status)}</span>${admin(x)}${mayEdit(x) ? `<button class="btn sm" data-act="edit" data-col="${col}" data-id="${x.id}">Bearbeiten</button>` : ''}</div>`; };
+    return head('Feedback & Fehler', 'Schlagt Verbesserungen vor und stimmt ab, was am wichtigsten ist. Der Admin setzt den Stand und macht Aufgaben daraus. Fehler meldest du auch über den Käfer unten links. Im Prototyp bleiben Meldungen in diesem Browser, mit dem Livegang sehen alle dieselbe Liste.',
+      `<div class="chips"><button class="btn pri" data-act="fbAdd">+ Vorschlag</button><button class="btn" data-act="bugOpen">Fehler melden</button></div>`) +
+      `<div class="chips"><button class="btn sm ${bugs ? '' : 'on'}" data-act="fbTab" data-v="ideen">Vorschläge (${D.feedback.length})</button><button class="btn sm ${bugs ? 'on' : ''}" data-act="fbTab" data-v="bugs">Fehlermeldungen (${D.bugs.length})</button></div>
+      <div class="panel">${rows(sorted, row, bugs ? 'Keine Fehlermeldungen.' : 'Noch keine Vorschläge.')}</div>`;
+  },
+  versionen() {
+    return head('Versionen', 'Was sich im Portal geändert hat, die neueste Version steht oben. Du nutzt Version ' + VERSION + '.') +
+      CHANGELOG.map((c, i) => `<div class="panel"><div class="ph"><h3>Version ${c.v}</h3>${i === 0 ? '<span class="pill good">aktuell</span>' : ''}${c.datum ? `<span class="sub">${fmtDate(c.datum).slice(4)}</span>` : ''}</div>
+        <ul class="log">${c.punkte.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('');
+  },
+  pinnwand() {
+    return head('Pinnwand & Abstimmungen', 'Neuigkeiten für alle und schnelle Abstimmungen in der Gruppe.', `<div class="chips">${addBtn('posts', '+ Beitrag')}${addBtn('umfragen', '+ Abstimmung')}</div>`) +
+      D.umfragen.map(u => { const n = Object.keys(u.stimmen).length, mine = u.stimmen[D.me];
+        return `<div class="panel"><div class="ph"><h3>${esc(u.frage)}${demo(u)}</h3>${(lead() || u.von === D.me) ? `<button class="btn sm" data-act="edit" data-col="umfragen" data-id="${u.id}">Bearbeiten</button>` : ''}</div>
+          <div class="rows">${u.opts.map((o, i) => { const c = Object.values(u.stimmen).filter(v => v === i).length;
+            return `<div class="row"><button class="btn sm ${mine === i ? 'on' : ''}" data-act="vote" data-id="${u.id}" data-v="${i}">${esc(o)}</button><span class="amt">${c}</span><div class="bar"><i style="width:${n ? c / n * 100 : 0}%"></i></div></div>`; }).join('')}</div>
+          <div class="sub" style="color:var(--muted);font-size:13px">${n} von ${D.members.length} haben abgestimmt</div></div>`; }).join('') +
+      [...D.posts].reverse().map(p => `<div class="panel"><div class="ph"><h3>${esc(p.titel)}${demo(p)}</h3>${(p.von === D.me || can('members')) ? `<button class="btn sm" data-act="edit" data-col="posts" data-id="${p.id}">Bearbeiten</button>` : ''}</div>
+        <div style="white-space:pre-wrap;max-width:65ch">${esc(p.text)}</div><div class="sub" style="color:var(--muted);font-size:13px">${esc(mname(p.von))} · ${fmtDate(p.datum)}</div></div>`).join('');
+  },
+  social() {
+    const t = todayISO(), ok = can('socialOk'), cls = { Vorschlag:'warn', Freigegeben:'good', Gepostet:'' };
+    const all = [...D.social].sort((a, b) => a.datum.localeCompare(b.datum));
+    const vor = all.filter(p => p.status === 'Vorschlag'), frei = all.filter(p => p.status === 'Freigegeben'), done = all.filter(p => p.status === 'Gepostet').reverse();
+    const nx = frei.find(p => p.datum >= t) || frei[0];
+    const row = p => { const mayEdit = ok || p.status === 'Vorschlag';
+      return `<div class="row"><div class="grow"><b>${esc(p.thema)}</b>${demo(p)}<div class="sub">${fmtDate(p.datum)} · ${esc(mname(p.wer))}</div>
+        ${p.text ? `<div class="n" style="white-space:pre-wrap;font-size:13px;background:var(--soft);border-radius:4px;padding:8px 10px;margin-top:6px">${esc(p.text)}</div>` : ''}</div>
+      <span class="pill vio">${esc(p.plattform)} · ${esc(p.format)}</span><span class="pill ${cls[p.status] || ''}">${esc(p.status)}</span>${p.ki ? '<span class="pill">von Claude</span>' : ''}
+      ${ok && p.status === 'Vorschlag' ? `<button class="btn sm pri" data-act="socSet" data-id="${p.id}" data-v="Freigegeben">Freigeben</button>` : ''}
+      ${ok && p.status === 'Freigegeben' ? `<button class="btn sm" data-act="socSet" data-id="${p.id}" data-v="Vorschlag">Freigabe zurücknehmen</button>` : ''}
+      ${p.status === 'Freigegeben' ? `<button class="btn sm" data-act="socSet" data-id="${p.id}" data-v="Gepostet">Als gepostet markieren</button>` : ''}
+      ${mayEdit ? `<button class="btn sm" data-act="socText" data-id="${p.id}">${p.text ? 'Text neu mit Claude' : 'Text mit Claude'}</button><button class="btn sm" data-act="edit" data-col="social" data-id="${p.id}">Bearbeiten</button>` : ''}</div>`; };
+    return head('Social Media', 'Euer Redaktionsplan. Jeder kann Posts vorschlagen, freigeben können nur die Trainerinnen.', addBtn('social', '+ Post vorschlagen')) +
+      `<div class="kpis"><div class="kpi"><small>Nächster freigegebener Post</small><b>${nx ? fmtDate(nx.datum).slice(4, 10) : 'keiner'}</b><span>${nx ? esc(nx.thema) : ''}</span></div>
+        <div class="kpi"><small>Wartet auf Freigabe</small><b>${vor.length}</b><span>${ok ? 'du kannst freigeben' : 'Freigabe durch die Trainerinnen'}</span></div>
+        <div class="kpi"><small>Gepostet</small><b>${done.length}</b><span>in dieser Liste</span></div></div>
+      <div class="panel"><div class="ph"><h3>Claude hilft mit</h3></div>
+        <div style="max-width:65ch;color:var(--muted);font-size:14px">Claude kennt eure anstehenden Auftritte und euer Motto. Lass dir einen Plan für die nächsten vier Wochen vorschlagen oder zu einem einzelnen Post den Text schreiben. Alles von Claude landet als Vorschlag und braucht wie jeder andere Post die Freigabe.</div>
+        <div class="chips"><button class="btn dark" data-act="socPlan">Plan für 4 Wochen vorschlagen</button><button class="btn" data-act="socIdeas">10 Post-Ideen sammeln</button></div>
+        <div id="aiMsg" role="status" style="font-size:14px;font-weight:700;color:var(--accent);white-space:pre-wrap">${esc(AI.msg)}</div></div>
+      <div class="panel"><div class="ph"><h3>Wartet auf Freigabe (${vor.length})</h3></div>${rows(vor, row, 'Keine offenen Vorschläge.')}</div>
+      <div class="panel"><div class="ph"><h3>Freigegeben (${frei.length})</h3></div>${rows(frei, row, 'Noch nichts freigegeben.')}</div>
+      ${done.length ? `<div class="panel"><div class="ph"><h3>Gepostet (${done.length})</h3></div>${rows(done, row, '')}</div>` : ''}`;
+  },
+  kontakte() {
+    const k = kontakte();
+    return head('Veranstalter-Kontakte', 'Entsteht automatisch aus den Ansprechpartnern in der Auftrittsplanung. Die Datenbank für die nächste Session steht unter <a href="#vormerken">Auftritte · Vormerken</a>.') +
+      `<div class="panel">${rows(k, c => `<div class="row"><div class="grow"><b>${esc(c.name || c.mail)}</b><div class="sub">${c.mail ? linkify(c.mail) : 'keine E-Mail hinterlegt'}${c.url ? ' · ' + linkify(c.url) : ''}<br>${c.events.map(esc).join(', ')}</div></div>
+        ${c.mail && can('postfach') ? `<button class="btn sm" data-act="mailTo" data-v="${esc(c.mail)}">Mail schreiben</button>` : ''}</div>`, 'Noch keine Ansprechpartner bei den Terminen eingetragen.')}</div>`;
+  },
+  dateien() {
+    const ord = ['Anmeldungen','Belege & Verträge','Musik','Kostüme','Fotos & Videos','Sonstiges'];
+    return head('Dateien', 'Gemeinsame Ablage. Live liegen die Dateien im Google Drive des Funky-Boys-Kontos; im Prototyp wird nur der Dateiname gemerkt.') +
+      (!can('dateien') ? '' : `<div class="panel"><div class="two"><label class="f" for="fOrd">Ordner<select id="fOrd">${ord.map(o => `<option>${o}</option>`).join('')}</select></label>
+        <label class="f" for="fileIn">Datei auswählen<input id="fileIn" type="file" multiple style="padding:8px;min-height:44px;width:100%"></label></div></div>`) +
+      ord.map(o => { const fs = D.dateien.filter(f => f.ordner === o); return fs.length ? `<div class="panel"><div class="ph"><h3>${o}</h3><span class="sub" style="color:var(--muted)">${fs.length} Datei${fs.length === 1 ? '' : 'en'}</span></div>
+        ${rows(fs, f => `<div class="row"><div class="grow"><b>${esc(f.name)}</b>${demo(f)}<div class="sub">${esc(mname(f.von))} · ${fmtDate(f.datum)}${f.size ? ' · ' + Math.max(1, Math.round(f.size / 1024)) + ' KB' : ''}</div></div>
+          ${(f.von === D.me || can('members')) ? `<button class="btn sm" data-act="delFile" data-id="${f.id}">Entfernen</button>` : ''}</div>`, '')}</div>` : ''; }).join('');
+  },
+  postfach() {
+    const ev = [...upcoming(), ...sortedEvents().filter(isPast).slice(-5).reverse()], k = kontakte().filter(c => c.mail);
+    return head('Postfach', 'Mails im Namen der Funky Boys schreiben. Live gehen sie über die Gmail-Adresse der Gruppe raus. Im Prototyp wird nichts verschickt.') +
+      `<div class="panel"><div class="ph"><h3>Neue Mail</h3><span class="sub" style="color:var(--muted);font-size:13px">Absender: Funky Boys &lt;${esc(D.absender)}&gt;</span></div>
+        <label class="f" for="mAn">An<input id="mAn" type="text" list="mList" value="${esc(UI.mailTo)}" placeholder="E-Mail-Adresse"></label><datalist id="mList">${k.map(c => `<option value="${esc(c.mail)}">${esc(c.name)}</option>`).join('')}</datalist>
+        <div class="two"><label class="f" for="mEv">Auftritt<select id="mEv">${ev.map(e => `<option value="${e.id}">${fmtDate(e.datum).slice(4)} ${esc(e.name)}</option>`).join('')}</select></label>
+          <label class="f" for="mTpl">Vorlage<select id="mTpl"><option value="anmeldung">Anmeldung</option><option value="zeiten">Auftrittszeit erfragen</option><option value="absage">Absage</option><option value="dank">Danke nach dem Auftritt</option></select></label></div>
+        <button class="btn" data-act="tpl">Vorlage einsetzen</button>
+        <div id="mNote" role="status" style="font-size:13px;color:var(--muted)"></div>
+        <label class="f" for="mBetreff">Betreff<input id="mBetreff" type="text"></label>
+        <label class="f" for="mText">Text<textarea id="mText" rows="9"></textarea></label>
+        <div class="err" id="mErr" hidden></div>
+        <button class="btn dark" data-act="draft">Als Entwurf speichern</button></div>
+      <div class="panel"><div class="ph"><h3>Entwürfe (${D.mails.length})</h3></div>
+        ${rows([...D.mails].reverse(), m => `<div class="row"><div class="grow"><b>${esc(m.betreff)}</b><div class="sub">an ${esc(m.an)} · ${esc(mname(m.von))} · ${fmtDate(m.datum)}</div></div><span class="pill warn">nicht verschickt</span><button class="btn sm" data-act="delMail" data-id="${m.id}">Löschen</button></div>`, 'Noch keine Entwürfe.')}</div>`;
+  },
+  verwaltung() {
+    const adm = me().rolle === 'admin';
+    return head('Verwaltung', 'Motto, Accounts, Rollen und der Weg zum echten Portal.') +
+      `<div class="panel"><div class="ph"><h3>Motto der Session</h3></div>
+        <div style="max-width:65ch;color:var(--muted);font-size:14px">Das Portal kleidet sich nach eurem Tanz-Motto. Zur neuen Session tragt ihr hier das neue Motto ein und wählt die passende Farbwelt.</div>
+        <div class="two"><label class="f" for="moTitel">Motto<input id="moTitel" type="text" value="${esc(D.motto.titel)}"></label>
+          <label class="f" for="moSession">Session<input id="moSession" type="text" value="${esc(D.motto.session)}" placeholder="automatisch: ${esc(season(todayISO()))}"></label>
+          <label class="f" for="moFarbe">Farbwelt<select id="moFarbe">${Object.entries(MOTTOS).map(x => `<option value="${x[0]}" ${D.motto.farbwelt === x[0] ? 'selected' : ''}>${x[1].n}</option>`).join('')}</select></label></div>
+        <div><button class="btn dark" data-act="saveMotto">Motto übernehmen</button></div></div>
+      <div class="panel"><div class="ph"><h3>Accounts und Rollen</h3>${addBtn('members', '+ Mitglied')}</div>
+        ${rows(D.members, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}${extraOf(m.id).length ? `<div class="sub">Zusatzrechte: ${extraOf(m.id).map(k => esc((RIGHTS.find(x => x[1] === k) || [k])[0])).join(', ')}</div>` : ''}</div>${adm ? `<button class="btn sm" data-act="extraOpen" data-id="${m.id}">Zusatzrechte</button>` : ''}<select data-act="role" data-id="${m.id}" ${adm ? '' : 'disabled'} aria-label="Rolle von ${esc(m.name)}" style="width:auto;min-width:140px">${Object.entries(ROLES).map(r => `<option value="${r[0]}" ${m.rolle === r[0] ? 'selected' : ''}>${r[1]}</option>`).join('')}</select></div>`, '')}</div>
+      <div class="panel"><div class="ph"><h3>Wer darf was</h3>${adm ? '<button class="btn sm" data-act="rechteReset">Auf Standard zurücksetzen</button>' : ''}</div>
+        <div style="max-width:65ch;color:var(--muted);font-size:14px">${adm ? 'Haken setzen oder entfernen, die Änderung gilt sofort für alle mit dieser Rolle. Für einzelne Personen gibt es oben „Zusatzrechte“.' : 'Ändern kann die Rechte nur der Admin.'}</div><div class="scroll"><table><thead><tr><th>Recht</th>${ALL.map(r => `<th class="c">${ROLES[r]}</th>`).join('')}</tr></thead>
+        <tbody>${RIGHTS.map(x => `<tr><td>${x[0]}</td>${ALL.map(r => `<td class="c"><input type="checkbox" data-act="recht" data-k="${x[1]}" data-r="${r}" ${roleCan(x[1], r) ? 'checked' : ''} ${!adm || FIX(x[1], r) ? 'disabled' : ''} aria-label="${x[0]}: ${ROLES[r]}" style="width:20px;height:20px;accent-color:var(--accent)"></td>`).join('')}</tr>`).join('')}</tbody></table></div>
+        <div style="max-width:65ch;color:var(--muted);font-size:13px">Lesen dürfen alle alles außer Postfach und Verwaltung. Zu- und Absagen gibt jeder für sich selbst. Eigene Aufgaben, Beiträge und Abstimmungen darf jeder ändern; eine zugeteilte Aufgabe darf man abhaken. Rollen vergeben und diese Tabelle ändern kann nur der Admin.</div></div>
+      <div class="panel"><div class="ph"><h3>Anmeldung</h3><button class="btn sm" data-act="syncLogins">Logins abgleichen</button></div>
+        <div style="max-width:65ch;color:var(--muted);font-size:14px">Jedes Mitglied meldet sich mit der E-Mail-Adresse an, die oben bei ihm steht, und bestätigt sie einmal per Mail. Wer keine Adresse hat, kann sich nicht anmelden. Änderungen an E-Mail oder Rolle werden automatisch übernommen. ${esc(UI.loginMsg || '')}</div></div>`;
+  }
+};
+
+/* ---------- Anzeige ---------- */
+function renderNav() {
+  const nw = news(), cnt = { pinnwand:nw.filter(x => x.sec === 'pinnwand').length, aufgaben:nw.filter(x => x.sec === 'aufgaben').length };
+  $('bellCnt').textContent = nw.length; $('bellCnt').hidden = !nw.length;
+  const child = NAV.find(n => n[0] === UI.sec && n[2]);
+  $('nav').innerHTML = NAV.map(n => { if (!n[0]) return `<div class="grp">${n[1]}</div>`; if (hiddenSec(n[0])) return '';
+    const cls = UI.sec === n[0] ? 'on' : (child && child[2] === n[0]) ? 'par' : '';
+    return `<a href="#${n[0]}" class="${cls}${n[2] ? ' sub' : ''}" ${UI.sec === n[0] ? 'aria-current="page"' : ''}>${n[0] === 'vormerken' ? 'Vormerken ' + nextSess() : n[1]}${cnt[n[0]] ? `<span class="cnt">${cnt[n[0]]}</span>` : ''}</a>`; }).join('');
+  const cur = $('nav').querySelector('.par') || $('nav').querySelector('.on'); if (cur && cur.scrollIntoView) cur.scrollIntoView({ block:'nearest', inline:'center' });
+  $('whoName').textContent = me().name + ' (' + ROLES[me().rolle] + ')';
+}
+function render() {
+  if (!UI.calAnchor) UI.calAnchor = todayISO();
+  if (!SEC[UI.sec] || hiddenSec(UI.sec)) UI.sec = 'start';
+  ensureSeen(); $('verLine').textContent = VERSION;
+  applyMotto(); renderNav(); $('main').innerHTML = SEC[UI.sec]();
+  markSeen();
+  gratulieren();
+}
+function route() { AI.msg = ''; UI.vmMsg = ''; UI.sec = (location.hash || '#start').slice(1); render(); window.scrollTo(0, 0); }
+
+/* ---------- Claude ---------- */
+const AI = { busy:false, msg:'' };
+let SAMPLE;
+async function getSample() {
+  if (SAMPLE !== undefined) return SAMPLE;
+  try { SAMPLE = (window.claude && window.claude.use) ? await window.claude.use('sample') : null; } catch (e) { SAMPLE = null; }
+  return SAMPLE;
+}
+function setAi(t) { AI.msg = t; const el = $('aiMsg'); if (el) el.textContent = t; }
+function aiCtx() {
+  return 'Du hilfst den Funky Boys bei Social Media. Das ist eine Tanzgruppe der TSG Rot-Weiße Funken Güsten e.V. (Karneval, Rheinland): 8 Tänzer, 3 Trainerinnen, Auftritte bei Männerballett-Turnieren und als Showtanz. ' +
+    'Motto der Session ' + sess() + ': ' + D.motto.titel + '. Ton: locker, humorvoll, gern Wortspiele passend zum Motto, auf Deutsch, per Du. Heute ist der ' + todayISO() + '.\nAnstehende Auftritte:\n' +
+    (upcoming().slice(0, 8).map(e => `- ${e.datum}: ${e.name}${e.standort ? ' (' + e.standort + ')' : ''}`).join('\n') || '- keine eingetragen');
+}
+function showPrompt(prompt) {
+  openDlg(`<h3>Auftrag für Claude</h3><div style="font-size:14px;color:var(--muted)">Claude ist in dieser Ansicht nicht direkt erreichbar. Kopiere den Auftrag und füge ihn bei Claude ein.</div>
+    <textarea id="pText" rows="9" readonly>${esc(prompt)}</textarea><div id="pMsg" role="status" style="font-size:13px;font-weight:700;color:var(--good)"></div>
+    <div class="acts"><button class="btn dark" data-act="copyPrompt">Auftrag kopieren</button><a class="btn" style="text-align:center;text-decoration:none;line-height:22px" href="https://claude.ai/new" target="_blank" rel="noopener">Claude öffnen</a><button class="btn" data-act="close">Schließen</button></div>`);
+}
+async function askClaude(prompt, onDone) {
+  if (AI.busy) return;
+  const s = await getSample();
+  if (!s) return showPrompt(prompt);
+  AI.busy = true; setAi('Claude denkt nach …');
+  try { const r = await s(prompt); AI.msg = onDone(r.text || '') || ''; save(); if (UI.sec === 'social') render(); }
+  catch (e) {
+    if (e && e.code === 'not_granted') { SAMPLE = null; setAi(''); showPrompt(prompt); }
+    else setAi(e && e.code === 'rate_limited' ? 'Claude ist gerade ausgelastet. Bitte in ein paar Minuten noch einmal versuchen.' : 'Das hat nicht geklappt. Bitte noch einmal versuchen.');
+  }
+  AI.busy = false;
+}
+function parsePlan(text) {
+  const a = text.indexOf('['), b = text.lastIndexOf(']'); if (a < 0 || b <= a) return null;
+  let arr; try { arr = JSON.parse(text.slice(a, b + 1)); } catch (e) { return null; }
+  if (!Array.isArray(arr)) return null;
+  const P = ['Instagram','TikTok','Facebook','WhatsApp'], F = ['Reel','Story','Beitrag','Karussell'];
+  return arr.filter(x => x && /^\d{4}-\d{2}-\d{2}$/.test(x.datum) && x.thema).slice(0, 12).map(x => ({ id:uid('so'), datum:x.datum, thema:String(x.thema).slice(0, 160),
+    plattform:P.includes(x.plattform) ? x.plattform : 'Instagram', format:F.includes(x.format) ? x.format : 'Beitrag', status:'Vorschlag', wer:D.me, text:x.text ? String(x.text) : '', ki:true }));
+}
+
+/* ---------- Aktionen ---------- */
+/* Mail-Vorlagen: ziehen Motto, Tänzerzahl und Auftrittszeiten aus den anderen Rubriken */
+function tplData(e) {
+  const clean = (e.inhaber || '').replace(/\(.*?\)/g, '').trim(), z = D.zeiten, t = [secs(z.aufmarsch), secs(z.tanz), secs(z.abmarsch)], m = me();
+  const zeilen = [];
+  if (z.aufmarsch) zeilen.push('- Aufmarsch: ' + z.aufmarsch + ' min');
+  if (z.tanz) zeilen.push('- Tanz: ' + z.tanz + ' min');
+  if (z.abmarsch) zeilen.push('- Abmarsch: ' + z.abmarsch + ' min');
+  if (t.every(x => x != null)) zeilen.push('- Gesamtdauer: ' + mmss(t[0] + t[1] + t[2]) + ' min');
+  const fehlt = [['Aufmarsch', z.aufmarsch], ['Tanz', z.tanz], ['Abmarsch', z.abmarsch]].filter(x => !x[1]).map(x => x[0]);
+  return {
+    anrede: !clean || /[\/@]|instagram/i.test(clean) ? 'Hallo zusammen' : 'Hallo ' + clean.split(' ')[0],
+    wann: fmtDate(e.datum).slice(4) + (e.zeit ? ' um ' + e.zeit + ' Uhr' : ''),
+    taenzer: D.members.filter(x => TANZT(x.rolle)).length, trainer: D.members.filter(x => x.rolle === 'trainerin').length, betreuer: D.members.filter(x => x.rolle === 'betreuer').length,
+    zeilen, fehlt, mail: ((e.inhaber || '').match(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/) || [''])[0],
+    gruss: 'Viele Grüße\n' + m.name + '\nFunky Boys, TSG Rot-Weiße Funken Güsten e.V.\n' + [D.absender, m.telefon].filter(Boolean).join(' · ')
+  };
+}
+const TPL = {
+  anmeldung(e, d) { return ['Anmeldung Funky Boys – ' + e.name,
+    `${d.anrede},\n\nwir sind die Funky Boys, eine Tanzgruppe der TSG Rot-Weiße Funken Güsten e.V., und würden uns sehr freuen, bei „${e.name}“ am ${d.wann} dabei sein zu dürfen.\n\nDas Wichtigste zu uns:\n` +
+    [`- Motto der Session ${sess()}: ${D.motto.titel}`, `- Tänzer: ${d.taenzer}` + (d.trainer || d.betreuer ? ', dazu ' + [d.trainer ? d.trainer + ' Trainerinnen' : '', d.betreuer ? d.betreuer + ' Betreuerinnen' : ''].filter(Boolean).join(' und ') : ''), ...d.zeilen, '- Musik: bringen wir auf einem eigenen USB-Stick mit'].join('\n') +
+    `\n\nWenn ihr vorab noch etwas von uns braucht, meldet euch gerne bei uns.\n\n${d.gruss}`]; },
+  zeiten(e, d) { return ['Auftrittszeit Funky Boys – ' + e.name,
+    `${d.anrede},\n\nwir freuen uns auf „${e.name}“ am ${d.wann}. Könnt ihr uns schon sagen, wann wir dran sind und ab wann wir vor Ort sein sollen?\n\nZur Planung für euch: Wir kommen mit ${d.taenzer} Tänzern` + (d.zeilen.length ? ', unser Auftritt im Überblick:\n' + d.zeilen.join('\n') : '.') +
+    `\n\nDie Musik bringen wir auf einem eigenen USB-Stick mit. Wenn ihr noch etwas von uns braucht, meldet euch gerne.\n\n${d.gruss}`]; },
+  absage(e, d) { return ['Absage Funky Boys – ' + e.name,
+    `${d.anrede},\n\nleider müssen wir unsere Teilnahme an „${e.name}“ am ${d.wann} absagen. Das tut uns leid, wir wären sehr gerne dabei gewesen.\n\nWir würden uns freuen, wenn ihr in der nächsten Session wieder an uns denkt.\n\n${d.gruss}`]; },
+  dank(e, d) { return ['Danke für den schönen Abend – ' + e.name,
+    `${d.anrede},\n\nvielen Dank, dass wir bei „${e.name}“ dabei sein durften. Uns hat es richtig Spaß gemacht.\n\nWir kommen gerne wieder. Meldet euch einfach, wenn die Planung für die nächste Session losgeht.\n\n${d.gruss}`]; }
+};
+function ensurePdfJs() {
+  if (window.pdfjsLib) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js';
+    s.onload = () => { try { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js'; resolve(); } catch (e) { reject(e); } };
+    s.onerror = reject; document.head.appendChild(s);
+  });
+}
+function extractDates(text) {
+  const re = /\b(\d{1,2})\.(\d{1,2})\.(\d{2,4})\b/g; const out = new Set(); let m;
+  while ((m = re.exec(text))) {
+    let [, dd, mm, yy] = m; if (yy.length === 2) yy = '20' + yy;
+    const dt = new Date(+yy, +mm - 1, +dd); if (dt.getMonth() !== +mm - 1 || dt.getDate() !== +dd) continue;
+    out.add(`${yy}-${pad(+mm)}-${pad(+dd)}`);
+  }
+  return [...out].sort();
+}
+async function calPdfHandle(file) {
+  if (!file) return;
+  $('pdfMsg').textContent = 'Lese PDF …'; $('pdfList').innerHTML = ''; $('pdfSave').disabled = true;
+  try {
+    await ensurePdfJs();
+    const buf = await file.arrayBuffer();
+    const doc = await window.pdfjsLib.getDocument({ data:buf }).promise;
+    let text = '';
+    for (let p = 1; p <= doc.numPages; p++) { const page = await doc.getPage(p); const tc = await page.getTextContent(); text += tc.items.map(it => it.str).join(' ') + '\n'; }
+    const found = extractDates(text);
+    if (!found.length) { $('pdfMsg').textContent = 'Es wurden keine Termine im Format TT.MM.JJJJ erkannt. Bitte stattdessen manuell eintragen.'; return; }
+    $('pdfMsg').textContent = found.length + (found.length === 1 ? ' möglicher Termin gefunden' : ' mögliche Termine gefunden') + '. Bitte prüfen und auswählen:';
+    $('pdfList').innerHTML = found.map(d => `<label class="chk"><input type="checkbox" class="pdfd" value="${d}" checked> ${fmtDate(d)}</label>`).join('');
+    $('pdfSave').disabled = false;
+  } catch (err) { $('pdfMsg').textContent = 'Die PDF konnte in diesem Browser nicht gelesen werden. Bitte die Termine stattdessen manuell eintragen.'; }
+}
+function ensureXlsx() {
+  if (window.XLSX) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+  });
+}
+function matchMember(text) {
+  const t = (text || '').toLowerCase(); let best = '';
+  D.members.forEach(m => { if (!best && m.name.toLowerCase().split(' ').some(p => p.length > 2 && t.includes(p))) best = m.id; });
+  return best;
+}
+function rowsFromAOA(aoa) {
+  const out = [];
+  aoa.forEach(r => {
+    const cells = (r || []).map(c => String(c == null ? '' : c).trim()).filter(Boolean);
+    let datum = '', betrag = null, text = [];
+    cells.forEach(c => {
+      const dm = c.match(/^(\d{1,2})[.\/](\d{1,2})[.\/](\d{2,4})$/);
+      const nm = !dm ? c.replace(/\./g, '').replace(',', '.').match(/^-?\d+(\.\d+)?$/) : null;
+      if (dm && !datum) { let [, dd, mm, yy] = dm; if (yy.length === 2) yy = '20' + yy; const dt = new Date(+yy, +mm - 1, +dd); if (dt.getMonth() === +mm - 1 && dt.getDate() === +dd) datum = `${yy}-${pad(+mm)}-${pad(+dd)}`; }
+      else if (nm && betrag == null && +nm[0] !== 0) betrag = Math.abs(parseFloat(nm[0]));
+      else if (c) text.push(c);
+    });
+    if (datum && betrag) out.push({ datum, betrag, text:text.join(' ') });
+  });
+  return out;
+}
+async function btImportHandle(file) {
+  if (!file || !can('beitraege')) return;
+  $('impMsg').textContent = 'Lese Datei …'; $('impList').innerHTML = ''; $('impSave').disabled = true;
+  try {
+    let found = []; const name = file.name.toLowerCase();
+    if (name.endsWith('.pdf')) {
+      await ensurePdfJs();
+      const buf = await file.arrayBuffer(); const doc = await window.pdfjsLib.getDocument({ data:buf }).promise; const lines = [];
+      for (let p = 1; p <= doc.numPages; p++) { const page = await doc.getPage(p); const tc = await page.getTextContent(); lines.push(tc.items.map(it => it.str).join(' ')); }
+      found = rowsFromAOA(lines.join('\n').split('\n').map(l => l.split(/\s{2,}|\t/)));
+    } else if (name.endsWith('.csv')) {
+      const txt = await file.text(); const delim = txt.includes(';') ? ';' : ',';
+      found = rowsFromAOA(txt.split(/\r?\n/).filter(Boolean).map(l => l.split(delim)));
+    } else {
+      await ensureXlsx();
+      const buf = await file.arrayBuffer(); const wb = window.XLSX.read(buf, { type:'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      found = rowsFromAOA(window.XLSX.utils.sheet_to_json(ws, { header:1, raw:false }));
+    }
+    if (!found.length) { $('impMsg').textContent = 'Es wurden keine Zeilen mit Datum und Betrag erkannt. Bitte Zahlungen stattdessen einzeln erfassen.'; return; }
+    FORM.imp = found;
+    $('impMsg').textContent = found.length + (found.length === 1 ? ' Zeile gefunden' : ' Zeilen gefunden') + '. Bitte prüfen, zuordnen und auswählen:';
+    $('impList').innerHTML = found.map((r, i) => `<div class="row"><label class="chk"><input type="checkbox" class="impd" data-i="${i}" checked></label>
+      <div class="grow"><b>${fmtDate(r.datum)} · ${eur(r.betrag)}</b><div class="sub">${esc(r.text)}</div></div>
+      <select class="impm" data-i="${i}"><option value="">– Mitglied wählen –</option>${memOpts().map(x => `<option value="${esc(x[0])}" ${matchMember(r.text) === x[0] ? 'selected' : ''}>${esc(x[1])}</option>`).join('')}</select></div>`).join('');
+    $('impSave').disabled = false;
+  } catch (err) { $('impMsg').textContent = 'Die Datei konnte in diesem Browser nicht gelesen werden. Bitte Zahlungen stattdessen einzeln erfassen.'; }
+}
+const ACT = {
+  edit:d => openEdit(d.col, d.id), close:closeDlg, saveForm,
+  delForm() { const { col, id } = FORM; if (!mayOpen(col, id)) return; askConfirm('Der Eintrag wird gelöscht.', () => { D[col] = D[col].filter(x => x.id !== id); if (col === 'members' && D.me === id) D.me = D.members[0].id; }); },
+  zusage(d) { const z = D.zusagen[d.id] || (D.zusagen[d.id] = {}); z[D.me] = z[D.me] === d.v ? '' : d.v; save(); $('evList') ? $('evList').innerHTML = evListHTML() : render(); },
+  evFilter(d) { UI.filter = d.v; render(); }, evPast(d, el) { UI.past = el.checked; render(); },
+  task(d, el) { const a = D.aufgaben.find(x => x.id === d.id); if (a && mayTickTask(a)) a.done = el.checked; save(); render(); },
+  spIn(d) { const x = D.sponsoren.find(y => y.id === d.id); if (!x || !can('sponsoren')) return; x.status = 'Eingegangen'; x.datum = todayISO(); delete x.demo; save(); render(); },
+  budget() { if (!can('buchungen')) return; openDlg(`<h3>Budget je Bereich</h3>${KAT_A.map((k, i) => `<label class="f" for="bud${i}">${k} in €<input id="bud${i}" type="number" min="0" step="1" inputmode="decimal" value="${+D.budget[k] || 0}"></label>`).join('')}<div class="acts"><button class="btn dark" data-act="saveBudget">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  saveBudget() { if (!can('buchungen')) return; KAT_A.forEach((k, i) => { D.budget[k] = parseFloat($('bud' + i).value) || 0; }); save(); closeDlg(); render(); },
+  zeiten() { const z = D.zeiten; openDlg(`<h3>Auftrittszeiten</h3><div class="sub" style="color:var(--muted);font-size:13px">Format Minuten:Sekunden, zum Beispiel 4:30</div>${[['aufmarsch','Aufmarsch'],['tanz','Tanz'],['abmarsch','Abmarsch']].map(x => `<label class="f" for="z_${x[0]}">${x[1]}<input id="z_${x[0]}" type="text" inputmode="numeric" placeholder="0:45" value="${esc(z[x[0]])}"></label>`).join('')}<div class="err" id="zErr" hidden></div><div class="acts"><button class="btn dark" data-act="saveZeiten">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  saveZeiten() { const v = {}; for (const k of ['aufmarsch','tanz','abmarsch']) { v[k] = $('z_' + k).value.trim(); if (v[k] && secs(v[k]) == null) { $('zErr').textContent = 'Bitte als Minuten:Sekunden eingeben, zum Beispiel 4:30.'; $('zErr').hidden = false; return; } } D.zeiten = v; save(); closeDlg(); render(); },
+  anw(d) { const a = D.anwesend[d.id] || (D.anwesend[d.id] = {}); a[d.m] = !a[d.m]; save(); render(); },
+  vote(d) { const u = D.umfragen.find(x => x.id === d.id); if (u.stimmen[D.me] === +d.v) delete u.stimmen[D.me]; else u.stimmen[D.me] = +d.v; save(); render(); },
+  mailTo(d) { UI.mailTo = d.v; location.hash = '#postfach'; },
+  tpl() { const e = D.events.find(x => x.id === $('mEv').value); if (!e) return; const k = $('mTpl').value, d = tplData(e), t = TPL[k](e, d);
+    $('mBetreff').value = t[0]; $('mText').value = t[1]; if (!$('mAn').value.trim() && d.mail) $('mAn').value = d.mail;
+    $('mNote').textContent = (k === 'anmeldung' || k === 'zeiten') && d.fehlt.length ? 'In der Rubrik Tanz fehlt noch die Zeit für ' + d.fehlt.join(', ') + '. Diese Zeilen stehen deshalb nicht in der Mail.' : 'Motto, Tänzerzahl und Zeiten kommen aus dem Portal. Bitte vor dem Speichern kurz gegenlesen.'; },
+  draft() { const an = $('mAn').value.trim(), betreff = $('mBetreff').value.trim(), text = $('mText').value.trim();
+    if (!an || !betreff || !text) { $('mErr').textContent = 'Bitte Empfänger, Betreff und Text ausfüllen.'; $('mErr').hidden = false; return; }
+    D.mails.push({ id:uid('ml'), an, betreff, text, von:D.me, datum:todayISO() }); UI.mailTo = ''; save(); render(); },
+  delMail(d) { D.mails = D.mails.filter(m => m.id !== d.id); save(); render(); },
+  delFile(d) { askConfirm('Die Datei wird aus der Ablage entfernt.', () => { D.dateien = D.dateien.filter(f => f.id !== d.id); }); },
+  role(d, el) { if (me().rolle !== 'admin') return; mem(d.id).rolle = el.value; save(); render(); },
+  recht(d, el) { if (me().rolle !== 'admin' || FIX(d.k, d.r)) return;
+    if (!D.rechte) D.rechte = {}; const cur = new Set(D.rechte[d.k] || CAN[d.k]); el.checked ? cur.add(d.r) : cur.delete(d.r); D.rechte[d.k] = [...cur]; save(); renderNav(); },
+  rechteReset() { askConfirm('Alle Anpassungen an der Rechte-Tabelle werden verworfen. Zusatzrechte einzelner Personen bleiben.', () => { D.rechte = null; }); },
+  extraOpen(d) { const m = mem(d.id); if (!m || me().rolle !== 'admin') return; FORM = { extra:m.id };
+    openDlg(`<h3>Zusatzrechte für ${esc(m.name)}</h3><div style="font-size:13px;color:var(--muted)">Rolle: ${ROLES[m.rolle]}. Was die Rolle schon erlaubt, ist fest angehakt.</div>
+      ${RIGHTS.map(x => { const viaRole = roleCan(x[1], m.rolle); return `<label class="chk"><input type="checkbox" class="xr" value="${x[1]}" ${viaRole || extraOf(m.id).includes(x[1]) ? 'checked' : ''} ${viaRole ? 'disabled' : ''}> ${x[0]}</label>`; }).join('')}
+      <div class="acts"><button class="btn dark" data-act="extraSave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  extraSave() { const id = FORM && FORM.extra; if (!id) return; const picked = [...$('dlgBox').querySelectorAll('.xr')].filter(c => c.checked && !c.disabled).map(c => c.value);
+    if (!D.extra) D.extra = {}; if (picked.length) D.extra[id] = picked; else delete D.extra[id]; save(); closeDlg(); render(); },
+  saveMotto() { D.motto = { titel:$('moTitel').value.trim() || D.motto.titel, session:$('moSession').value.trim(), farbwelt:$('moFarbe').value }; save(); render(); },
+  fundAdd(d) { const f = SUCHE.funde.find(x => x.id === d.id); if (!f || !can('events')) return;
+    D.events.push({ id:uid('s'), name:f.name, art:f.art === 'Turnier' ? 'Tunier' : 'Showtanz', datum:f.datum, zeit:/^\d{2}:\d{2}$/.test(f.zeit || '') ? f.zeit : '', ende:'', standort:f.ort || '', maps:'', inhaber:f.veranstalter || '', status:'Offen', gebuehr:f.gebuehr || '',
+      notizen:'Aus der Auftritts-Suche.' + (f.hinweis ? ' ' + f.hinweis : '') + (f.quelle ? ' Quelle: ' + f.quelle : '') });
+    D.sucheDone[f.id] = 'uebernommen'; save(); render(); },
+  fundHide(d) { if (!can('events')) return; D.sucheDone[d.id] = 'ignoriert'; save(); render(); },
+  fundBack(d) { delete D.sucheDone[d.id]; save(); render(); },
+  socSet(d) { const p = D.social.find(x => x.id === d.id); if (!p) return;
+    if (d.v === 'Gepostet') { if (p.status !== 'Freigegeben') return; } else if (!can('socialOk')) return;
+    p.status = d.v; delete p.demo; AI.msg = ''; save(); render(); },
+  socPlan() {
+    askClaude(aiCtx() + '\n\nSchon im Plan:\n' + (D.social.map(p => `- ${p.datum}: ${p.thema}`).join('\n') || '- nichts') +
+      '\n\nSchlage 6 weitere Posts für die nächsten vier Wochen vor, passend zu den Auftritten (Ankündigung vorher, Rückblick danach) und mit etwas Abwechslung. ' +
+      'Antworte nur mit einem JSON-Array, ohne Text davor oder danach. Jedes Element: {"datum":"JJJJ-MM-TT","plattform":"Instagram|TikTok|Facebook|WhatsApp","format":"Reel|Story|Beitrag|Karussell","thema":"kurze Beschreibung","text":"Caption mit Hashtags"}.',
+      text => { const ps = parsePlan(text); if (!ps || !ps.length) return 'Claudes Antwort ließ sich nicht als Plan lesen. Bitte noch einmal versuchen.'; D.social.push(...ps); return ps.length === 1 ? 'Ein Vorschlag von Claude wartet jetzt auf Freigabe.' : ps.length + ' Vorschläge von Claude warten jetzt auf Freigabe.'; });
+  },
+  socIdeas() { askClaude(aiCtx() + '\n\nSammle 10 kurze Post-Ideen für die Gruppe, jede in einer Zeile mit Format in Klammern. Nur die Liste, kein Text davor oder danach, keine Formatierung.', text => 'Ideen von Claude:\n' + text.trim()); },
+  socText(d) {
+    const p = D.social.find(x => x.id === d.id); if (!p || (p.status !== 'Vorschlag' && !can('socialOk'))) return;
+    askClaude(aiCtx() + `\n\nSchreibe den Text für diesen Post: 2 bis 4 Sätze, darunter 6 bis 10 Hashtags. Antworte nur mit dem fertigen Text.\nPlattform: ${p.plattform}\nFormat: ${p.format}\nDatum: ${p.datum}\nThema: ${p.thema}`,
+      text => { if (!text.trim()) return 'Claude hat nichts geliefert. Bitte noch einmal versuchen.'; p.text = text.trim(); delete p.demo; return 'Text für „' + p.thema + '“ ist eingetragen.'; });
+  },
+  async copyPrompt() { const ta = $('pText'); let ok = false; try { await navigator.clipboard.writeText(ta.value); ok = true; } catch (e) {} ta.focus(); ta.select(); $('pMsg').textContent = ok ? 'Kopiert. Jetzt bei Claude einfügen.' : 'Text ist markiert. Bitte lange drücken und „Kopieren“ wählen.'; },
+  bugOpen() { const n = NAV.find(x => x[0] && x[0] === UI.sec); openEdit('bugs', null, { bereich:n ? n[1] : 'Sonstiges' }); },
+  fbAdd() { openEdit('feedback'); },
+  fbTab(d) { UI.fbTab = d.v; render(); },
+  fbVote(d) { const x = D.feedback.find(i => i.id === d.id); if (!x) return; if (!x.stimmen) x.stimmen = {}; if (x.stimmen[D.me]) delete x.stimmen[D.me]; else x.stimmen[D.me] = 1; save(); render(); },
+  fbStatus(d, el) { if (!can('verwaltung')) return; const x = (D[d.col] || []).find(i => i.id === d.id); if (!x) return; x.status = el.value; delete x.demo; save(); render(); },
+  fbTask(d) { if (!can('verwaltung')) return; const x = (D[d.col] || []).find(i => i.id === d.id); if (!x || x.aufgabe) return;
+    D.aufgaben.push({ id:uid('a'), titel:(d.col === 'bugs' ? 'Fehler: ' : 'Vorschlag: ') + x.titel, bereich:'Sonstiges', wer:D.me, von:D.me, bis:'', done:false, ts:Date.now() });
+    x.aufgabe = true; if (x.status === 'Neu') x.status = 'Geplant'; else if (x.status === 'Offen') x.status = 'In Arbeit'; save(); render(); },
+  bellOpen() { const n = news();
+    openDlg(`<h3>Neu für dich</h3>${n.length ? `<div class="rows">${n.map(x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b><div class="sub">${x.art} · von ${esc(mname(x.von))} · ${fmtTs(x.ts)}</div></div><button class="btn sm" data-act="bellGo" data-sec="${x.sec}">Ansehen</button></div>`).join('')}</div>` : '<div class="empty">Nichts Neues auf der Pinnwand oder bei den Aufgaben.</div>'}
+      <div class="acts">${n.length ? '<button class="btn dark" data-act="bellRead">Alles gelesen</button>' : ''}<button class="btn" data-act="close">Schließen</button></div>`); },
+  bellGo(d) { closeDlg(); if (location.hash === '#' + d.sec) render(); else location.hash = '#' + d.sec; },
+  bellRead() { D.seen[D.me] = { posts:Date.now(), aufgaben:Date.now() }; save(); if (!$('dlg').hidden) closeDlg(); render(); },
+  reload() { location.reload(); },
+  trSerieOpen(d) { if (!can('trainings')) return; const sr = d.id ? D.trSerien.find(x => x.id === d.id) : { wochentag:'6', von:todayISO(), bis:'', zeit:'11:00', zeitBis:'13:00', ort:'', thema:'' };
+    FORM = { col:'trSerie', id:d.id || '' };
+    openDlg(`<h3>${d.id ? 'Trainingsserie ändern' : 'Wöchentliche Trainingsserie anlegen'}</h3>
+      <p class="sub" style="color:var(--muted)">Legt für jeden passenden Tag ein Training an, das für die ganze Gruppe gilt.${d.id ? ' Beim Ändern werden nur künftige Termine neu erzeugt, vergangene und ihre Anwesenheit bleiben.' : ''}</p>
+      <label class="f" for="ts_wd">Wochentag<select id="ts_wd">${WDN.map((w, i) => `<option value="${i}" ${+sr.wochentag === i ? 'selected' : ''}>${w}</option>`).join('')}</select></label>
+      <label class="f" for="ts_von">Erster Tag<input id="ts_von" type="date" value="${esc(sr.von)}"></label>
+      <label class="f" for="ts_bis">Letzter Tag<input id="ts_bis" type="date" value="${esc(sr.bis)}"></label>
+      <label class="f" for="ts_z1">Von (Uhrzeit)<input id="ts_z1" type="time" value="${esc(sr.zeit)}"></label>
+      <label class="f" for="ts_z2">Bis (Uhrzeit)<input id="ts_z2" type="time" value="${esc(sr.zeitBis)}"></label>
+      <label class="f" for="ts_ort">Ort<input id="ts_ort" type="text" value="${esc(sr.ort)}"></label>
+      <label class="f" for="ts_th">Thema<input id="ts_th" type="text" value="${esc(sr.thema)}"></label>
+      <div class="err" id="fErr" hidden></div>
+      <div class="acts"><button class="btn dark" data-act="trSerieSave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  trSerieSave() { if (!can('trainings')) return; const sr = { wochentag:$('ts_wd').value, von:$('ts_von').value, bis:$('ts_bis').value, zeit:$('ts_z1').value, zeitBis:$('ts_z2').value, ort:$('ts_ort').value.trim(), thema:$('ts_th').value.trim() };
+    if (!sr.von || !sr.bis || sr.bis < sr.von) { $('fErr').textContent = 'Bitte Start- und Enddatum angeben (Ende nicht vor dem Start).'; $('fErr').hidden = false; return; }
+    const old = FORM.id ? D.trSerien.find(x => x.id === FORM.id) : null, today = todayISO();
+    if (old) { D.trainings = D.trainings.filter(t => t.serie !== old.id || t.datum < today); Object.assign(old, sr); trGen(old).filter(t => t.datum >= today && !D.trainings.some(x => x.id === t.id)).forEach(t => D.trainings.push(t)); }
+    else { sr.id = uid('ts'); D.trSerien.push(sr); trGen(sr).forEach(t => D.trainings.push(t)); }
+    save(); closeDlg(); render(); },
+  trSerieDel(d) { if (!can('trainings')) return; askConfirm('Alle künftigen Termine dieser Serie werden gelöscht. Vergangene Trainings bleiben mit ihrer Anwesenheit erhalten.', () => { const today = todayISO(); D.trainings = D.trainings.filter(t => t.serie !== d.id || t.datum < today); D.trSerien = D.trSerien.filter(x => x.id !== d.id); }); },
+  calMine(d, el) { UI.calMine = el.checked; render(); },
+  calKind(d) { UI.calHide[d.v] = !UI.calHide[d.v]; render(); },
+  calMore(d) { UI.calMore = d.d; render(); },
+  calDay(d) { if (!can('kalender')) return; openEdit('kalender', null, { mid:D.me, typ:'einzel', datum:d.d }); },
+  calChip(d) { if (d.k === 'tr') openEdit('trainings', d.id); else if (d.k === 'kl') openEdit('kalender', d.id); else if (d.k === 'ev') location.hash = '#auftritte'; },
+  trAddDay() { openEdit('trainings', null, { datum:todayISO(), zeit:'11:00', zeitBis:'13:00' }); },
+  calAdd() { if (!can('kalender')) return; openEdit('kalender', null, { mid:D.me, typ:'einzel' }); },
+  calView(d) { UI.calView = d.v; render(); },
+  calFilter(d, el) { UI.calMid = el.value; render(); },
+  calNav(d) {
+    if (+d.d === 0) { UI.calAnchor = todayISO(); render(); return; }
+    const dt = dObj(UI.calAnchor);
+    if (UI.calView === 'monat') dt.setMonth(dt.getMonth() + (+d.d));
+    else if (UI.calView === 'zeitstrahl') dt.setDate(dt.getDate() + 14 * (+d.d));
+    else dt.setDate(dt.getDate() + 7 * (+d.d));
+    UI.calAnchor = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`; render();
+  },
+  calPdfOpen() {
+    if (!can('kalender')) return;
+    FORM = { pdf:true };
+    const opts = lead() ? memOpts() : [[D.me, mname(D.me)]];
+    openDlg(`<h3>Spielplan als PDF einlesen</h3><div class="sub">Lade eine PDF mit eurem Spielplan hoch. Gefundene Termine (Format TT.MM.JJJJ) könnt ihr unten prüfen und auswählen, bevor sie übernommen werden.</div>
+      <label class="f" for="pdfMid">Für wen<select id="pdfMid">${opts.map(x => `<option value="${esc(x[0])}">${esc(x[1])}</option>`).join('')}</select></label>
+      <label class="f" for="pdfTitel">Titel der Termine<input id="pdfTitel" value="Fußballspiel"></label>
+      <label class="f" for="pdfFile">PDF-Datei<input id="pdfFile" type="file" accept="application/pdf"></label>
+      <div id="pdfMsg" class="sub"></div><div id="pdfList" class="chips"></div>
+      <div class="acts"><button class="btn dark" id="pdfSave" disabled data-act="calPdfSave">Ausgewählte Termine übernehmen</button><button class="btn" data-act="close">Abbrechen</button></div>`);
+  },
+  calPdfSave() {
+    const mid = $('pdfMid').value, titel = $('pdfTitel').value.trim() || 'Termin';
+    const picked = [...$('dlgBox').querySelectorAll('.pdfd')].filter(c => c.checked).map(c => c.value);
+    if (!picked.length) return;
+    picked.forEach(datum => D.kalender.push({ id:uid('k'), mid, titel, typ:'einzel', datum, von:'', bis:'', wochentag:'', notiz:'Aus PDF-Import.', quelle:'pdf' }));
+    save(); closeDlg(); render();
+  },
+  btPayOpen(d) {
+    const b = D.beitraege.find(x => x.id === d.id); if (!b || !can('beitraege')) return;
+    const info = beitragInfo(b); FORM = { bt:b.id };
+    openDlg(`<h3>Zahlung erfassen – ${esc(mname(b.mid))}</h3><div class="sub">${esc(b.zeitraum)} · bisher ${eur(info.sum)} von ${eur(b.betrag)} · Rest ${eur(info.rest)}</div>
+      <label class="f" for="payDatum">Datum<input id="payDatum" type="date" value="${todayISO()}"></label>
+      <label class="f" for="payBetrag">Betrag in €<input id="payBetrag" type="number" step="0.01" min="0" inputmode="decimal" value="${b.modus === 'dauerauftrag' ? (b.rate || '') : info.rest}"></label>
+      <div class="acts"><button class="btn dark" data-act="btPaySave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`);
+  },
+  btPaySave() {
+    if (!can('beitraege')) return;
+    const b = D.beitraege.find(x => x.id === FORM.bt); if (!b) return;
+    const betrag = parseFloat($('payBetrag').value.replace(',', '.')); if (!betrag || betrag <= 0) return;
+    (b.zahlungen = b.zahlungen || []).push({ datum:$('payDatum').value || todayISO(), betrag, quelle:'manuell' }); delete b.demo;
+    save(); closeDlg(); render();
+  },
+  btImportOpen() {
+    if (!can('beitraege')) return; FORM = { imp:[] };
+    openDlg(`<h3>Zahlungen aus Datei importieren</h3><div class="sub">Lade einen Kontoauszug oder eine Liste als Excel (.xlsx), CSV oder PDF hoch. Gefundene Zeilen mit Datum und Betrag könnt ihr unten prüfen, einem Mitglied zuordnen und auswählen.</div>
+      <label class="f" for="impFile">Datei<input id="impFile" type="file" accept=".xlsx,.csv,.pdf"></label>
+      <div id="impMsg" class="sub"></div><div id="impList" class="rows"></div>
+      <div class="acts"><button class="btn dark" id="impSave" disabled data-act="btImportSave">Ausgewählte Zahlungen übernehmen</button><button class="btn" data-act="close">Abbrechen</button></div>`);
+  },
+  btImportSave() {
+    if (!can('beitraege')) return;
+    const boxes = [...$('dlgBox').querySelectorAll('.impd')];
+    boxes.forEach(cb => { if (!cb.checked) return; const i = +cb.dataset.i, r = FORM.imp[i], sel = $('dlgBox').querySelector(`.impm[data-i="${i}"]`), mid = sel && sel.value; if (!mid) return;
+      const cand = D.beitraege.filter(b => b.mid === mid); const b = cand[cand.length - 1]; if (!b) return;
+      (b.zahlungen = b.zahlungen || []).push({ datum:r.datum, betrag:r.betrag, quelle:'import', notiz:r.text }); delete b.demo; });
+    save(); closeDlg(); render();
+  },
+  vmFilter(d) { UI.vmFilter = d.v; render(); },
+  vmStand(d, el) { const v = D.veranstalter.find(x => x.id === d.id); if (!v || !can('events')) return; v.stand = el.value; UI.vmMsg = ''; save(); render(); },
+  vmMail(d) { const v = D.veranstalter.find(x => x.id === d.id); if (!v || !can('postfach')) return; const m = vmText(v); FORM = { vm:v.id };
+    openDlg(`<h3>Anmeldung an ${esc(v.verein)}</h3><div style="font-size:13px;color:var(--muted)">${v.email ? 'Bitte kurz gegenlesen. Absender: ' + esc(D.absender) : 'Hier ist keine E-Mail-Adresse hinterlegt. Trag eine ein oder kopiere den Text für Instagram oder das Anmeldeformular.'}</div>
+      <label class="f" for="vAn">An<input id="vAn" type="text" value="${esc(m.an)}" placeholder="E-Mail-Adresse"></label>
+      <label class="f" for="vBetreff">Betreff<input id="vBetreff" type="text" value="${esc(m.betreff)}"></label>
+      <label class="f" for="vText">Text<textarea id="vText" rows="12">${esc(m.text)}</textarea></label>
+      <div class="err" id="vErr" hidden></div><div id="vMsg" role="status" style="font-size:13px;font-weight:700;color:var(--good)"></div>
+      <div class="acts"><button class="btn dark" data-act="vmDraft">Als Entwurf ins Postfach</button><button class="btn" data-act="vmCopy">Text kopieren</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  vmDraft() { const v = D.veranstalter.find(x => x.id === (FORM && FORM.vm)); if (!v) return; const an = $('vAn').value.trim(), betreff = $('vBetreff').value.trim(), text = $('vText').value.trim();
+    if (!an || !betreff || !text) { $('vErr').textContent = 'Bitte Empfänger, Betreff und Text ausfüllen.'; $('vErr').hidden = false; return; }
+    D.mails.push({ id:uid('ml'), an, betreff, text, von:D.me, datum:todayISO() }); if (!v.email && /@/.test(an)) v.email = an; if (v.stand === 'Vormerken') v.stand = 'Entwurf fertig';
+    UI.vmMsg = 'Der Entwurf für ' + v.verein + ' liegt im Postfach.'; save(); closeDlg(); render(); },
+  async vmCopy() { const ta = $('vText'); let ok = false; try { await navigator.clipboard.writeText(ta.value); ok = true; } catch (e) {} ta.focus(); ta.select(); $('vMsg').textContent = ok ? 'Text kopiert.' : 'Text ist markiert. Bitte lange drücken und „Kopieren“ wählen.'; },
+  vmAlle() { if (!can('postfach') || !can('events')) return; const todo = D.veranstalter.filter(v => v.stand === 'Vormerken' && v.email);
+    todo.forEach(v => { const m = vmText(v); D.mails.push({ id:uid('ml'), an:m.an, betreff:m.betreff, text:m.text, von:D.me, datum:todayISO() }); v.stand = 'Entwurf fertig'; });
+    UI.vmMsg = todo.length + (todo.length === 1 ? ' Entwurf liegt' : ' Entwürfe liegen') + ' jetzt im Postfach.'; save(); render(); },
+  fundVm(d) { const f = SUCHE.funde.find(x => x.id === d.id); if (!f || !can('events') || vmHas(f)) return; const mo = MON[dObj(f.datum).getMonth()];
+    D.veranstalter.push({ id:uid('v'), verein:f.veranstalter || f.name, veranstaltung:f.name, monat:VM_MON.includes(mo) ? mo : 'offen', ort:f.ort || '', art:['Turnier','Gastauftritt'].includes(f.art) ? f.art : 'Showtanz', person:'', email:'', telefon:'',
+      web:/^https?:\/\//.test(f.quelle || '') ? f.quelle : '', gebuehr:f.gebuehr || '', stand:'Vormerken', notiz:'Aus der Auftritts-Suche. Termin in dieser Session: ' + fmtDate(f.datum) + '.' + (f.hinweis ? ' ' + f.hinweis : '') });
+    save(); render(); },
+  gIn() { CLOUD.signIn($('gMail').value.trim(), $('gPw').value).catch(e => gErr(authMsg(e))); },
+  gUp() { const m = $('gMail').value.trim(), p = $('gPw').value; if (!m || !p) return gErr('Bitte E-Mail und ein Passwort eingeben.'); CLOUD.signUp(m, p).then(() => CLOUD.sendVerify()).catch(e => gErr(authMsg(e))); },
+  gReset() { const m = $('gMail').value.trim(); if (!m) return gErr('Bitte oben deine E-Mail eingeben.'); CLOUD.reset(m).then(() => gErr('Wenn es zu der Adresse ein Konto gibt, ist eine Mail zum Zurücksetzen unterwegs.')).catch(e => gErr(authMsg(e))); },
+  gDone() { CLOUD.refresh().then(u => onAuth(u)).catch(e => gErr(authMsg(e))); },
+  gResend() { CLOUD.sendVerify().then(() => gErr('Die Mail ist unterwegs.')).catch(e => gErr(authMsg(e))); },
+  logout() { CLOUD.signOut(); },
+  reloadPage() { location.reload(); },
+  async syncLogins() { if (!can('verwaltung')) return; try { const n = await syncAllowed(); UI.loginMsg = n + ' Logins abgeglichen.'; } catch (e) { UI.loginMsg = 'Abgleich fehlgeschlagen (' + (e.code || e.message) + ').'; } render(); },
+  async seedGo() { const s = CS.seed, mid = $('seedMe').value; if (!s || !mid || !CS.info.adm) return;
+    const d = Object.assign(blank(), s); delete d.me; delete d.live; delete d.seedIds; d.finpub = null; d.members.find(x => x.id === mid).email = CS.user.email.toLowerCase();
+    D = d; D.me = mid; CS.info.mid = mid; $('seedMsg').textContent = 'Wird hochgeladen …'; $('seedGo').disabled = true; save();
+    try { await flushNow(); await publishFin(); await afterReady(); } catch (e) { $('seedMsg').textContent = 'Hochladen fehlgeschlagen: ' + (e.code || e.message); $('seedGo').disabled = false; } }
+};
+document.addEventListener('click', e => {
+  if (e.target.id === 'dlg') return closeDlg();
+  const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT' || b.type === 'checkbox') return;
+  if (ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset, b);
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'seedFile') { const f = t.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const s = JSON.parse(r.result); if (!Array.isArray(s.members) || !s.members.length) throw new Error('keine Mitglieder'); CS.seed = s; $('seedMe').innerHTML = s.members.map(m => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join(''); $('seedGo').disabled = false; $('seedMsg').textContent = s.members.length + ' Mitglieder, ' + (s.events || []).length + ' Auftritte gefunden.'; } catch (e) { $('seedMsg').textContent = 'Die Datei passt nicht (' + e.message + ').'; } }; r.readAsText(f); return; }
+  if (t.id === 'fileIn') { [...t.files].forEach(f => D.dateien.push({ id:uid('f'), ordner:$('fOrd').value, name:f.name, size:f.size, von:D.me, datum:todayISO() })); save(); render(); return; }
+  if (t.id === 'pdfFile') { calPdfHandle(t.files[0]); return; }
+  if (t.id === 'impFile') { btImportHandle(t.files[0]); return; }
+  if (t.dataset.act && (t.tagName === 'SELECT' || t.type === 'checkbox') && ACT[t.dataset.act]) ACT[t.dataset.act](t.dataset, t);
+});
+document.addEventListener('input', e => { if (e.target.id === 'evSearch') { UI.q = e.target.value; $('evList').innerHTML = evListHTML(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('dlg').hidden) closeDlg(); });
+window.addEventListener('hashchange', () => { if (CS.ready && D.members.length && mem(D.me)) route(); });
+startDb();
+window.appBoot = appBoot;
+if (window.CLOUD) appBoot(); else setTimeout(() => { if (!window.CLOUD) gateShow('<h2>Verbindung nicht möglich</h2><p>Firebase konnte nicht geladen werden. Bitte Internet prüfen und neu laden.</p><button class="btn dark" data-act="reloadPage">Neu laden</button>'); }, 12000);
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { initializeFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const app = initializeApp({
+  apiKey: "AIzaSyACAImQ3HoiXHNIK8QAmioE8VEoIWa4voA",
+  authDomain: "funkyboys-portal.firebaseapp.com",
+  projectId: "funkyboys-portal",
+  storageBucket: "funkyboys-portal.firebasestorage.app",
+  messagingSenderId: "24639324466",
+  appId: "1:24639324466:web:a7ac27edff4f25ee53d72b"
+});
+const auth = getAuth(app); auth.languageCode = 'de';
+const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
+const snapOf = s => ({ exists: s.exists(), data: s.exists() ? s.data() : null });
+window.CLOUD = {
+  onAuth: cb => onAuthStateChanged(auth, cb),
+  signIn: (m, p) => signInWithEmailAndPassword(auth, m, p),
+  signUp: (m, p) => createUserWithEmailAndPassword(auth, m, p),
+  sendVerify: () => sendEmailVerification(auth.currentUser),
+  reset: m => sendPasswordResetEmail(auth, m),
+  signOut: () => signOut(auth),
+  refresh: async () => { await auth.currentUser.reload(); await auth.currentUser.getIdToken(true); return auth.currentUser; },
+  get: async path => snapOf(await getDoc(doc(db, path))),
+  set: (path, obj) => setDoc(doc(db, path), obj),
+  del: path => deleteDoc(doc(db, path)),
+  listen: (path, ok, err) => onSnapshot(doc(db, path), s => ok(snapOf(s)), err),
+  listIds: async col => (await getDocs(collection(db, col))).docs.map(d => ({ id: d.id, data: d.data() })),
+  update: (path, fn) => runTransaction(db, async tx => {
+    const ref = doc(db, path), s = await tx.get(ref), sv = s.exists() ? JSON.parse(s.data().j) : null, nv = fn(sv);
+    tx.set(ref, { j: JSON.stringify(nv), at: serverTimestamp() }); return nv;
+  })
+};
+if (window.appBoot) window.appBoot();
+</script>
+
+</body>
+</html>

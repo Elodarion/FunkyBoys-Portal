@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Start-Admin: HIER deine Admin-E-Mail eintragen (nur in der Firebase-Konsole, nicht ins Repository committen)
+    function mail() { return request.auth.token.email.lower(); }
+    function verified() { return request.auth != null && request.auth.token.email_verified == true; }
+    function boot() { return mail() == 'ADMIN_EMAIL_HIER'; }
+    function al() { return get(/databases/$(database)/documents/allowed/$(mail())).data; }
+    function listed() { return exists(/databases/$(database)/documents/allowed/$(mail())); }
+    function approved() { return verified() && (boot() || listed()); }
+    function isAdm() { return verified() && (boot() || (listed() && al().adm == true)); }
+    function isFin() { return isAdm() || (verified() && listed() && al().fin == true); }
+
+    match /allowed/{em} {
+      allow read: if verified() && (mail() == em || isAdm());
+      allow write: if isAdm();
+    }
+    match /data/{key} {
+      allow read: if approved();
+      allow write: if approved()
+        && (!(key in ['members','rechte','extra','motto','absender']) || isAdm())
+        && (key != 'finpub' || isFin());
+    }
+    match /fin/{key} {
+      allow read, write: if isFin();
+    }
+    match /own/{mid} {
+      allow read: if isFin() || (verified() && listed() && al().mid == mid);
+      allow write: if isFin();
+    }
+  }
+}
