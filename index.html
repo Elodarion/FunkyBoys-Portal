@@ -467,8 +467,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.6', BUILD = 36;
+const VERSION = '2.7', BUILD = 37;
 const CHANGELOG = [
+  { v:'2.7', datum:'2026-11-15', punkte:['Die Auftritts-Suche ist online: Der tägliche Suchlauf legt neue Funde ab, sie lassen sich mit einem Tipp in die Auftrittsliste übernehmen'] },
   { v:'2.6', datum:'2026-11-15', punkte:['Im Monatsraster erscheinen jetzt auch Zahlungen, die oben bei den Beiträgen erfasst wurden, als bezahlte Monate'] },
   { v:'2.5', datum:'2026-11-15', punkte:['Monatsraster bei den Beiträgen: bezahlte Monate pro Person einfach antippen'] },
   { v:'2.4', datum:'2026-11-15', punkte:['Zahlungen können auch aus einem Bild (Screenshot oder Foto eines Kontoauszugs) übernommen werden'] },
@@ -628,7 +629,12 @@ const toks = s => String(s || '').toLowerCase().split(/[^a-zäöüß0-9]+/).filt
 function imPlaner(f) { const a = toks(f.name + ' ' + f.ort + ' ' + (f.veranstalter || '')); return D.events.some(e => e.datum === f.datum && toks(e.name + ' ' + e.standort).some(w => a.includes(w))); }
 const sameDay = f => D.events.filter(e => e.datum === f.datum && statusInfo(e.status).b !== 'declined').map(e => e.name);
 function funde() { const t = todayISO(); return SUCHE.funde.filter(f => f && f.name && /^\d{4}-\d{2}-\d{2}$/.test(f.datum || '') && f.datum >= t && (+f.fahrzeit || 0) <= 60 && (D.sucheDone[f.id] === 'uebernommen' || !imPlaner(f))).sort((a, b) => a.datum.localeCompare(b.datum)); }
-async function startDb() { SUCHE.state = 'weg'; }
+async function startDb() {
+  try { const r = await fetch('funde.json?t=' + Date.now(), { cache:'no-store' }); if (!r.ok) throw new Error('http'); const j = await r.json();
+    SUCHE.funde = (j.funde || []).filter(f => f && f.id); SUCHE.status = j.status || null; SUCHE.state = 'ok'; }
+  catch (e) { if (SUCHE.state !== 'ok') SUCHE.state = 'weg'; }
+  if (UI.sec === 'suche' && $('dlg').hidden) render();
+}
 
 /* ---------- Finanzen ---------- */
 const MERCH_ST = ['In Planung','Bestellt','In Zustellung','Ausgehändigt','Retoure'];
@@ -1659,7 +1665,7 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('input', e => { if (e.target.id === 'evSearch') { UI.q = e.target.value; $('evList').innerHTML = evListHTML(); } });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('dlg').hidden) closeDlg(); });
-window.addEventListener('hashchange', () => { if (CS.ready && D.members.length && mem(D.me)) route(); });
+window.addEventListener('hashchange', () => { if (CS.ready && D.members.length && mem(D.me)) { route(); if (location.hash === '#suche') startDb(); } });
 startDb();
 window.appBoot = appBoot;
 if (window.CLOUD) appBoot(); else setTimeout(() => { if (!window.CLOUD) gateShow('<h2>Verbindung nicht möglich</h2><p>Firebase konnte nicht geladen werden. Bitte Internet prüfen und neu laden.</p><button class="btn dark" data-act="reloadPage">Neu laden</button>'); }, 12000);
