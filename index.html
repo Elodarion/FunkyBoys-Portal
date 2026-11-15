@@ -96,6 +96,15 @@
   .amt { font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap; }
   .amt.in { color:var(--good); } .amt.out { color:var(--bad); }
   .pill { font-size:11px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; padding:3px 8px; border-radius:3px; background:var(--soft); border:1px solid var(--line); color:var(--muted); white-space:nowrap; }
+.rasterwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:6px; }
+  table.raster { border-collapse:collapse; font-size:13px; width:max-content; min-width:100%; }
+  table.raster th, table.raster td { border:1px solid var(--line); padding:0; text-align:center; white-space:nowrap; }
+  table.raster thead th { padding:8px 6px; background:var(--card); }
+  table.raster th.rn { position:sticky; left:0; background:var(--card); text-align:left; padding:8px 10px; z-index:1; min-width:120px; }
+  table.raster td.rs { padding:8px 10px; font-weight:700; }
+  .rc { all:unset; box-sizing:border-box; display:block; min-width:62px; padding:10px 6px; min-height:44px; cursor:pointer; color:var(--muted); }
+  .rc.on { background:var(--good-bg); color:var(--good); font-weight:700; }
+  .rc:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
   .pill.good { background:var(--good-bg); color:var(--good); border-color:transparent; } .pill.warn { background:var(--warn-bg); color:var(--warn); border-color:transparent; }
   .pill.bad { background:var(--bad-bg); color:var(--bad); border-color:transparent; } .pill.vio { background:var(--accent-bg); color:var(--accent); border-color:transparent; }
   .demo { font-size:10px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; padding:2px 6px; border-radius:3px; border:1px dashed var(--faint); color:var(--faint); white-space:nowrap; margin-left:6px; }
@@ -256,6 +265,7 @@ function seed0() {
       { id:'b5', typ:'A', kat:'Requisiten', betrag:35, text:'Strohballen-Attrappe', datum:'2026-10-20', demo:true },
       { id:'b6', typ:'E', kat:'Zuschuss Verein', betrag:200, text:'Zuschuss TSG', datum:'2026-09-01', demo:true } ],
     budget:{ 'Anmeldegebühren':250, 'Kostüme':600, 'Requisiten':150, 'Training':100, 'Fahrt & Verpflegung':100, 'Sonstiges':100 },
+    beitragCfg:null,
     beitraege:[
       { id:'bt1', mid:'m1', zeitraum:'Session 2026/27', betrag:60, modus:'einmalig', von:'2026-09-01', rate:0, zahlungen:[{ datum:'2026-09-11', betrag:60, quelle:'manuell' }], demo:true },
       { id:'bt2', mid:'m2', zeitraum:'Session 2026/27', betrag:60, modus:'einmalig', von:'2026-09-01', rate:0, zahlungen:[{ datum:'2026-09-12', betrag:60, quelle:'manuell' }], demo:true },
@@ -456,8 +466,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.4', BUILD = 34;
+const VERSION = '2.5', BUILD = 35;
 const CHANGELOG = [
+  { v:'2.5', datum:'2026-11-15', punkte:['Monatsraster bei den Beiträgen: bezahlte Monate pro Person einfach antippen'] },
   { v:'2.4', datum:'2026-11-15', punkte:['Zahlungen können auch aus einem Bild (Screenshot oder Foto eines Kontoauszugs) übernommen werden'] },
   { v:'2.3', datum:'2026-11-15', punkte:['Die Menüleiste links scrollt unabhängig vom Inhalt'] },
   { v:'2.2', datum:'2026-11-15', punkte:['Teamausstattung und Merch zeigt jetzt auch die Größen der Tänzer'] },
@@ -635,6 +646,19 @@ function beitragInfo(b) {
   }
   if (b.von && todayISO() > b.von) return { sum, rest, status:'rueckstand', label:'Im Rückstand', cls:'bad' };
   return { sum, rest, status:'offen', label:'Offen', cls:'warn' };
+}
+const MON_K = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+const rCfg = () => Object.assign({ rate:20, start:(new Date().getMonth() >= 2 ? new Date().getFullYear() : new Date().getFullYear() - 1) + '-03' }, D.beitragCfg || {});
+const rMonths = () => { const c = rCfg(), [y, m] = c.start.split('-').map(Number); return Array.from({ length:12 }, (_, i) => { const t = new Date(y, m - 1 + i, 1); return { key:t.getFullYear() + '-' + pad(t.getMonth() + 1), label:MON_K[t.getMonth()] + ' ' + String(t.getFullYear()).slice(2) }; }); };
+const rBeitrag = mid => { const c = rCfg(), mine = D.beitraege.filter(b => b.mid === mid); return mine.find(b => b.raster === c.start) || (mine.length === 1 && !mine[0].raster ? mine[0] : null); };
+function rasterHTML() {
+  const c = rCfg(), ms = rMonths(), ids = D.members.filter(m => TANZT(m.rolle) || D.beitraege.some(b => b.mid === m.id));
+  const head = `<tr><th class="rn">Name</th>${ms.map(m => `<th>${m.label}</th>`).join('')}<th>Summe</th></tr>`;
+  const body = ids.map(m => { const b = rBeitrag(m.id), paid = new Set(((b && b.zahlungen) || []).filter(z => z.monat).map(z => z.monat)), sum = b ? beitragZahlt(b) : 0;
+    return `<tr><th class="rn">${esc(m.name)}</th>${ms.map(x => { const on = paid.has(x.key); return `<td><button class="rc ${on ? 'on' : ''}" data-act="rasterTog" data-mid="${esc(m.id)}" data-m="${x.key}" aria-pressed="${on}" aria-label="${esc(m.name)} ${x.label} ${on ? 'bezahlt, antippen zum Zurücknehmen' : 'offen, antippen für bezahlt'}">${on ? '✓ ' : ''}${eur(b && b.rate ? b.rate : c.rate).replace(',00', '')}</button></td>`; }).join('')}<td class="rs">${eur(sum)}</td></tr>`; }).join('');
+  return `<div class="panel"><div class="ph"><h3>Monatsraster Beiträge</h3><button class="btn sm" data-act="rasterCfg">Betrag und Start ändern</button></div>
+    <div class="sub" style="color:var(--muted);font-size:13px;margin-bottom:8px">Monatsbeitrag ${eur(c.rate)}, Beitragsjahr ab ${MON[+c.start.split('-')[1] - 1]} ${c.start.split('-')[0]}. Zelle antippen = bezahlt (grün mit Haken), nochmal antippen = zurücknehmen.</div>
+    <div class="rasterwrap"><table class="raster"><thead>${head}</thead><tbody>${body}</tbody></table></div></div>`;
 }
 function fin() {
   const sum = a => a.reduce((s, x) => s + (+x.betrag || 0), 0);
@@ -976,6 +1000,7 @@ const SEC = {
               <span class="pill ${info.cls}">${info.label}</span>
               ${full && info.rest > 0 ? `<button class="btn sm" data-act="btPayOpen" data-id="${b.id}">+ Zahlung</button>` : ''}${full ? editBtn('beitraege', b.id) : ''}</div>`; }, 'Für dich ist kein Beitrag hinterlegt.')}</div>
       </div>
+      ${full ? rasterHTML() : ''}
       ${!can('buchungen') ? '<div class="panel"><div class="ph"><h3>Buchungen</h3></div><div class="sub" style="color:var(--muted);font-size:13px">Die einzelnen Buchungen sehen Admin und Kasse. Die Summen und das Budget oben sind für alle offen.</div></div>' : `<div class="panel"><div class="ph"><h3>Buchungen</h3></div>
         ${rows(bs, b => `<div class="row"><div class="grow"><b>${esc(b.text)}</b>${demo(b)}<div class="sub">${fmtDate(b.datum)}</div></div><span class="pill">${esc(b.kat)}</span>
           <span class="amt ${b.typ === 'E' ? 'in' : 'out'}">${b.typ === 'E' ? '+' : '−'} ${eur(b.betrag)}</span>${b.sp ? '<a href="#sponsoren" style="font-size:13px">aus Sponsoren</a>' : editBtn('buchungen', b.id)}</div>`, 'Noch keine Buchungen.')}</div>`}`;
@@ -1523,6 +1548,21 @@ const ACT = {
     picked.forEach(datum => D.kalender.push({ id:uid('k'), mid, titel, typ:'einzel', datum, von:'', bis:'', wochentag:'', notiz:'Aus PDF-Import.', quelle:'pdf' }));
     save(); closeDlg(); render();
   },
+  rasterTog(d) {
+    if (!can('beitraege')) return; const c = rCfg(), m = mem(d.mid); if (!m) return; let b = rBeitrag(d.mid);
+    if (!b) { const y = +c.start.slice(0, 4); b = { id:uid('bt'), mid:d.mid, zeitraum:'Beitragsjahr ' + y + '/' + String(y + 1).slice(2), betrag:c.rate * 12, modus:'dauerauftrag', von:c.start + '-01', rate:c.rate, raster:c.start, zahlungen:[] }; D.beitraege.push(b); }
+    else if (!b.raster) b.raster = c.start;
+    b.zahlungen = b.zahlungen || []; const i = b.zahlungen.findIndex(z => z.monat === d.m);
+    if (i >= 0) b.zahlungen.splice(i, 1); else b.zahlungen.push({ datum:d.m + '-01', betrag:+b.rate || c.rate, quelle:'raster', monat:d.m }); delete b.demo;
+    const w = document.querySelector('.rasterwrap'), x = w ? w.scrollLeft : 0, y = window.scrollY; save(); render();
+    const w2 = document.querySelector('.rasterwrap'); if (w2) w2.scrollLeft = x; window.scrollTo(0, y);
+  },
+  rasterCfg() { if (!can('beitraege')) return; const c = rCfg();
+    openDlg(`<h3>Monatsraster einstellen</h3><div class="sub">Gilt für neue Einträge im Raster. Bereits erfasste Zahlungen bleiben unverändert.</div>
+      <label class="f" for="rcRate">Monatsbeitrag in €<input id="rcRate" type="number" inputmode="decimal" min="0" step="0.5" value="${c.rate}"></label>
+      <label class="f" for="rcStart">Erster Monat des Beitragsjahres<input id="rcStart" type="month" value="${c.start}"></label>
+      <div class="acts"><button class="btn dark" data-act="rasterCfgSave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  rasterCfgSave() { if (!can('beitraege')) return; const rate = parseFloat(String($('rcRate').value).replace(',', '.')), st = $('rcStart').value; if (!(rate > 0) || !/^\d{4}-\d{2}$/.test(st)) return; D.beitragCfg = { rate, start:st }; save(); closeDlg(); render(); },
   btPayOpen(d) {
     const b = D.beitraege.find(x => x.id === d.id); if (!b || !can('beitraege')) return;
     const info = beitragInfo(b); FORM = { bt:b.id };
