@@ -274,6 +274,7 @@ function seed0() {
       { id:'d2', titel:'Hauptteil Saloon', art:'Choreo-Teil', status:'In Arbeit', notiz:'', demo:true },
       { id:'d3', titel:'Musikschnitt Session 2026/27', art:'Musik', status:'In Arbeit', notiz:'', demo:true } ],
     zeiten:{ aufmarsch:'', tanz:'', abmarsch:'' },
+    merch:[],
     requisiten:[
       { id:'r1', name:'Saloon-Schwingtür', anzahl:1, wo:'', zustand:'In Arbeit', notiz:'', demo:true },
       { id:'r2', name:'Lasso', anzahl:8, wo:'', zustand:'Fertig', notiz:'', demo:true } ],
@@ -455,8 +456,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.0', BUILD = 30;
+const VERSION = '2.1', BUILD = 31;
 const CHANGELOG = [
+  { v:'2.1', datum:'2026-11-15', punkte:['Neue Rubrik Teamausstattung und Merch für Shirts, Hosen, Trainingsanzüge und Jacken mit Anzahl, Wert und Status','Auftrittszeiten werden mit Minuten und Sekunden getrennt eingegeben, das geht auch mit der Zahlentastatur am Handy'] },
   { v:'2.0', datum:'2026-11-15', punkte:['Echtbetrieb: Anmeldung mit E-Mail und Passwort, gemeinsame Daten für alle in Firebase','Finanzen werden auf dem Server geschützt: Beiträge und Buchungen sehen nur Admin und Kasse, alle anderen die Summen und ihren eigenen Beitrag','Als App aufs Handy installierbar (Zum Startbildschirm hinzufügen)'] },
   { v:'1.12', datum:'2026-11-15', punkte:['Start im Echtbetrieb: alle Beispieleinträge sind entfernt (Kostüme, Requisiten, Tanz, Sponsoren, Beiträge, Pinnwand, Abstimmung, Social Media, Kalender)','Kasse startet mit 10 Euro Startguthaben','Training bleibt nur als Sonntagsserie 11 bis 13 Uhr bis 21.03.2027'] },
   { v:'1.11', datum:'2026-11-15', punkte:['Finanzen, Beiträge, Buchungen und Sponsoren: Ändern dürfen ausschließlich Admin und Kasse, alle anderen Rollen sehen nur Summen, Budget, Spenden und den eigenen Beitrag'] },
@@ -513,9 +515,9 @@ const ALL = Object.keys(ROLES), MIT_ROLLE = ALL.filter(r => r !== 'taenzer'), TA
 const CAN = { events:['admin','trainerin','auftritte'], buchungen:['admin','kasse'], beitraege:['admin','kasse'], kostueme:['admin','trainerin','kostuem','betreuer'], tanz:['admin','trainerin'],
   requisiten:['admin','trainerin','requisit'], trainings:['admin','trainerin'], members:['admin'], aufgaben:MIT_ROLLE, posts:ALL, umfragen:ALL, dateien:['admin','trainerin'],
   postfach:['admin','trainerin'], verwaltung:['admin'], social:ALL.filter(r => r !== 'betreuer'), socialOk:['trainerin'] };
-CAN.fremde = ['admin','trainerin']; CAN.sponsoren = ['admin','kasse']; CAN.kalender = ALL;
+CAN.merch = ['admin']; CAN.fremde = ['admin','trainerin']; CAN.sponsoren = ['admin','kasse']; CAN.kalender = ALL;
 const RIGHTS = [['Auftritte bearbeiten','events'],['Pinnwand und Abstimmungen','posts'],['Aufgaben anlegen','aufgaben'],['Kalender: eigene Termine eintragen','kalender'],['Fremde Aufgaben und Abstimmungen ändern','fremde'],['Dateien hochladen','dateien'],['Buchungen und Budget','buchungen'],['Beiträge aller sehen und pflegen','beitraege'],['Sponsoren pflegen','sponsoren'],
-  ['Kostüme pflegen','kostueme'],['Requisiten pflegen','requisiten'],['Tanz bearbeiten','tanz'],['Training und Anwesenheit','trainings'],['Social-Media-Posts vorschlagen','social'],['Social-Media-Posts freigeben','socialOk'],['Mails im Namen der Gruppe','postfach'],['Mitglieder pflegen','members']];
+  ['Kostüme pflegen','kostueme'],['Teamausstattung und Merch pflegen','merch'],['Requisiten pflegen','requisiten'],['Tanz bearbeiten','tanz'],['Training und Anwesenheit','trainings'],['Social-Media-Posts vorschlagen','social'],['Social-Media-Posts freigeben','socialOk'],['Mails im Namen der Gruppe','postfach'],['Mitglieder pflegen','members']];
 const FIX = (k, r) => r === 'admin' && (k === 'members' || k === 'verwaltung');   // der Admin kann sich nicht selbst aussperren
 const roleCan = (k, r) => FIX(k, r) || ((D.rechte && D.rechte[k]) || CAN[k]).includes(r);
 const extraOf = id => (D.extra && D.extra[id]) || [];
@@ -613,6 +615,7 @@ function funde() { const t = todayISO(); return SUCHE.funde.filter(f => f && f.n
 async function startDb() { SUCHE.state = 'weg'; }
 
 /* ---------- Finanzen ---------- */
+const MERCH_ST = ['In Planung','Bestellt','In Zustellung','Ausgehändigt','Retoure'];
 const KAT_A = ['Anmeldegebühren','Kostüme','Requisiten','Training','Fahrt & Verpflegung','Sonstiges'];
 const KAT_E = ['Preisgeld','Gage','Zuschuss Verein','Sonstiges'];   // Sponsoring kommt aus der Rubrik Sponsoren
 const spGeld = () => D.sponsoren.filter(x => x.art !== 'Sachspende' && x.status === 'Eingegangen');
@@ -687,6 +690,9 @@ const C = {
     { k:'status', l:'Status', t:'select', o:['Idee','Bestellt','Geliefert','Angepasst'] }, { k:'notiz', l:'Notiz', t:'area' } ] },
   tanz:{ t:'Tanz-Baustein', f:[ { k:'titel', l:'Titel', req:1 }, { k:'art', l:'Art', t:'select', o:['Choreo-Teil','Musik','Aufstellung','Video'] },
     { k:'status', l:'Status', t:'select', o:['Idee','In Arbeit','Steht'] }, { k:'notiz', l:'Notiz oder Link', t:'area' } ] },
+  merch:{ t:'Ausstattungsteil', f:[ { k:'artikel', l:'Artikel (z. B. Shirt Funky Boys Logo)', req:1 }, { k:'kat', l:'Art', t:'select', o:['Shirt','Hose','Trainingsanzug','Jacke','Sonstiges'] },
+    { k:'anzahl', l:'Anzahl', t:'number' }, { k:'wert', l:'Wert pro Stück in €', t:'number' },
+    { k:'status', l:'Status', t:'select', o:MERCH_ST }, { k:'notiz', l:'Notiz (z. B. Lieferant, Größen)', t:'area' } ] },
   requisiten:{ t:'Requisit', f:[ { k:'name', l:'Bezeichnung', req:1 }, { k:'anzahl', l:'Anzahl', t:'number' }, { k:'wo', l:'Lagerort / wer hat es' },
     { k:'zustand', l:'Zustand', t:'select', o:['Idee','In Arbeit','Fertig','Reparatur nötig'] }, { k:'notiz', l:'Notiz (z. B. Transport)', t:'area' } ] },
   trainings:{ t:'Training', f:[ { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Von (Uhrzeit)', t:'time' }, { k:'zeitBis', l:'Bis (Uhrzeit)', t:'time' }, { k:'ort', l:'Ort' }, { k:'thema', l:'Thema' } ] },
@@ -777,7 +783,7 @@ function askConfirm(text, yes) {
 
 /* ---------- Rubriken ---------- */
 const NAV = [ ['', 'Überblick'], ['start','Start'], ['pinnwand','Pinnwand'], ['aufgaben','Aufgaben'], ['kalender','Kalender'],
-  ['', 'Planung'], ['auftritte','Auftritte'], ['suche','Suche','auftritte'], ['vormerken','Vormerken','auftritte'], ['finanzen','Finanzen'], ['sponsoren','Sponsoren'], ['kostueme','Kostüme'], ['tanz','Tanz'], ['requisiten','Requisiten'], ['training','Training'], ['trainerinnen','Trainerinnen'], ['social','Social Media'],
+  ['', 'Planung'], ['auftritte','Auftritte'], ['suche','Suche','auftritte'], ['vormerken','Vormerken','auftritte'], ['finanzen','Finanzen'], ['sponsoren','Sponsoren'], ['kostueme','Kostüme'], ['merch','Teamausstattung & Merch'], ['tanz','Tanz'], ['requisiten','Requisiten'], ['training','Training'], ['trainerinnen','Trainerinnen'], ['social','Social Media'],
   ['', 'Gruppe'], ['mitglieder','Mitglieder'], ['kontakte','Veranstalter'], ['dateien','Dateien'], ['feedback','Feedback & Fehler'], ['versionen','Versionen'], ['postfach','Postfach'], ['verwaltung','Verwaltung'] ];
 const hiddenSec = s => (s === 'postfach' && !can('postfach')) || (s === 'verwaltung' && !can('verwaltung'));
 const grpOf = s => { let g = ''; for (const n of NAV) { if (!n[0]) g = n[1]; else if (n[0] === s) return n[2] ? g + ' · ' + NAV.find(x => x[0] === n[2])[1] : g; } return ''; };
@@ -1006,6 +1012,16 @@ const SEC = {
         <div class="kpis">${[['Aufmarsch', z.aufmarsch], ['Tanz', z.tanz], ['Abmarsch', z.abmarsch], ['Gesamt', sum === 'offen' ? '' : sum]].map(x => `<div class="kpi"><small>${x[0]}</small><b>${x[1] ? esc(x[1]) + ' min' : 'offen'}</b></div>`).join('')}</div></div>
       <div class="panel"><div class="ph"><h3>Bausteine</h3></div>
         ${rows(D.tanz, x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b>${demo(x)}${x.notiz ? `<div class="sub">${linkify(x.notiz)}</div>` : ''}</div><span class="pill vio">${esc(x.art)}</span><span class="pill ${cls[x.status] || ''}">${esc(x.status)}</span>${editBtn('tanz', x.id)}</div>`, 'Noch nichts angelegt.')}</div>`;
+  },
+  merch() {
+    const cls = { 'In Planung':'', Bestellt:'warn', 'In Zustellung':'warn', 'Ausgehändigt':'good', Retoure:'bad' }, val = x => (+x.anzahl || 0) * (+x.wert || 0);
+    const total = D.merch.filter(x => x.status !== 'Retoure').reduce((a, x) => a + val(x), 0);
+    const kp = MERCH_ST.map(st => { const l = D.merch.filter(x => x.status === st); return `<div class="kpi"><small>${st}</small><b>${l.reduce((a, x) => a + (+x.anzahl || 0), 0)} Stück</b><small>${eur(l.reduce((a, x) => a + val(x), 0))}</small></div>`; }).join('');
+    return head('Teamausstattung & Merch', 'Shirts, Hosen, Trainingsanzüge und Jacken mit dem Funky-Boys-Logo: Planung, Bestellstand und Wert.', addBtn('merch', '+ Ausstattungsteil')) +
+      `<div class="kpis">${kp}</div>
+      <div class="panel"><div class="ph"><h3>Anschaffungen</h3><span class="amt">Gesamtwert ohne Retouren ${eur(total)}</span></div>
+        ${rows(D.merch, x => `<div class="row"><div class="grow"><b>${esc(x.artikel)}</b><div class="sub">${esc(x.kat || '')}${x.kat ? ' · ' : ''}${+x.anzahl || 0} × ${eur(x.wert)}${x.notiz ? ' · ' + esc(x.notiz) : ''}</div></div>
+          <span class="pill ${cls[x.status] || ''}">${esc(x.status)}</span><span class="amt">${eur(val(x))}</span>${editBtn('merch', x.id)}</div>`, 'Noch keine Anschaffungen geplant.')}</div>`;
   },
   requisiten() {
     const cls = { Fertig:'good', 'In Arbeit':'warn', 'Reparatur nötig':'bad' };
@@ -1363,8 +1379,13 @@ const ACT = {
   spIn(d) { const x = D.sponsoren.find(y => y.id === d.id); if (!x || !can('sponsoren')) return; x.status = 'Eingegangen'; x.datum = todayISO(); delete x.demo; save(); render(); },
   budget() { if (!can('buchungen')) return; openDlg(`<h3>Budget je Bereich</h3>${KAT_A.map((k, i) => `<label class="f" for="bud${i}">${k} in €<input id="bud${i}" type="number" min="0" step="1" inputmode="decimal" value="${+D.budget[k] || 0}"></label>`).join('')}<div class="acts"><button class="btn dark" data-act="saveBudget">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
   saveBudget() { if (!can('buchungen')) return; KAT_A.forEach((k, i) => { D.budget[k] = parseFloat($('bud' + i).value) || 0; }); save(); closeDlg(); render(); },
-  zeiten() { const z = D.zeiten; openDlg(`<h3>Auftrittszeiten</h3><div class="sub" style="color:var(--muted);font-size:13px">Format Minuten:Sekunden, zum Beispiel 4:30</div>${[['aufmarsch','Aufmarsch'],['tanz','Tanz'],['abmarsch','Abmarsch']].map(x => `<label class="f" for="z_${x[0]}">${x[1]}<input id="z_${x[0]}" type="text" inputmode="numeric" placeholder="0:45" value="${esc(z[x[0]])}"></label>`).join('')}<div class="err" id="zErr" hidden></div><div class="acts"><button class="btn dark" data-act="saveZeiten">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
-  saveZeiten() { const v = {}; for (const k of ['aufmarsch','tanz','abmarsch']) { v[k] = $('z_' + k).value.trim(); if (v[k] && secs(v[k]) == null) { $('zErr').textContent = 'Bitte als Minuten:Sekunden eingeben, zum Beispiel 4:30.'; $('zErr').hidden = false; return; } } D.zeiten = v; save(); closeDlg(); render(); },
+  zeiten() { const z = D.zeiten, part = (v, i) => { const m = /^(\d+):(\d{1,2})$/.exec(String(v || '').trim()); return m ? +m[i + 1] : ''; };
+    openDlg(`<h3>Auftrittszeiten</h3><div class="sub" style="color:var(--muted);font-size:13px">Minuten und Sekunden getrennt eintragen, zum Beispiel 4 Min und 30 Sek</div>${[['aufmarsch','Aufmarsch'],['tanz','Tanz'],['abmarsch','Abmarsch']].map(x => `<div class="f"><span>${x[1]}</span><span style="display:flex;gap:8px;align-items:center"><input id="z_${x[0]}_m" type="number" inputmode="numeric" min="0" max="59" placeholder="Min" aria-label="${x[1]} Minuten" value="${part(z[x[0]], 0)}" style="flex:1"> <b>:</b> <input id="z_${x[0]}_s" type="number" inputmode="numeric" min="0" max="59" placeholder="Sek" aria-label="${x[1]} Sekunden" value="${part(z[x[0]], 1)}" style="flex:1"></span></div>`).join('')}<div class="err" id="zErr" hidden></div><div class="acts"><button class="btn dark" data-act="saveZeiten">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  saveZeiten() { const v = {}; for (const k of ['aufmarsch','tanz','abmarsch']) { const m = $('z_' + k + '_m').value.trim(), sc = $('z_' + k + '_s').value.trim();
+      if (!m && !sc) { v[k] = ''; continue; }
+      if (!/^\d{1,2}$/.test(m || '0') || !/^\d{1,2}$/.test(sc || '0') || +(sc || 0) > 59) { $('zErr').textContent = 'Bitte Minuten und Sekunden als Zahlen eintragen, Sekunden von 0 bis 59.'; $('zErr').hidden = false; return; }
+      v[k] = +(m || 0) + ':' + String(+(sc || 0)).padStart(2, '0'); }
+    D.zeiten = v; save(); closeDlg(); render(); },
   anw(d) { const a = D.anwesend[d.id] || (D.anwesend[d.id] = {}); a[d.m] = !a[d.m]; save(); render(); },
   vote(d) { const u = D.umfragen.find(x => x.id === d.id); if (u.stimmen[D.me] === +d.v) delete u.stimmen[D.me]; else u.stimmen[D.me] = +d.v; save(); render(); },
   mailTo(d) { UI.mailTo = d.v; location.hash = '#postfach'; },
