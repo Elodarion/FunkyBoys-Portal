@@ -103,6 +103,7 @@
   table.raster th.rn { position:sticky; left:0; background:var(--card); text-align:left; padding:8px 10px; z-index:1; min-width:120px; }
   table.raster td.rs { padding:8px 10px; font-weight:700; }
   .rc { all:unset; box-sizing:border-box; display:block; min-width:62px; padding:10px 6px; min-height:44px; cursor:pointer; color:var(--muted); }
+  .rc.part { background:var(--warn-bg); color:var(--warn); font-weight:700; }
   .rc.on { background:var(--good-bg); color:var(--good); font-weight:700; }
   .rc:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
   .pill.good { background:var(--good-bg); color:var(--good); border-color:transparent; } .pill.warn { background:var(--warn-bg); color:var(--warn); border-color:transparent; }
@@ -466,8 +467,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.5', BUILD = 35;
+const VERSION = '2.6', BUILD = 36;
 const CHANGELOG = [
+  { v:'2.6', datum:'2026-11-15', punkte:['Im Monatsraster erscheinen jetzt auch Zahlungen, die oben bei den Beiträgen erfasst wurden, als bezahlte Monate'] },
   { v:'2.5', datum:'2026-11-15', punkte:['Monatsraster bei den Beiträgen: bezahlte Monate pro Person einfach antippen'] },
   { v:'2.4', datum:'2026-11-15', punkte:['Zahlungen können auch aus einem Bild (Screenshot oder Foto eines Kontoauszugs) übernommen werden'] },
   { v:'2.3', datum:'2026-11-15', punkte:['Die Menüleiste links scrollt unabhängig vom Inhalt'] },
@@ -651,11 +653,20 @@ const MON_K = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov
 const rCfg = () => Object.assign({ rate:20, start:(new Date().getMonth() >= 2 ? new Date().getFullYear() : new Date().getFullYear() - 1) + '-03' }, D.beitragCfg || {});
 const rMonths = () => { const c = rCfg(), [y, m] = c.start.split('-').map(Number); return Array.from({ length:12 }, (_, i) => { const t = new Date(y, m - 1 + i, 1); return { key:t.getFullYear() + '-' + pad(t.getMonth() + 1), label:MON_K[t.getMonth()] + ' ' + String(t.getFullYear()).slice(2) }; }); };
 const rBeitrag = mid => { const c = rCfg(), mine = D.beitraege.filter(b => b.mid === mid); return mine.find(b => b.raster === c.start) || (mine.length === 1 && !mine[0].raster ? mine[0] : null); };
+function rState(b, ms, rate) {
+  const tagged = new Set(((b && b.zahlungen) || []).filter(z => z.monat).map(z => z.monat));
+  let rest = ((b && b.zahlungen) || []).filter(z => !z.monat).reduce((a, z) => a + (+z.betrag || 0), 0);
+  return ms.map(x => { if (tagged.has(x.key)) return { st:'tag', amt:rate };
+    if (rate > 0 && rest >= rate - 0.005) { rest -= rate; return { st:'auto', amt:rate }; }
+    if (rest > 0.004) { const a = rest; rest = 0; return { st:'part', amt:a }; }
+    return { st:'off', amt:rate }; });
+}
 function rasterHTML() {
   const c = rCfg(), ms = rMonths(), ids = D.members.filter(m => TANZT(m.rolle) || D.beitraege.some(b => b.mid === m.id));
   const head = `<tr><th class="rn">Name</th>${ms.map(m => `<th>${m.label}</th>`).join('')}<th>Summe</th></tr>`;
-  const body = ids.map(m => { const b = rBeitrag(m.id), paid = new Set(((b && b.zahlungen) || []).filter(z => z.monat).map(z => z.monat)), sum = b ? beitragZahlt(b) : 0;
-    return `<tr><th class="rn">${esc(m.name)}</th>${ms.map(x => { const on = paid.has(x.key); return `<td><button class="rc ${on ? 'on' : ''}" data-act="rasterTog" data-mid="${esc(m.id)}" data-m="${x.key}" aria-pressed="${on}" aria-label="${esc(m.name)} ${x.label} ${on ? 'bezahlt, antippen zum Zurücknehmen' : 'offen, antippen für bezahlt'}">${on ? '✓ ' : ''}${eur(b && b.rate ? b.rate : c.rate).replace(',00', '')}</button></td>`; }).join('')}<td class="rs">${eur(sum)}</td></tr>`; }).join('');
+  const body = ids.map(m => { const b = rBeitrag(m.id), rate = b && b.rate ? +b.rate : c.rate, sum = b ? beitragZahlt(b) : 0, sts = rState(b, ms, rate);
+    return `<tr><th class="rn">${esc(m.name)}</th>${ms.map((x, i) => { const t = sts[i], on = t.st === 'tag' || t.st === 'auto', part = t.st === 'part', txt = eur(t.amt).replace(',00', '');
+      return `<td><button class="rc ${on ? 'on' : part ? 'part' : ''}" data-act="rasterTog" data-mid="${esc(m.id)}" data-m="${x.key}" aria-pressed="${on}" aria-label="${esc(m.name)} ${x.label} ${on ? 'bezahlt, antippen zum Zurücknehmen' : part ? 'teilweise bezahlt ' + txt : 'offen, antippen für bezahlt'}">${on ? '✓ ' : ''}${part ? txt + ' teilw.' : txt}</button></td>`; }).join('')}<td class="rs">${eur(sum)}</td></tr>`; }).join('');
   return `<div class="panel"><div class="ph"><h3>Monatsraster Beiträge</h3><button class="btn sm" data-act="rasterCfg">Betrag und Start ändern</button></div>
     <div class="sub" style="color:var(--muted);font-size:13px;margin-bottom:8px">Monatsbeitrag ${eur(c.rate)}, Beitragsjahr ab ${MON[+c.start.split('-')[1] - 1]} ${c.start.split('-')[0]}. Zelle antippen = bezahlt (grün mit Haken), nochmal antippen = zurücknehmen.</div>
     <div class="rasterwrap"><table class="raster"><thead>${head}</thead><tbody>${body}</tbody></table></div></div>`;
@@ -1552,7 +1563,13 @@ const ACT = {
     if (!can('beitraege')) return; const c = rCfg(), m = mem(d.mid); if (!m) return; let b = rBeitrag(d.mid);
     if (!b) { const y = +c.start.slice(0, 4); b = { id:uid('bt'), mid:d.mid, zeitraum:'Beitragsjahr ' + y + '/' + String(y + 1).slice(2), betrag:c.rate * 12, modus:'dauerauftrag', von:c.start + '-01', rate:c.rate, raster:c.start, zahlungen:[] }; D.beitraege.push(b); }
     else if (!b.raster) b.raster = c.start;
-    b.zahlungen = b.zahlungen || []; const i = b.zahlungen.findIndex(z => z.monat === d.m);
+    b.zahlungen = b.zahlungen || []; const ms = rMonths(), rate = +b.rate || c.rate, sts = rState(b, ms, rate), k = ms.findIndex(x => x.key === d.m);
+    if (k >= 0 && sts[k].st === 'auto') {   // durch normale Zahlungen gedeckt: in einzelne Monate aufteilen, damit der Monat zurückgenommen werden kann
+      const lose = b.zahlungen.filter(z => !z.monat), rest = Math.round((lose.reduce((a, z) => a + (+z.betrag || 0), 0) - sts.filter(t => t.st === 'auto').length * rate) * 100) / 100;
+      b.zahlungen = b.zahlungen.filter(z => z.monat);
+      sts.forEach((t, j) => { if (t.st === 'auto') b.zahlungen.push({ datum:ms[j].key + '-01', betrag:rate, quelle:'raster', monat:ms[j].key }); });
+      if (rest > 0.004) b.zahlungen.push({ datum:todayISO(), betrag:rest, quelle:'manuell' }); }
+    const i = b.zahlungen.findIndex(z => z.monat === d.m);
     if (i >= 0) b.zahlungen.splice(i, 1); else b.zahlungen.push({ datum:d.m + '-01', betrag:+b.rate || c.rate, quelle:'raster', monat:d.m }); delete b.demo;
     const w = document.querySelector('.rasterwrap'), x = w ? w.scrollLeft : 0, y = window.scrollY; save(); render();
     const w2 = document.querySelector('.rasterwrap'); if (w2) w2.scrollLeft = x; window.scrollTo(0, y);
