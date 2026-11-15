@@ -235,6 +235,7 @@
 <div id="dlg" class="overlay" hidden><div class="box" id="dlgBox" role="dialog" aria-modal="true"></div></div>
 
 <script>
+window.API_URL = '';   // Adresse des Google-Skripts (Ablage und Mailversand)
 /* ---------- Stammdaten ---------- */
 const RAW_EVENTS = [];
 function convEvent(r) {
@@ -478,8 +479,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.10', BUILD = 40;
+const VERSION = '2.11', BUILD = 41;
 const CHANGELOG = [
+  { v:'2.11', datum:'2026-11-15', punkte:['Datensicherung: Admin kann den kompletten Stand als Datei exportieren','Dateiablage und Mailversand sind vorbereitet und arbeiten mit dem Google-Konto der Funky Boys, sobald es verbunden ist'] },
   { v:'2.10', datum:'2026-11-15', punkte:['Anmeldegebühren der Auftritte stehen bei den Finanzen. Mit dem Status Überwiesen entsteht automatisch eine Ausgabe in den Buchungen'] },
   { v:'2.9', datum:'2026-11-15', punkte:['Kalender am Handy zeigt den Namen des Termins in der Zelle, am Ende mit Punkten gekürzt'] },
   { v:'2.8', datum:'2026-11-15', punkte:['Kalender am Handy: gleich breite Spalten, Termine als farbige Balken und darunter eine Liste der Termine des Monats'] },
@@ -701,6 +703,14 @@ function gebHTML() {
     ${rows(l, e => { const st = gebState(e); return `<div class="row"><div class="grow"><b>${esc(e.name)}</b><div class="sub">${fmtDate(e.datum)} · Eintrag: ${esc(e.gebuehr)}</div></div><span class="amt">${eur(parseFee(e.gebuehr))}</span>
       <select data-act="gebSet" data-id="${esc(e.id)}" aria-label="Status Anmeldegebühr ${esc(e.name)}"><option value="offen" ${st === 'offen' ? 'selected' : ''}>Offen</option><option value="ueberwiesen" ${st === 'ueberwiesen' ? 'selected' : ''}>Überwiesen</option>${st === 'alt' ? '<option value="alt" selected>Bezahlt laut Eintrag</option>' : ''}</select></div>`; }, 'Bei den Auftritten dieser Session ist keine Anmeldegebühr eingetragen.')}</div>`;
 }
+const apiOn = () => !!window.API_URL;
+async function apiCall(action, p) {
+  if (!window.API_URL) throw new Error('Die Ablage ist noch nicht mit dem Google-Konto verbunden.');
+  const token = await CLOUD.token(), r = await fetch(window.API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body:JSON.stringify(Object.assign({ action, token }, p)) });
+  const j = await r.json(); if (!j.ok) throw new Error(j.error || 'Unbekannter Fehler'); return j;
+}
+const readB64 = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = rej; r.readAsDataURL(f); });
+const FILE_MAX = 20 * 1024 * 1024;
 function fin() {
   const sum = a => a.reduce((s, x) => s + (+x.betrag || 0), 0);
   if (!hasFin()) { const p = D.finpub || { einOhne:0, aus:0, beitr:0, offen:0, kat:{} }, spons = sum(spGeld()), ein = p.einOhne + spons; return { ein, aus:p.aus, saldo:ein - p.aus, beitr:p.beitr, offen:p.offen, kat:p.kat || {}, spons }; }
@@ -843,6 +853,10 @@ function saveForm() {
     D[FORM.col].push(it);
   }
   save(); closeDlg(); render();
+}
+function askConfirmSend(text, yes) {
+  openDlg(`<h3>Verschicken?</h3><div>${esc(text)}</div><div class="acts"><button class="btn dark" id="cYes">Ja, senden</button><button class="btn" data-act="close">Abbrechen</button></div>`);
+  $('cYes').onclick = () => { $('cYes').disabled = true; Promise.resolve(yes()).then(() => closeDlg()); };
 }
 function askConfirm(text, yes) {
   openDlg(`<h3>Sicher?</h3><div>${esc(text)}</div><div class="acts"><button class="btn dark" id="cYes">Ja, löschen</button><button class="btn" data-act="close">Abbrechen</button></div>`);
@@ -1220,16 +1234,16 @@ const SEC = {
   },
   dateien() {
     const ord = ['Anmeldungen','Belege & Verträge','Musik','Kostüme','Fotos & Videos','Sonstiges'];
-    return head('Dateien', 'Gemeinsame Ablage. Live liegen die Dateien im Google Drive des Funky-Boys-Kontos; im Prototyp wird nur der Dateiname gemerkt.') +
-      (!can('dateien') ? '' : `<div class="panel"><div class="two"><label class="f" for="fOrd">Ordner<select id="fOrd">${ord.map(o => `<option>${o}</option>`).join('')}</select></label>
+    return head('Dateien', 'Gemeinsame Ablage. Die Dateien liegen im Google Drive des Funky-Boys-Kontos (bis 20 MB je Datei).') + (apiOn() ? '' : '<div class="panel"><div class="sub" style="color:var(--muted)">Die Ablage ist noch nicht mit dem Google-Konto verbunden. Bis dahin können keine Dateien hochgeladen werden.</div></div>') +
+      (!can('dateien') || !apiOn() ? '' : `<div class="panel"><div id="fileMsg" role="status" class="sub" style="color:var(--muted);margin-bottom:6px">${esc(UI.fileMsg || '')}</div><div class="two"><label class="f" for="fOrd">Ordner<select id="fOrd">${ord.map(o => `<option>${o}</option>`).join('')}</select></label>
         <label class="f" for="fileIn">Datei auswählen<input id="fileIn" type="file" multiple style="padding:8px;min-height:44px;width:100%"></label></div></div>`) +
       ord.map(o => { const fs = D.dateien.filter(f => f.ordner === o); return fs.length ? `<div class="panel"><div class="ph"><h3>${o}</h3><span class="sub" style="color:var(--muted)">${fs.length} Datei${fs.length === 1 ? '' : 'en'}</span></div>
         ${rows(fs, f => `<div class="row"><div class="grow"><b>${esc(f.name)}</b>${demo(f)}<div class="sub">${esc(mname(f.von))} · ${fmtDate(f.datum)}${f.size ? ' · ' + Math.max(1, Math.round(f.size / 1024)) + ' KB' : ''}</div></div>
-          ${(f.von === D.me || can('members')) ? `<button class="btn sm" data-act="delFile" data-id="${f.id}">Entfernen</button>` : ''}</div>`, '')}</div>` : ''; }).join('');
+          ${f.driveId ? `<button class="btn sm" data-act="openFile" data-id="${f.id}">Öffnen</button>` : '<span class="pill warn">nur Name</span>'}${(f.von === D.me || can('members')) ? `<button class="btn sm" data-act="delFile" data-id="${f.id}">Entfernen</button>` : ''}</div>`, '')}</div>` : ''; }).join('');
   },
   postfach() {
     const ev = [...upcoming(), ...sortedEvents().filter(isPast).slice(-5).reverse()], k = kontakte().filter(c => c.mail);
-    return head('Postfach', 'Mails im Namen der Funky Boys schreiben. Live gehen sie über die Gmail-Adresse der Gruppe raus. Im Prototyp wird nichts verschickt.') +
+    return head('Postfach', 'Mails im Namen der Funky Boys schreiben und über die Gmail-Adresse der Gruppe verschicken.' + (apiOn() ? '' : ' Das Verschicken ist noch nicht verbunden, bis dahin gibt es nur Entwürfe.')) +
       `<div class="panel"><div class="ph"><h3>Neue Mail</h3><span class="sub" style="color:var(--muted);font-size:13px">Absender: Funky Boys &lt;${esc(D.absender)}&gt;</span></div>
         <label class="f" for="mAn">An<input id="mAn" type="text" list="mList" value="${esc(UI.mailTo)}" placeholder="E-Mail-Adresse"></label><datalist id="mList">${k.map(c => `<option value="${esc(c.mail)}">${esc(c.name)}</option>`).join('')}</datalist>
         <div class="two"><label class="f" for="mEv">Auftritt<select id="mEv">${ev.map(e => `<option value="${e.id}">${fmtDate(e.datum).slice(4)} ${esc(e.name)}</option>`).join('')}</select></label>
@@ -1239,9 +1253,9 @@ const SEC = {
         <label class="f" for="mBetreff">Betreff<input id="mBetreff" type="text"></label>
         <label class="f" for="mText">Text<textarea id="mText" rows="9"></textarea></label>
         <div class="err" id="mErr" hidden></div>
-        <button class="btn dark" data-act="draft">Als Entwurf speichern</button></div>
+        <div class="chips">${apiOn() ? '<button class="btn dark" data-act="mailSendNow">Jetzt senden</button>' : ''}<button class="btn" data-act="draft">Als Entwurf speichern</button></div><div id="mSendMsg" role="status" class="sub" style="color:var(--muted)">${esc(UI.mailMsg || '')}</div></div>
       <div class="panel"><div class="ph"><h3>Entwürfe (${D.mails.length})</h3></div>
-        ${rows([...D.mails].reverse(), m => `<div class="row"><div class="grow"><b>${esc(m.betreff)}</b><div class="sub">an ${esc(m.an)} · ${esc(mname(m.von))} · ${fmtDate(m.datum)}</div></div><span class="pill warn">nicht verschickt</span><button class="btn sm" data-act="delMail" data-id="${m.id}">Löschen</button></div>`, 'Noch keine Entwürfe.')}</div>`;
+        ${rows([...D.mails].reverse(), m => `<div class="row"><div class="grow"><b>${esc(m.betreff)}</b><div class="sub">an ${esc(m.an)} · ${esc(mname(m.von))} · ${fmtDate(m.datum)}</div></div>${m.gesendet ? '<span class="pill good">gesendet</span>' : `<span class="pill warn">nicht verschickt</span>${apiOn() && can('postfach') ? `<button class="btn sm pri" data-act="mailSendDraft" data-id="${m.id}">Senden</button>` : ''}`}<button class="btn sm" data-act="delMail" data-id="${m.id}">Löschen</button></div>`, 'Noch keine Entwürfe.')}</div>`;
   },
   verwaltung() {
     const adm = me().rolle === 'admin';
@@ -1259,7 +1273,9 @@ const SEC = {
         <tbody>${RIGHTS.map(x => `<tr><td>${x[0]}</td>${ALL.map(r => `<td class="c"><input type="checkbox" data-act="recht" data-k="${x[1]}" data-r="${r}" ${roleCan(x[1], r) ? 'checked' : ''} ${!adm || FIX(x[1], r) ? 'disabled' : ''} aria-label="${x[0]}: ${ROLES[r]}" style="width:20px;height:20px;accent-color:var(--accent)"></td>`).join('')}</tr>`).join('')}</tbody></table></div>
         <div style="max-width:65ch;color:var(--muted);font-size:13px">Lesen dürfen alle alles außer Postfach und Verwaltung. Zu- und Absagen gibt jeder für sich selbst. Eigene Aufgaben, Beiträge und Abstimmungen darf jeder ändern; eine zugeteilte Aufgabe darf man abhaken. Rollen vergeben und diese Tabelle ändern kann nur der Admin.</div></div>
       <div class="panel"><div class="ph"><h3>Anmeldung</h3><button class="btn sm" data-act="syncLogins">Logins abgleichen</button></div>
-        <div style="max-width:65ch;color:var(--muted);font-size:14px">Jedes Mitglied meldet sich mit der E-Mail-Adresse an, die oben bei ihm steht, und bestätigt sie einmal per Mail. Wer keine Adresse hat, kann sich nicht anmelden. Änderungen an E-Mail oder Rolle werden automatisch übernommen. ${esc(UI.loginMsg || '')}</div></div>`;
+        <div style="max-width:65ch;color:var(--muted);font-size:14px">Jedes Mitglied meldet sich mit der E-Mail-Adresse an, die oben bei ihm steht, und bestätigt sie einmal per Mail. Wer keine Adresse hat, kann sich nicht anmelden. Änderungen an E-Mail oder Rolle werden automatisch übernommen. ${esc(UI.loginMsg || '')}</div></div>
+      <div class="panel"><div class="ph"><h3>Datensicherung</h3><button class="btn sm" data-act="exportAll">Alles exportieren</button></div>
+        <div style="max-width:65ch;color:var(--muted);font-size:14px">Lädt den kompletten Stand (Mitglieder, Auftritte, Finanzen, Beiträge und alles andere) als Datei herunter. Bitte regelmäßig machen, zum Beispiel einmal im Monat, und die Datei sicher aufbewahren. Sie enthält persönliche Daten.</div></div>`;
   }
 };
 
@@ -1488,8 +1504,17 @@ const ACT = {
   draft() { const an = $('mAn').value.trim(), betreff = $('mBetreff').value.trim(), text = $('mText').value.trim();
     if (!an || !betreff || !text) { $('mErr').textContent = 'Bitte Empfänger, Betreff und Text ausfüllen.'; $('mErr').hidden = false; return; }
     D.mails.push({ id:uid('ml'), an, betreff, text, von:D.me, datum:todayISO() }); UI.mailTo = ''; save(); render(); },
+  async mailSendNow() { if (!can('postfach')) return; const an = $('mAn').value.trim(), betreff = $('mBetreff').value.trim(), text = $('mText').value.trim();
+    if (!an || !betreff || !text) { $('mErr').textContent = 'Bitte Empfänger, Betreff und Text ausfüllen.'; $('mErr').hidden = false; return; }
+    askConfirmSend('Mail an ' + an + ' jetzt verschicken?', async () => { try { await apiCall('mail', { an, betreff, text }); D.mails.push({ id:uid('ml'), an, betreff, text, von:D.me, datum:todayISO(), gesendet:true }); UI.mailTo = ''; UI.mailMsg = 'Die Mail an ' + an + ' wurde verschickt.'; } catch (e) { UI.mailMsg = 'Verschicken fehlgeschlagen: ' + e.message; } save(); render(); }); },
+  mailSendDraft(d) { if (!can('postfach')) return; const m = D.mails.find(x => x.id === d.id); if (!m || m.gesendet) return;
+    askConfirmSend('Mail an ' + m.an + ' jetzt verschicken?', async () => { try { await apiCall('mail', { an:m.an, betreff:m.betreff, text:m.text }); m.gesendet = true; m.datum = todayISO(); UI.mailMsg = 'Die Mail an ' + m.an + ' wurde verschickt.'; } catch (e) { UI.mailMsg = 'Verschicken fehlgeschlagen: ' + e.message; } save(); render(); }); },
   delMail(d) { D.mails = D.mails.filter(m => m.id !== d.id); save(); render(); },
-  delFile(d) { askConfirm('Die Datei wird aus der Ablage entfernt.', () => { D.dateien = D.dateien.filter(f => f.id !== d.id); }); },
+  delFile(d) { const f0 = D.dateien.find(f => f.id === d.id); askConfirm('Die Datei wird aus der Ablage entfernt.', () => { if (f0 && f0.driveId) apiCall('delete', { id:f0.driveId }).catch(() => {}); D.dateien = D.dateien.filter(f => f.id !== d.id); }); },
+  async openFile(d) { const f = D.dateien.find(x => x.id === d.id); if (!f || !f.driveId) return; UI.fileMsg = 'Lade „' + f.name + '“ …'; render();
+    try { const j = await apiCall('download', { id:f.driveId }), bin = atob(j.b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      const url = URL.createObjectURL(new Blob([u8], { type:j.mime || 'application/octet-stream' })), a = document.createElement('a'); a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); UI.fileMsg = ''; }
+    catch (e) { UI.fileMsg = 'Das Öffnen hat nicht geklappt: ' + e.message; } render(); },
   role(d, el) { if (me().rolle !== 'admin') return; mem(d.id).rolle = el.value; save(); render(); },
   recht(d, el) { if (me().rolle !== 'admin' || FIX(d.k, d.r)) return;
     if (!D.rechte) D.rechte = {}; const cur = new Set(D.rechte[d.k] || CAN[d.k]); el.checked ? cur.add(d.r) : cur.delete(d.r); D.rechte[d.k] = [...cur]; save(); renderNav(); },
@@ -1677,6 +1702,9 @@ const ACT = {
   gResend() { CLOUD.sendVerify().then(() => gErr('Die Mail ist unterwegs.')).catch(e => gErr(authMsg(e))); },
   logout() { CLOUD.signOut(); },
   reloadPage() { location.reload(); },
+  exportAll() { if (!can('verwaltung')) return; const out = {}; Object.keys(blank()).filter(k => !LOCAL_KEYS.includes(k) && (hasFin() || !FIN_KEYS.includes(k))).forEach(k => { out[k] = D[k]; });
+    out._export = { am:new Date().toISOString(), version:VERSION }; const url = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type:'application/json' })), a = document.createElement('a');
+    a.href = url; a.download = 'funkyboys-sicherung-' + todayISO() + '.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); UI.loginMsg = ''; },
   async syncLogins() { if (!can('verwaltung')) return; try { const n = await syncAllowed(); UI.loginMsg = n + ' Logins abgeglichen.'; } catch (e) { UI.loginMsg = 'Abgleich fehlgeschlagen (' + (e.code || e.message) + ').'; } render(); },
   async seedGo() { const s = CS.seed, mid = $('seedMe').value; if (!s || !mid || !CS.info.adm) return;
     const d = Object.assign(blank(), s); delete d.me; delete d.live; delete d.seedIds; d.finpub = null; d.members.find(x => x.id === mid).email = CS.user.email.toLowerCase();
@@ -1691,7 +1719,12 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'seedFile') { const f = t.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const s = JSON.parse(r.result); if (!Array.isArray(s.members) || !s.members.length) throw new Error('keine Mitglieder'); CS.seed = s; $('seedMe').innerHTML = s.members.map(m => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join(''); $('seedGo').disabled = false; $('seedMsg').textContent = s.members.length + ' Mitglieder, ' + (s.events || []).length + ' Auftritte gefunden.'; } catch (e) { $('seedMsg').textContent = 'Die Datei passt nicht (' + e.message + ').'; } }; r.readAsText(f); return; }
-  if (t.id === 'fileIn') { [...t.files].forEach(f => D.dateien.push({ id:uid('f'), ordner:$('fOrd').value, name:f.name, size:f.size, von:D.me, datum:todayISO() })); save(); render(); return; }
+  if (t.id === 'fileIn') { const list = [...t.files], ord = $('fOrd').value; t.value = ''; if (!apiOn() || !can('dateien')) return;
+    (async () => { let ok = 0; for (const f of list) { if (f.size > FILE_MAX) { UI.fileMsg = '„' + f.name + '“ ist größer als 20 MB und wurde übersprungen.'; render(); continue; }
+        try { UI.fileMsg = 'Lade „' + f.name + '“ hoch …'; render(); const j = await apiCall('upload', { ordner:ord, name:f.name, mime:f.type || 'application/octet-stream', b64:await readB64(f) });
+          D.dateien.push({ id:uid('f'), ordner:ord, name:f.name, size:f.size, von:D.me, datum:todayISO(), driveId:j.id }); ok++; save(); }
+        catch (e) { UI.fileMsg = 'Hochladen von „' + f.name + '“ fehlgeschlagen: ' + e.message; render(); return; } }
+      UI.fileMsg = ok ? ok + (ok === 1 ? ' Datei hochgeladen.' : ' Dateien hochgeladen.') : UI.fileMsg; render(); })(); return; }
   if (t.id === 'pdfFile') { calPdfHandle(t.files[0]); return; }
   if (t.id === 'impFile') { btImportHandle(t.files[0]); return; }
   if (t.dataset.act && (t.tagName === 'SELECT' || t.type === 'checkbox') && ACT[t.dataset.act]) ACT[t.dataset.act](t.dataset, t);
@@ -1725,6 +1758,7 @@ window.CLOUD = {
   sendVerify: () => sendEmailVerification(auth.currentUser),
   reset: m => sendPasswordResetEmail(auth, m),
   signOut: () => signOut(auth),
+  token: () => auth.currentUser.getIdToken(),
   refresh: async () => { await auth.currentUser.reload(); await auth.currentUser.getIdToken(true); return auth.currentUser; },
   get: async path => snapOf(await getDoc(doc(db, path))),
   set: (path, obj) => setDoc(doc(db, path), obj),
