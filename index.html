@@ -478,8 +478,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.9', BUILD = 39;
+const VERSION = '2.10', BUILD = 40;
 const CHANGELOG = [
+  { v:'2.10', datum:'2026-11-15', punkte:['Anmeldegebühren der Auftritte stehen bei den Finanzen. Mit dem Status Überwiesen entsteht automatisch eine Ausgabe in den Buchungen'] },
   { v:'2.9', datum:'2026-11-15', punkte:['Kalender am Handy zeigt den Namen des Termins in der Zelle, am Ende mit Punkten gekürzt'] },
   { v:'2.8', datum:'2026-11-15', punkte:['Kalender am Handy: gleich breite Spalten, Termine als farbige Balken und darunter eine Liste der Termine des Monats'] },
   { v:'2.7', datum:'2026-11-15', punkte:['Die Auftritts-Suche ist online: Der tägliche Suchlauf legt neue Funde ab, sie lassen sich mit einem Tipp in die Auftrittsliste übernehmen'] },
@@ -689,6 +690,16 @@ function rasterHTML() {
   return `<div class="panel"><div class="ph"><h3>Monatsraster Beiträge</h3><button class="btn sm" data-act="rasterCfg">Betrag und Start ändern</button></div>
     <div class="sub" style="color:var(--muted);font-size:13px;margin-bottom:8px">Monatsbeitrag ${eur(c.rate)}, Beitragsjahr ab ${MON[+c.start.split('-')[1] - 1]} ${c.start.split('-')[0]}. Zelle antippen = bezahlt (grün mit Haken), nochmal antippen = zurücknehmen.</div>
     <div class="rasterwrap"><table class="raster"><thead>${head}</thead><tbody>${body}</tbody></table></div></div>`;
+}
+const parseFee = t0 => { const t = String(t0 || ''); if (/kostenlos|keine geb/i.test(t)) return 0; const m = /(\d+(?:[.,]\d+)?)\s*(?:€|eur)/i.exec(t) || /^\s*(\d+(?:[.,]\d+)?)\s*$/.exec(t); return m ? parseFloat(m[1].replace(',', '.')) : 0; };
+const gebList = () => D.events.filter(e => e.datum && season(e.datum) === sess() && statusInfo(e.status).b !== 'declined' && parseFee(e.gebuehr) > 0).sort((a, b) => a.datum.localeCompare(b.datum));
+const gebState = e => D.buchungen.some(b => b.ev === e.id) ? 'ueberwiesen' : e.gebStatus === 'offen' ? 'offen' : /überwiesen|bezahlt/i.test(e.gebuehr || '') ? 'alt' : 'offen';
+function gebHTML() {
+  const l = gebList(), sum = f => l.filter(f).reduce((a, e) => a + parseFee(e.gebuehr), 0), off = sum(e => gebState(e) === 'offen'), bez = sum(e => gebState(e) !== 'offen');
+  return `<div class="panel"><div class="ph"><h3>Anmeldegebühren der Auftritte</h3><span class="amt">offen ${eur(off)} · überwiesen ${eur(bez)}</span></div>
+    <div class="sub" style="color:var(--muted);font-size:13px;margin-bottom:6px">Die Gebühren kommen aus den Auftritten dieser Session (nicht abgesagte). Auf „Überwiesen“ stellen legt automatisch eine Ausgabe bei den Buchungen an, zurück auf „Offen“ nimmt sie wieder weg.</div>
+    ${rows(l, e => { const st = gebState(e); return `<div class="row"><div class="grow"><b>${esc(e.name)}</b><div class="sub">${fmtDate(e.datum)} · Eintrag: ${esc(e.gebuehr)}</div></div><span class="amt">${eur(parseFee(e.gebuehr))}</span>
+      <select data-act="gebSet" data-id="${esc(e.id)}" aria-label="Status Anmeldegebühr ${esc(e.name)}"><option value="offen" ${st === 'offen' ? 'selected' : ''}>Offen</option><option value="ueberwiesen" ${st === 'ueberwiesen' ? 'selected' : ''}>Überwiesen</option>${st === 'alt' ? '<option value="alt" selected>Bezahlt laut Eintrag</option>' : ''}</select></div>`; }, 'Bei den Auftritten dieser Session ist keine Anmeldegebühr eingetragen.')}</div>`;
 }
 function fin() {
   const sum = a => a.reduce((s, x) => s + (+x.betrag || 0), 0);
@@ -1033,6 +1044,7 @@ const SEC = {
               ${full && info.rest > 0 ? `<button class="btn sm" data-act="btPayOpen" data-id="${b.id}">+ Zahlung</button>` : ''}${full ? editBtn('beitraege', b.id) : ''}</div>`; }, 'Für dich ist kein Beitrag hinterlegt.')}</div>
       </div>
       ${full ? rasterHTML() : ''}
+      ${can('buchungen') ? gebHTML() : ''}
       ${!can('buchungen') ? '<div class="panel"><div class="ph"><h3>Buchungen</h3></div><div class="sub" style="color:var(--muted);font-size:13px">Die einzelnen Buchungen sehen Admin und Kasse. Die Summen und das Budget oben sind für alle offen.</div></div>' : `<div class="panel"><div class="ph"><h3>Buchungen</h3></div>
         ${rows(bs, b => `<div class="row"><div class="grow"><b>${esc(b.text)}</b>${demo(b)}<div class="sub">${fmtDate(b.datum)}</div></div><span class="pill">${esc(b.kat)}</span>
           <span class="amt ${b.typ === 'E' ? 'in' : 'out'}">${b.typ === 'E' ? '+' : '−'} ${eur(b.betrag)}</span>${b.sp ? '<a href="#sponsoren" style="font-size:13px">aus Sponsoren</a>' : editBtn('buchungen', b.id)}</div>`, 'Noch keine Buchungen.')}</div>`}`;
@@ -1601,6 +1613,12 @@ const ACT = {
       <label class="f" for="rcStart">Erster Monat des Beitragsjahres<input id="rcStart" type="month" value="${c.start}"></label>
       <div class="acts"><button class="btn dark" data-act="rasterCfgSave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
   rasterCfgSave() { if (!can('beitraege')) return; const rate = parseFloat(String($('rcRate').value).replace(',', '.')), st = $('rcStart').value; if (!(rate > 0) || !/^\d{4}-\d{2}$/.test(st)) return; D.beitragCfg = { rate, start:st }; save(); closeDlg(); render(); },
+  gebSet(d, el) {
+    if (!can('buchungen')) return; const e = D.events.find(x => x.id === d.id); if (!e || el.value === 'alt') return;
+    if (el.value === 'ueberwiesen') { if (!D.buchungen.some(b => b.ev === e.id)) D.buchungen.push({ id:uid('b'), typ:'A', kat:'Anmeldegebühren', betrag:parseFee(e.gebuehr), text:'Anmeldegebühr: ' + e.name, datum:todayISO(), ev:e.id }); delete e.gebStatus; }
+    else { D.buchungen = D.buchungen.filter(b => b.ev !== e.id); e.gebStatus = 'offen'; }
+    save(); render();
+  },
   btPayOpen(d) {
     const b = D.beitraege.find(x => x.id === d.id); if (!b || !can('beitraege')) return;
     const info = beitragInfo(b); FORM = { bt:b.id };
