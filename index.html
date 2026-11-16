@@ -235,7 +235,7 @@
 <div id="dlg" class="overlay" hidden><div class="box" id="dlgBox" role="dialog" aria-modal="true"></div></div>
 
 <script>
-window.API_URL = '';   // Adresse des Google-Skripts (Ablage und Mailversand)
+window.API_URL = 'https://script.google.com/macros/s/AKfycbyjI-fGwUWtS_Y2YNo718KNscXrxxmLn82p4QPFN38NE30aCfKd3jKqHHISY0eQ9To/exec';   // Adresse des Google-Skripts (Ablage und Mailversand)
 /* ---------- Stammdaten ---------- */
 const RAW_EVENTS = [];
 function convEvent(r) {
@@ -479,8 +479,9 @@ function applyMotto() {
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
 }
-const VERSION = '2.11', BUILD = 41;
+const VERSION = '2.12', BUILD = 42;
 const CHANGELOG = [
+  { v:'2.12', datum:'2026-11-16', punkte:['Dateiablage und Mailversand sind mit dem Google-Konto der Funky Boys verbunden'] },
   { v:'2.11', datum:'2026-11-15', punkte:['Datensicherung: Admin kann den kompletten Stand als Datei exportieren','Dateiablage und Mailversand sind vorbereitet und arbeiten mit dem Google-Konto der Funky Boys, sobald es verbunden ist'] },
   { v:'2.10', datum:'2026-11-15', punkte:['Anmeldegebühren der Auftritte stehen bei den Finanzen. Mit dem Status Überwiesen entsteht automatisch eine Ausgabe in den Buchungen'] },
   { v:'2.9', datum:'2026-11-15', punkte:['Kalender am Handy zeigt den Namen des Termins in der Zelle, am Ende mit Punkten gekürzt'] },
