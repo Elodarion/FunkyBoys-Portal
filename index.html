@@ -368,6 +368,12 @@
   .callbtn { width:54px; height:54px; border-radius:50%; border:0; background:#2a3042; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; } .callbtn svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; } .callbtn.off { background:#5a2430; } .callbtn.end { background:#e03e52; }
   .callin { position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:110; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:18px; padding:14px 16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; box-shadow:0 12px 40px rgba(0,0,0,.5); max-width:94vw; } .callint { display:flex; flex-direction:column; margin-right:8px; } .callint span { color:var(--muted); font-size:13px; }
   @media (max-width:820px) { .chatfab { right:14px; bottom:calc(92px + env(safe-area-inset-bottom)); } .chatpanel { inset:0; width:auto; max-width:none; height:auto; max-height:none; border-radius:0; border:0; } .bugbtn { right:auto !important; } }
+  /* Hilfe */
+  .hlp summary { cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; } .hlp summary::-webkit-details-marker { display:none; } .hlp summary b { font-size:16px; }
+  .hlp summary::after { content:'+'; font-size:22px; color:var(--accent); margin-left:auto; } .hlp[open] summary::after { content:'–'; } .hlpr { display:flex; gap:6px; flex-wrap:wrap; }
+  .hlpsteps { margin:12px 0 4px; padding-left:22px; display:flex; flex-direction:column; gap:8px; max-width:70ch; } .hlpimg { width:100%; max-width:760px; border-radius:14px; border:1px solid var(--line); margin:12px 0 4px; display:block; background:var(--soft); }
+  .hlptip { background:var(--accent-bg); border-radius:12px; padding:10px 14px; margin:8px 0; font-size:14px; max-width:70ch; }
+  #helpQ { width:100%; }
 .gate { position:fixed; inset:0; background:#2e1d12; z-index:100; display:flex; align-items:center; justify-content:center; padding:16px; overflow:auto; }
   .gate[hidden], .syncerr[hidden] { display:none; }
   .gbox { background:#fff; color:#222; max-width:440px; width:100%; border-radius:10px; padding:22px; display:flex; flex-direction:column; gap:12px; }
@@ -864,8 +870,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.21', BUILD = 51;
+const VERSION = '2.22', BUILD = 52;
 const CHANGELOG = [
+  { v:'2.22', datum:'2026-11-16', punkte:['Neue Rubrik „Hilfe & Anleitung“: Schritt-für-Schritt-Anleitungen mit Bildern, nach Rolle sortiert (alle, Trainerinnen, Kasse, Admin) und durchsuchbar','Hilfe-Assistent in der Chat-Blase: beantwortet Fragen zum Portal aus der Anleitung und führt zur passenden Seite'] },
   { v:'2.21', datum:'2026-11-16', punkte:['Chat als Blase unten rechts, wie im Betriebsratsportal: Gruppenchat und Einzelchats mit jedem Mitglied, ungelesene Nachrichten als Zähler','Sprach- und Videoanrufe direkt aus dem Chat, auch als Gruppenanruf mit allen, die gerade online sind','Online-Anzeige mit „zuletzt gesehen“'] },
   { v:'2.20', datum:'2026-11-16', punkte:['Gruppenchat: Nachrichten in Echtzeit an alle Mitglieder, neue Nachrichten erscheinen als Zähler am Chat und bei „Neu für dich“','Online-Anzeige: Wer gerade im Portal ist, steht im Chat und auf der Startseite, dazu „zuletzt gesehen“'] },
   { v:'2.19', datum:'2026-11-16', punkte:['Gruppentermine für alle (Zusatztraining, Treffen, Teamevent): Admin und Trainerinnen legen sie an, sie stehen im Kalender bei allen','Kalender: neue Ansicht „Freie Zeiten finden“ mit Zeitraum, Wochentagen, Uhrzeit und Personenauswahl, Treffer lassen sich direkt als Gruppentermin eintragen'] },
@@ -1334,7 +1341,7 @@ function askConfirm(text, yes) {
 /* ---------- Rubriken ---------- */
 const NAV = [ ['', 'Überblick'], ['start','Start'], ['pinnwand','Pinnwand'], ['aufgaben','Aufgaben'], ['kalender','Kalender'],
   ['', 'Planung'], ['auftritte','Auftritte'], ['suche','Suche','auftritte'], ['vormerken','Vormerken','auftritte'], ['finanzen','Finanzen'], ['sponsoren','Sponsoren'], ['kostueme','Kostüme'], ['merch','Teamausstattung & Merch'], ['tanz','Tanz'], ['requisiten','Requisiten'], ['training','Training'], ['trainerinnen','Trainerinnen'], ['social','Social Media'],
-  ['', 'Gruppe'], ['mitglieder','Mitglieder'], ['kontakte','Veranstalter'], ['dateien','Dateien'], ['feedback','Feedback & Fehler'], ['versionen','Versionen'], ['postfach','Postfach'], ['verwaltung','Verwaltung'] ];
+  ['', 'Gruppe'], ['mitglieder','Mitglieder'], ['kontakte','Veranstalter'], ['dateien','Dateien'], ['hilfe','Hilfe & Anleitung'], ['feedback','Feedback & Fehler'], ['versionen','Versionen'], ['postfach','Postfach'], ['verwaltung','Verwaltung'] ];
 const hiddenSec = s => (s === 'postfach' && !can('postfach')) || (s === 'verwaltung' && !can('verwaltung'));
 const grpOf = s => { let g = ''; for (const n of NAV) { if (!n[0]) g = n[1]; else if (n[0] === s) return n[2] ? g + ' · ' + NAV.find(x => x[0] === n[2])[1] : g; } return ''; };
 const evTabs = () => { const n = funde().filter(f => !D.sucheDone[f.id]).length; return `<div class="tabs"><a href="#auftritte" class="${UI.sec === 'auftritte' ? 'on' : ''}">Termine</a><a href="#suche" class="${UI.sec === 'suche' ? 'on' : ''}">Suche nach neuen Auftritten${n ? ' (' + n + ')' : ''}</a><a href="#vormerken" class="${UI.sec === 'vormerken' ? 'on' : ''}">Vormerken ${nextSess()}</a></div>`; };
@@ -1502,26 +1509,26 @@ const chatWhoHTML = () => {
     + (off.length ? `<div class="sub" style="width:100%">Zuletzt gesehen: ${off.slice(0, 6).map(m => memShort(m.id) + ' ' + agoTxt(CH.pres[m.id])).join(' · ')}</div>` : '');
 };
 function chatMsgsHTML(c) {
-  const a = chatAll(c); if (!a.length) return '<div class="empty">Noch keine Nachrichten. Schreib die erste.</div>';
+  if (c === 'bot') botLoad(); const a = chatAll(c); if (!a.length) return '<div class="empty">Noch keine Nachrichten. Schreib die erste.</div>';
   let last = '', h = ''; const today = new Date().toLocaleDateString('de-DE');
   a.forEach(m => { const d = new Date(m.t), day = d.toLocaleDateString('de-DE'); if (day !== last) { last = day; h += `<div class="chatday">${day === today ? 'Heute' : day}</div>`; }
     const mine = m.von === D.me, pend = CH.pend[c] && CH.pend[c][m.id];
-    h += `<div class="chatmsg${mine ? ' mine' : ''}"><div class="chatb">${c === 'g' && !mine ? `<b>${memShort(m.von)}</b> ` : ''}<span class="sub">${pad(d.getHours())}:${pad(d.getMinutes())}</span>${(mine || can('verwaltung')) && !pend ? `<button class="chatx" data-act="chatDel" data-c="${esc(c)}" data-id="${esc(m.id)}" aria-label="Nachricht löschen">×</button>` : ''}<div class="chatt">${linkify(m.text)}</div></div></div>`; });
+    h += `<div class="chatmsg${mine ? ' mine' : ''}"><div class="chatb">${c === 'g' && !mine ? `<b>${memShort(m.von)}</b> ` : ''}${m.von === 'bot' ? '<b>Assistent</b> ' : ''}<span class="sub">${pad(d.getHours())}:${pad(d.getMinutes())}</span>${c !== 'bot' && (mine || can('verwaltung')) && !pend ? `<button class="chatx" data-act="chatDel" data-c="${esc(c)}" data-id="${esc(m.id)}" aria-label="Nachricht löschen">×</button>` : ''}<div class="chatt">${m.html ? m.html : linkify(m.text)}</div>${m.von === 'bot' ? botExtra(m) : ''}</div></div>`; });
   return h;
 }
-const convTitle = c => c === 'g' ? 'Gruppenchat' : mname(c);
+const convTitle = c => c === 'g' ? 'Gruppenchat' : c === 'bot' ? 'Hilfe-Assistent' : mname(c);
 function chatRender() {
   const P = $('chatPanel'); if (!P) return; P.hidden = !CH.open; if (!CH.open) return;
   const c = CH.conv;
   if (!c) {
     const row = id => { const l = chatAll(id), last = l[l.length - 1], un = convUnread(id).length, on = id === 'g' ? D.members.filter(m => m.id !== D.me && isOnline(m.id)).length : isOnline(id);
       return `<button class="cprow" data-act="chatConv" data-id="${esc(id)}"><span class="cpav ${id === 'g' ? 'grp' : ''}">${id === 'g' ? '👥' : esc(mname(id).slice(0, 1).toUpperCase())}${id !== 'g' && on ? '<i class="dot"></i>' : ''}</span><span class="cptx"><b>${esc(convTitle(id))}</b><small>${last ? esc((last.von === D.me ? 'Du: ' : id === 'g' ? mname(last.von).split(' ')[0] + ': ' : '') + last.text).slice(0, 70) : (id === 'g' ? (on ? on + ' online' : 'Alle Mitglieder') : (on ? 'online' : CH.pres[id] ? 'zuletzt ' + agoTxt(CH.pres[id]) : 'offline'))}</small></span>${un ? `<span class="cnt">${un}</span>` : ''}</button>`; };
-    P.innerHTML = `<div class="cphead"><b>Chat</b><button class="cpx" data-act="chatToggle" aria-label="Schließen">×</button></div><div class="cplist">${convIds().map(row).join('')}</div>`; return;
+    P.innerHTML = `<div class="cphead"><b>Chat</b><button class="cpx" data-act="chatToggle" aria-label="Schließen">×</button></div><div class="cplist"><button class="cprow" data-act="chatConv" data-id="bot"><span class="cpav grp">🤖</span><span class="cptx"><b>Hilfe-Assistent</b><small>Fragen zum Portal</small></span></button>${convIds().map(row).join('')}</div>`; return;
   }
-  const dm = c !== 'g', on = dm && isOnline(c);
-  P.innerHTML = `<div class="cphead"><button class="cpx" data-act="chatConv" data-id="" aria-label="Zurück">‹</button><span class="cptt"><b>${esc(convTitle(c))}</b><small id="cpSub">${dm ? (on ? '<i class="dot"></i>online' : CH.pres[c] ? 'zuletzt ' + agoTxt(CH.pres[c]) : 'offline') : D.members.filter(m => m.id !== D.me && isOnline(m.id)).length + ' online'}</small></span>
-      <button class="cpx" data-act="callGo" data-c="${esc(c)}" data-k="audio" aria-label="Sprachanruf" title="Sprachanruf"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></button>
-      <button class="cpx" data-act="callGo" data-c="${esc(c)}" data-k="video" aria-label="Videoanruf" title="Videoanruf"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></button>
+  const bot = c === 'bot', dm = c !== 'g' && !bot, on = dm && isOnline(c);
+  P.innerHTML = `<div class="cphead"><button class="cpx" data-act="chatConv" data-id="" aria-label="Zurück">‹</button><span class="cptt"><b>${esc(convTitle(c))}</b><small id="cpSub">${bot ? 'Antwortet aus der Anleitung' : dm ? (on ? '<i class="dot"></i>online' : CH.pres[c] ? 'zuletzt ' + agoTxt(CH.pres[c]) : 'offline') : D.members.filter(m => m.id !== D.me && isOnline(m.id)).length + ' online'}</small></span>
+      ${bot ? '' : `<button class="cpx" data-act="callGo" data-c="${esc(c)}" data-k="audio" aria-label="Sprachanruf" title="Sprachanruf"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></button>
+      <button class="cpx" data-act="callGo" data-c="${esc(c)}" data-k="video" aria-label="Videoanruf" title="Videoanruf"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="M15 10l6-3v10l-6-3"/></svg></button>`}
       <button class="cpx" data-act="chatToggle" aria-label="Schließen">×</button></div>
     <div id="cpMsgs" class="chatlist" aria-live="polite">${chatMsgsHTML(c)}</div><div id="chatErr" class="sub" role="status" style="color:var(--bad,#c33);padding:0 12px">${esc(CH.err)}</div>
     <div class="chatin"><textarea id="chatText" rows="1" maxlength="1000" placeholder="Nachricht … (Enter sendet)" aria-label="Nachricht"></textarea><button class="btn pri" data-act="chatSend">Senden</button></div>`;
@@ -1532,15 +1539,120 @@ function chatPaint(c) {
   chatBadge();
   if (CH.open) {
     if (!CH.conv) { if (!document.querySelector('#chatPanel :focus')) chatRender(); }
-    else if (c === CH.conv || c === '') { const l = $('cpMsgs'); if (l) { const near = l.scrollHeight - l.scrollTop - l.clientHeight < 140; l.innerHTML = chatMsgsHTML(CH.conv); if (near || c === CH.conv) l.scrollTop = l.scrollHeight; } chatRead(CH.conv); const sb = $('cpSub'); if (sb) { const dm = CH.conv !== 'g'; sb.innerHTML = dm ? (isOnline(CH.conv) ? '<i class="dot"></i>online' : CH.pres[CH.conv] ? 'zuletzt ' + agoTxt(CH.pres[CH.conv]) : 'offline') : D.members.filter(m => m.id !== D.me && isOnline(m.id)).length + ' online'; } }
+    else if (c === CH.conv || c === '') { const l = $('cpMsgs'); if (l) { const near = l.scrollHeight - l.scrollTop - l.clientHeight < 140; l.innerHTML = chatMsgsHTML(CH.conv); if (near || c === CH.conv) l.scrollTop = l.scrollHeight; } chatRead(CH.conv); const sb = $('cpSub'); if (sb) { const dm = CH.conv !== 'g' && CH.conv !== 'bot'; if (CH.conv === 'bot') sb.textContent = 'Antwortet aus der Anleitung'; else sb.innerHTML = dm ? (isOnline(CH.conv) ? '<i class="dot"></i>online' : CH.pres[CH.conv] ? 'zuletzt ' + agoTxt(CH.pres[CH.conv]) : 'offline') : D.members.filter(m => m.id !== D.me && isOnline(m.id)).length + ' online'; } }
   }
   if ($('onlineStart')) $('onlineStart').innerHTML = chatWhoHTML();
   if (c !== '') renderNav();
 }
 const onlinePanel = () => chatOn() ? `<div class="panel"><div class="ph"><h3>Gerade online</h3><button class="btn sm" data-act="chatToggle">Chat öffnen${chatUnreadN() ? ' (' + chatUnreadN() + ' neu)' : ''}</button></div><div class="chips" id="onlineStart">${chatWhoHTML()}</div></div>` : '';
+/* ---------- Hilfe & Anleitung ---------- */
+const GUIDE = [
+  { id:'start', t:'Erste Schritte: Anmelden, App installieren, zurechtfinden', r:'all', sec:'start', img:'handy', kw:'login anmelden registrieren passwort vergessen bestätigung mail installieren app handy homescreen navigation menü mehr glocke start überblick',
+    steps:['Öffne das Portal im Browser und melde dich mit der E-Mail-Adresse an, die der Admin bei dir eingetragen hat. Beim ersten Mal legst du ein Passwort fest und bestätigst deine E-Mail über den Link, den du per Mail bekommst. Schau notfalls im Spam-Ordner nach.','Passwort vergessen? Tippe auf der Anmeldeseite auf „Passwort vergessen“, du bekommst eine Mail zum Zurücksetzen.','Als App installieren: Am iPhone im Safari auf „Teilen“ und „Zum Home-Bildschirm“, am Android-Handy im Chrome-Menü auf „App installieren“. Danach öffnet sich das Portal wie eine normale App.','Am Handy gibt es unten eine Leiste mit Start, Auftritte, Kalender und Finanzen. Alles andere findest du unter „Mehr“. Am Computer steht das Menü links.','Die Glocke oben zeigt, was neu ist: Beiträge, Aufgaben, Chatnachrichten. Mit „Alles gelesen“ räumst du sie auf.'],
+    tip:'Du siehst nur die Bereiche, die zu deiner Rolle passen. Fehlt dir etwas, frag den Admin.' },
+  { id:'startseite', t:'Die Startseite', r:'all', sec:'start', img:'start', kw:'startseite überblick countdown nächster auftritt kassenstand beitrag aufgaben pinnwand',
+    steps:['Oben siehst du das Motto der Session und den Countdown bis zum nächsten Auftritt.','Darunter stehen die wichtigsten Zahlen: nächster Auftritt, offene Aufgaben, Kassenstand und dein Beitragsstand.','Weiter unten findest du die letzten Pinnwand-Beiträge, anstehende Termine und, falls vorhanden, „Neu für dich“ und „Gerade online“.'] },
+  { id:'zusage', t:'Zu- und Absagen für Auftritte', r:'all', sec:'auftritte', img:'auftritte', kw:'auftritt zusagen absagen zusage absage dabei kann nicht termin turnier teilnehmen anmelden status filter suche',
+    steps:['Öffne „Auftritte“. Dort stehen alle Termine in der Reihenfolge, in der sie stattfinden.','Tippe bei jedem Termin auf „Ich bin dabei“ oder „Ich kann nicht“. Dein Eintrag ist sofort für alle sichtbar, bei der Gruppe steht dann zum Beispiel „Dabei 4 · Absage 1 · offen 7“.','Du kannst deine Antwort jederzeit ändern. Tippe dazu noch einmal auf den gleichen Knopf, dann wird sie zurückgenommen.','Mit der Suche und den Filtern („Angemeldet“, „Ausstehend“, „Abgesagt“) findest du schnell einen bestimmten Termin. Vergangene Termine blendest du mit dem Häkchen ein.'],
+    tip:'Der Status („Angemeldet“, „Angefragt“ …) zeigt, ob die Gruppe schon beim Veranstalter angemeldet ist. Deine Zusage ist davon unabhängig.' },
+  { id:'abwesenheit', t:'Urlaub und Abwesenheiten eintragen', r:'all', sec:'kalender', img:'kalender', kw:'kalender urlaub abwesend abwesenheit fußball spiel verhindert krank nicht da zeitraum wiederkehrend wochentag eintragen pdf spielplan ansicht monat woche',
+    steps:['Öffne „Kalender“ und tippe auf „+ Abwesenheit“. Oder tippe im Monatskalender direkt auf den Tag.','Wähle die Art: „Einzelner Tag“, „Zeitraum“ (zum Beispiel Urlaub) oder „Wiederkehrend“ (zum Beispiel Fußball jeden Samstag, mit Wochentag).','Gib einen Titel ein und speichere. Die Gruppe sieht damit, wann du nicht kannst, und kann Termine passend planen.','Mit „Spielplan als PDF einlesen“ übernimmst du Spieltermine aus einer PDF.','Oben wechselst du zwischen Kalender, Arbeitswoche, Zeitstrahl und Liste. Training, Gruppentermine und Auftritte stehen automatisch für alle drin.'],
+    tip:'Ändern oder löschen kannst du nur deine eigenen Einträge (und der Admin alle).' },
+  { id:'frei', t:'Freie Zeiten finden (Treffen oder Zusatztraining planen)', r:'all', sec:'kalender', img:'frei', kw:'freie zeiten frei termin finden zusatztraining treffen teamevent wer hat zeit suche zeitpunkt verfügbar abstimmen planen wochenende',
+    steps:['Öffne „Kalender“ und tippe oben auf „Freie Zeiten finden“.','Stelle den Zeitraum ein und wähle die Wochentage, zum Beispiel „Nur Wochenende“. Wenn du möchtest, gibst du ein Zeitfenster an, etwa 14 bis 16 Uhr.','Wähle unten, wer können muss: alle oder nur bestimmte Personen.','Oben stehen die Tage, an denen alle Zeit haben. Darunter stehen Tage, an denen nur wenige fehlen, mit Namen und Grund.','Admin und Trainerinnen tippen beim passenden Tag auf „Als Gruppentermin eintragen“. Dann steht der Termin bei allen im Kalender.'],
+    tip:'Die Suche kennt nur eingetragene Abwesenheiten. Je mehr ihr eintragt, desto besser die Treffer.' },
+  { id:'pinnwand', t:'Pinnwand und Abstimmungen', r:'all', sec:'pinnwand', img:'pinnwand', kw:'pinnwand beitrag abstimmung umfrage stimme neuigkeit ankündigung posten',
+    steps:['Öffne „Pinnwand“. Dort stehen Neuigkeiten für die ganze Gruppe.','Mit „+ Beitrag“ schreibst du selbst etwas auf die Pinnwand.','Mit „+ Abstimmung“ stellst du der Gruppe eine Frage mit Antwortmöglichkeiten. Jeder kann einmal abstimmen, sieht das Ergebnis und kann seine Stimme ändern.'] },
+  { id:'aufgaben', t:'Aufgaben', r:'all', sec:'aufgaben', img:'aufgaben', kw:'aufgabe aufgaben todo erledigt abhaken zuteilen frist bis wer macht was',
+    steps:['Öffne „Aufgaben“. Dort steht, wer was bis wann erledigt.','Hast du eine Aufgabe erledigt, hake sie ab. Das darfst du bei Aufgaben tun, die dir zugeteilt sind.','Wer eine Rolle hat, kann mit „+ Aufgabe“ neue Aufgaben anlegen und jemandem zuteilen. Ändern dürfen Admin, Trainerinnen und wer die Aufgabe angelegt hat.'] },
+  { id:'training', t:'Training und Anwesenheit', r:'all', sec:'training', img:'training', kw:'training trainings anwesenheit anwesend probe halle uhrzeit serie',
+    steps:['Öffne „Training“. Dort stehen alle Trainingstermine mit Datum, Uhrzeit und Ort. Sie erscheinen auch im Kalender.','Die Trainerinnen haken ab, wer beim Training war. Du siehst deine eigene Anwesenheit.'] },
+  { id:'chat', t:'Chat und Anrufe', r:'all', sec:'start', img:'chat', kw:'chat nachricht schreiben rufen rufe anrufe telefonieren anrufen anruf video videoanruf sprachanruf einzelchat gruppenchat online blase mikrofon kamera',
+    steps:['Unten rechts findest du die runde Chat-Blase. Eine Zahl daran zeigt ungelesene Nachrichten.','Tippe darauf: oben steht der Hilfe-Assistent, dann der Gruppenchat für alle, darunter jedes Mitglied für Einzelchats. Ein grüner Punkt heißt: ist gerade online.','Schreibe unten und sende mit Enter oder dem Knopf „Senden“. Eigene Nachrichten löschst du mit dem ×.','Oben im Chat starten das Telefon-Symbol einen Sprachanruf und die Kamera einen Videoanruf. Im Gruppenchat werden alle angerufen, die gerade online sind.','Beim Anruf erlaubst du dem Browser Mikrofon und Kamera. Mit den Knöpfen unten schaltest du sie aus oder legst auf.'],
+    tip:'Anrufe klingeln nur, wenn das Portal offen ist. Klappt eine Verbindung nicht, probiert es im WLAN oder schreibt kurz im Chat, dass ihr es versucht.' },
+  { id:'finanzen', t:'Finanzen und mein Beitrag', r:'all', sec:'finanzen', img:'finanzen', kw:'finanzen geld beitrag bezahlt kasse budget einnahmen ausgaben kassenstand rückstand',
+    steps:['Öffne „Finanzen“. Alle sehen Einnahmen, Ausgaben, Kassenstand und das Budget je Bereich.','Deinen eigenen Beitrag und ob er bezahlt ist siehst du nur du selbst, zum Beispiel auf der Startseite oder im Bereich „Beiträge“.','Fragen zu einer Zahlung klärst du direkt mit der Kasse.'] },
+  { id:'feedback', t:'Fehler melden und Ideen vorschlagen', r:'all', sec:'feedback', img:'feedback', kw:'fehler bug problem melden feedback idee vorschlag verbesserung wunsch kaputt funktioniert nicht',
+    steps:['Etwas klappt nicht? Tippe auf den Käfer (Desktop: unten rechts neben dem Chat, Handy: im Menü „Mehr“ unter „Feedback & Fehler“) oder öffne „Feedback & Fehler“.','Beschreibe kurz, was passiert ist und was du erwartet hast. Die Rubrik, in der du gerade warst, ist schon vorausgewählt.','Ideen schreibst du im gleichen Bereich unter „Ideen“. Andere stimmen dafür, so sieht der Admin, was am wichtigsten ist.','Der Admin setzt den Stand („In Arbeit“, „Behoben“ …) und sieht alle Meldungen.'],
+    tip:'Du kannst auch den Hilfe-Assistenten in der Chat-Blase fragen. Er kennt diese Anleitung.' },
+  { id:'tr-anlegen', t:'Training anlegen, ändern und als Serie planen', r:['admin','trainerin'], can:'trainings', sec:'training', img:'training', kw:'training anlegen serie wöchentlich einzeltermin ändern löschen uhrzeit ort thema anwesenheit abhaken',
+    steps:['Öffne „Training“ und wähle „+ Wöchentliche Serie“ (zum Beispiel jeden Sonntag von November bis März) oder „+ Einzeltermin“.','Trage Uhrzeit von/bis, Ort und Thema ein und speichere. Das Training gilt für die ganze Gruppe und steht im Kalender.','Beim Ändern einer Serie werden nur künftige Termine neu erzeugt, vergangene bleiben mit ihrer Anwesenheit erhalten.','Nach dem Training hakst du ab, wer da war.'] },
+  { id:'gruppentermin', t:'Gruppentermine für alle anlegen (Zusatztraining, Treffen)', r:['admin','trainerin'], can:'gruppe', sec:'kalender', img:'kalender', kw:'gruppentermin termin für alle zusatztraining treffen teamevent anlegen kalender',
+    steps:['Öffne „Kalender“ und tippe auf „+ Gruppentermin“.','Trage Titel, Datum, Uhrzeit von/bis und Ort ein und speichere.','Der Termin steht bei allen im Kalender (lila). Zum Ändern tippst du ihn an.','Welcher Tag passt, findest du mit „Freie Zeiten finden“. Dort kannst du den Termin mit einem Klick eintragen.'] },
+  { id:'ev-pflegen', t:'Auftritte pflegen: anlegen, ändern, Ansprechpartner zuordnen', r:['admin','trainerin','auftritte'], can:'events', sec:'auftritte', img:'auftritte', kw:'auftritt anlegen termin neu ändern bearbeiten status angemeldet ansprechpartner verein kontakt gebühr suche vormerken session turnier',
+    steps:['Öffne „Auftritte“ und tippe auf „+ Neuer Termin“ oder bei einem Termin auf „Bearbeiten“.','Trage Name, Datum, Uhrzeit, Ort, Status und Gebühr ein. Der Status zeigt, ob ihr schon angemeldet seid.','Unter „Ansprechpartner aus der Veranstalter-Liste wählen“ nimmst du einen vorhandenen Kontakt. Verein und Kontaktdaten erscheinen dann automatisch auf der Terminkarte.','Neue Auftritte findest du unter „Suche nach neuen Auftritten“. Der Assistent durchsucht täglich Vereinsseiten. Mit „Vormerken“ legst du Veranstalter für die nächste Session ab.'] },
+  { id:'kontakte', t:'Veranstalter-Kontakte, Vereine und Doppelte', r:['admin','trainerin','auftritte'], can:'kontakte', sec:'kontakte', img:'kontakte', kw:'kontakt kontakte veranstalter verein gruppe doppelt doppelte zusammenführen zuordnen telefon mail ansprechpartner ausblenden trennen',
+    steps:['Öffne „Veranstalter“. Die Ansprechpartner entstehen automatisch aus den Auftritten und sind nach Verein oder Gruppe sortiert.','Mit „Bearbeiten“ ergänzt du Telefon, Mail, Ort und Notizen. Mit „+ Kontakt“ legst du selbst jemanden an.','Mit „+ Verein / Gruppe“ legst du einen Verein an. Mit „Vereinen zuordnen“ ordnest du mehrere Kontakte in einem Rutsch zu.','Mit „Doppelte prüfen“ siehst du Kontakte, die doppelt vorkommen. Vorgeschlagen ist der Eintrag mit den meisten Angaben. Nach dem Zusammenführen landen auch neue Auftritte mit dem alten Namen bei diesem Kontakt.','Hat das Portal falsch zusammengeführt, klickst du beim Kontakt auf „trennen“.'] },
+  { id:'ausstattung', t:'Kostüme, Requisiten, Tanz und Social Media', r:['admin','trainerin','kostuem','requisit','betreuer'], can:'kostueme', sec:'kostueme', kw:'kostüm kostüme requisiten tanz choreo musik aufstellung merch teamausstattung social media post freigeben bestellung',
+    steps:['„Kostüme“, „Teamausstattung & Merch“, „Requisiten“ und „Tanz“ funktionieren gleich: Eintrag anlegen oder bei einem Eintrag auf „Bearbeiten“ tippen.','Bei Kostümen und Merch pflegst du Bestellstand, Kosten und Größen. Bei Requisiten steht, wo etwas liegt und wer es mitbringt. Bei Tanz gehören Musik, Zeiten und Aufstellung dazu.','Unter „Social Media“ schlägt jeder Posts vor. Freigeben dürfen nur die Trainerinnen.'] },
+  { id:'dateien', t:'Dateien ablegen und herunterladen', r:['admin','trainerin'], can:'dateien', sec:'dateien', img:'dateien', kw:'datei dateien ablage upload hochladen drive pdf anmeldebogen ordner herunterladen',
+    steps:['Öffne „Dateien“, wähle den Ordner und tippe auf „Datei hochladen“. Pro Datei sind 20 MB möglich.','Die Dateien liegen im Google Drive des Funky-Boys-Kontos. Zum Öffnen tippst du auf den Dateinamen.','Löschen darf, wer die Datei hochgeladen hat, und der Admin.'] },
+  { id:'mitglieder', t:'Mitglieder anlegen, Logins und Rollen vergeben', r:['admin'], can:'members', sec:'mitglieder', img:'mitglieder', kw:'mitglied mitglieder neu anlegen login einladen e-mail rolle rollen rechte trainerin kasse admin geburtstag notfall größen',
+    steps:['Öffne „Mitglieder“ und tippe auf „+ Mitglied“. Trage Name, Rolle, Kontaktdaten, Geburtsdatum, Größen und Notfallkontakt ein.','Damit sich jemand anmelden kann, muss seine E-Mail-Adresse beim Mitglied stehen. Danach legt die Person beim ersten Anmelden ihr Passwort fest.','Unter „Verwaltung“ → „Wer darf was“ legst du fest, welche Rolle was bearbeiten darf, und kannst einzelnen Personen Zusatzrechte geben.','In „Verwaltung“ → „Accounts und Rollen“ gleichst du die Logins mit der Mitgliederliste ab, falls jemand sich nicht anmelden kann.'] },
+  { id:'design', t:'Design, Motto, Datensicherung und Mailversand einstellen', r:['admin'], can:'verwaltung', sec:'verwaltung', img:'verwaltung', kw:'verwaltung design farbe farben schrift motto session sicherung backup export mail absender banner glas ecken vorlage einstellungen',
+    steps:['Öffne „Verwaltung“. Unter „Motto der Session“ trägst du das neue Motto ein und wählst eine Farbwelt. Mit „Motto übernehmen“ wirkt es für alle.','Unter „Design“ stellst du Farben, Schrift, Rundung, Glas-Effekt und Banner ein. Du siehst die Änderung sofort. Erst mit „Für alle speichern“ gilt sie für alle. Vorlagen bringen dich schnell zu einem stimmigen Look, „Zurücksetzen“ führt zur Standard-Farbwelt zurück.','Die Datensicherung lädt alle Daten als Datei herunter. Mach das gelegentlich, zum Beispiel vor größeren Änderungen.','Der Mailversand nutzt das Gmail-Konto der Gruppe als Absender. Mit der Testmail prüfst du, dass er funktioniert.'] },
+  { id:'kasse', t:'Buchungen, Beiträge und Sponsoren pflegen', r:['admin','kasse'], can:'buchungen', sec:'finanzen', img:'finanzen', kw:'buchung buchungen beitrag beiträge sponsor sponsoren spende einnahme ausgabe budget zahlung import kasse bezahlt rückstand',
+    steps:['Öffne „Finanzen“. Mit „+ Buchung“ erfasst du Einnahmen und Ausgaben mit Betrag, Kategorie und Text. Über „Budget ändern“ legst du das Budget je Bereich fest.','Unter „Beiträge“ legst du mit „+ Beitrag“ Beiträge je Mitglied an und markierst Zahlungen. Mit „Zahlungen importieren“ liest du Kontoauszüge ein.','Unter „Sponsoren“ trägst du Spender und Beträge ein. Eingegangene Geldspenden zählen automatisch als Einnahme.'] }
+];
+const roleName = r => r === 'all' ? 'Für alle' : (ROLES[r] || r);
+const guideVisible = g => g.r === 'all' || g.r.includes(me().rolle) || (g.can && can(g.can));
+const guideRoles = g => g.r === 'all' ? ['Für alle'] : g.r.map(roleName);
+const gNorm = s => String(s || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9 ]/g, ' ');
+const G_STOP = new Set('der die das den dem des ein eine einen einem einer und oder mit fuer auf aus bei von vom zum zur zu im in am an um ich mich mir mein meine meinen wir uns man kann koennen muss soll wie wo wer was wann warum wieso welche welcher ist sind war hab habe haben hat wird werden nicht kein keine auch noch nur bitte mal dass wenn aber doch es sie er du dich dir dein deine gibt gibts geht gehts will moechte moechten'.split(' '));
+const gStem = w => w.length > 5 ? w.slice(0, 5) : w;
+const gTok = s => gNorm(s).split(/\s+/).filter(w => w.length > 2 && !G_STOP.has(w)).map(gStem);
+const GINDEX = GUIDE.map(g => ({ g, t:new Set(gTok(g.t)), k:new Set(gTok(g.kw || '')), s:new Set(gTok(g.steps.join(' '))) }));
+function guideSearch(q) {
+  const qt = [...new Set(gTok(q))]; if (!qt.length) return [];
+  return GINDEX.map(x => { let sc = 0; qt.forEach(w => { if (x.t.has(w)) sc += 3; else if (x.k.has(w)) sc += 2.5; else if (x.s.has(w)) sc += 1; });
+    if (guideVisible(x.g)) sc += 0.4; return { g:x.g, sc }; }).filter(x => x.sc >= 2).sort((a, b) => b.sc - a.sc);
+}
+const helpImg = n => `help/${n}.webp`;
+function guideHTML(g, open) {
+  return `<details class="panel hlp" id="hlp_${g.id}" ${open ? 'open' : ''}><summary><b>${esc(g.t)}</b><span class="hlpr">${guideRoles(g).map(x => `<span class="pill">${esc(x)}</span>`).join('')}</span></summary>
+    <ol class="hlpsteps">${g.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol>
+    ${g.img ? `<img class="hlpimg" src="${helpImg(g.img)}" alt="Beispielansicht: ${esc(g.t)}" loading="lazy">` : ''}
+    ${g.tip ? `<div class="hlptip"><b>Tipp:</b> ${esc(g.tip)}</div>` : ''}
+    <div class="chips"><a class="btn sm" href="#${g.sec}">Zur Rubrik</a>${chatOn() ? '<button class="btn sm" data-act="botOpen">Assistenten fragen</button>' : ''}</div></details>`;
+}
+function helpListHTML() {
+  const q = (UI.hq || '').trim(); let list = GUIDE.filter(g => UI.helpAll || guideVisible(g));
+  if (q) { const hit = guideSearch(q).map(x => x.g.id); list = GUIDE.filter(g => hit.includes(g.id)).sort((a, b) => hit.indexOf(a.id) - hit.indexOf(b.id)); }
+  return list.length ? list.map(g => guideHTML(g, UI.helpOpen === g.id || (q && list.length === 1))).join('') : '<div class="empty">Dazu steht nichts in der Anleitung. Frag den Hilfe-Assistenten oder schreib eine Idee unter „Feedback & Fehler“.</div>';
+}
+/* Hilfe-Assistent (läuft im Browser, durchsucht diese Anleitung) */
+const botBtns = list => list.map(x => `<button class="btn sm" data-act="botTopic" data-id="${x.g.id}">${esc(x.g.t.length > 46 ? x.g.t.slice(0, 44) + '…' : x.g.t)}</button>`).join('');
+function botReply(q) {
+  const hits = guideSearch(q), me1 = me().name.split(' ')[0];
+  if (/^\s*(hallo|hi|hey|moin|servus|guten (morgen|tag|abend))\b/i.test(q) && q.trim().split(/\s+/).length < 4) return { html:`Hallo ${esc(me1)}! Was möchtest du wissen? Ich kenne die Anleitung des Portals.`, hits:[] };
+  if (!hits.length) return { html:'Dazu finde ich nichts in der Anleitung. Versuch es mit anderen Worten, zum Beispiel „Urlaub eintragen“ oder „Zusage ändern“. Oder öffne die Anleitung und stöbere. Wenn etwas fehlt oder nicht klappt, melde es unter „Feedback & Fehler“.', hits:[], fb:1 };
+  const top = hits[0], g = top.g, more = hits.slice(1, 3).filter(x => x.sc >= top.sc * 0.55);
+  const steps = g.steps.slice(0, 3).map((x, i) => `${i + 1}. ${esc(x)}`).join('<br>');
+  return { html:`<b>${esc(g.t)}</b><br>${steps}${g.steps.length > 3 ? '<br>…' : ''}${guideVisible(g) ? '' : '<br><i>Das ist für andere Rollen gedacht, du siehst es vielleicht nicht.</i>'}`, top:g, hits:more };
+}
+function botSave() { try { chLS.set('fb_bot', JSON.stringify((CH.m.bot || []).slice(-30))); } catch (e) {} }
+function botLoad() { if (CH.m.bot) return; try { CH.m.bot = JSON.parse(chLS.get('fb_bot') || '[]'); } catch (e) { CH.m.bot = []; } if (!CH.m.bot.length) CH.m.bot.push({ id:'b0', von:'bot', t:Date.now(), html:`Hallo ${esc(me().name.split(' ')[0])}! Ich bin der Hilfe-Assistent. Frag mich, wie etwas im Portal geht, zum Beispiel:`, sug:1 }); }
+function botAsk(text) {
+  botLoad(); const t = Date.now(); CH.m.bot.push({ id:uid('u'), von:D.me, t, text });
+  const r = botReply(text); const m = { id:uid('b'), von:'bot', t:t + 1, html:r.html, top:r.top ? r.top.id : '', more:(r.hits || []).map(x => x.g.id), fb:r.fb ? 1 : 0 }; CH.m.bot.push(m); botSave(); chatPaint('bot');
+}
+const botSug = () => ['Wie sage ich einen Auftritt zu?', 'Wie trage ich Urlaub ein?', 'Wie finde ich einen freien Termin?', 'Wie rufe ich jemanden an?', 'Wie melde ich einen Fehler?'];
+function botExtra(m) {
+  let h = '';
+  if (m.sug) h += `<div class="chips">${botSug().map(q => `<button class="btn sm" data-act="botAsk" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>`;
+  if (m.top) h += `<div class="chips"><button class="btn sm pri" data-act="botTopic" data-id="${esc(m.top)}">Ganze Anleitung mit Bild</button></div>`;
+  if (m.more && m.more.length) h += `<div class="sub" style="margin-top:6px">Dazu passt auch:</div><div class="chips">${botBtns(m.more.map(id => ({ g:GUIDE.find(g => g.id === id) })).filter(x => x.g))}</div>`;
+  if (m.fb) h += `<div class="chips"><button class="btn sm" data-act="botFb">Als Idee oder Fehler melden</button><button class="btn sm" data-act="botTopic" data-id="">Anleitung öffnen</button></div>`;
+  return h;
+}
 const FB_PILL = { Neu:'vio', Offen:'vio', Geplant:'warn', 'In Arbeit':'warn', Umgesetzt:'good', Behoben:'good', Abgelehnt:'bad' };
 const FB_CLOSED = ['Umgesetzt', 'Abgelehnt', 'Behoben'];
 const SEC = {
+  hilfe() {
+    return head('Hilfe & Anleitung', 'Schritt für Schritt erklärt, wie du im Portal arbeitest, mit Bildern. Du siehst zuerst die Anleitungen für deine Rolle (' + (ROLES[me().rolle] || '') + '). Auf „Alle Anleitungen“ kannst du auch den Rest ansehen.', chatOn() ? '<button class="btn pri" data-act="botOpen">Hilfe-Assistent fragen</button>' : '') +
+      `<div class="panel"><input id="helpQ" type="search" placeholder="Was möchtest du wissen? (z. B. Urlaub, Zusage, Beitrag)" value="${esc(UI.hq || '')}" aria-label="Anleitung durchsuchen" autocomplete="off">
+        <div class="chips"><button class="btn sm ${UI.helpAll ? '' : 'on'}" data-act="helpAll" data-v="0">Für meine Rolle</button><button class="btn sm ${UI.helpAll ? 'on' : ''}" data-act="helpAll" data-v="1">Alle Anleitungen</button></div></div><div id="helpList">${helpListHTML()}</div>`;
+  },
   start() {
     const up = upcoming(), f = fin(), open = D.aufgaben.filter(a => !a.done), mb = myBeitrag(), nx = up[0], votesOpen = D.umfragen.filter(u => u.stimmen[D.me] === undefined).length;
     return `<div class="hero"><div class="art">${bannerArt(artKey())}</div><small>Session ${esc(sess())}</small><b>${esc(D.motto.titel)}</b><span>${(MOTTOS[D.motto.farbwelt] || MOTTOS.western).greet}, ${esc(me().name.split(' ')[0])}. ${hasBday() ? 'Alles Gute zum Geburtstag!' : 'Das Wichtigste auf einen Blick.'}</span>${nx ? (() => { const dd = Math.round((new Date(nx.datum + 'T12:00') - new Date(todayISO() + 'T12:00')) / 864e5); return `<div class="cd"><b>${dd <= 0 ? 'Heute' : dd}</b><span>${dd <= 0 ? '' : dd === 1 ? 'Tag bis ' : 'Tage bis '}${esc(nx.name)}</span></div>`; })() : ''}</div>
@@ -1764,7 +1876,7 @@ const SEC = {
         <div class="grow"><b>${esc(x.titel)}</b>${demo(x)}${bugs ? ` <span class="pill">${esc(x.bereich || 'Sonstiges')}</span>` : ''}<div class="sub" style="white-space:pre-wrap">${esc(x.text || '')}</div>
           <div class="sub">${esc(mname(x.von))} · ${fmtTs(x.ts)}${bugs && adm && x.rolle ? ' · ' + esc(x.rolle) : ''}${bugs && adm && x.browser ? '<br>' + esc(x.browser) : ''}</div></div>
         <span class="pill ${FB_PILL[x.status] || ''}">${esc(x.status)}</span>${admin(x)}${mayEdit(x) ? `<button class="btn sm" data-act="edit" data-col="${col}" data-id="${x.id}">Bearbeiten</button>` : ''}</div>`; };
-    return head('Feedback & Fehler', 'Schlagt Verbesserungen vor und stimmt ab, was am wichtigsten ist. Der Admin setzt den Stand und macht Aufgaben daraus. Fehler meldest du auch über den Käfer unten links. Im Prototyp bleiben Meldungen in diesem Browser, mit dem Livegang sehen alle dieselbe Liste.',
+    return head('Feedback & Fehler', 'Schlagt Verbesserungen vor und stimmt ab, was am wichtigsten ist. Der Admin setzt den Stand und macht Aufgaben daraus. Fehler meldest du auch über den Käfer. Wie etwas funktioniert, steht unter <a href="#hilfe">Hilfe & Anleitung</a>, und der Hilfe-Assistent in der Chat-Blase beantwortet Fragen dazu.',
       `<div class="chips"><button class="btn pri" data-act="fbAdd">+ Vorschlag</button><button class="btn" data-act="bugOpen">Fehler melden</button></div>`) +
       `<div class="chips"><button class="btn sm ${bugs ? '' : 'on'}" data-act="fbTab" data-v="ideen">Vorschläge (${D.feedback.length})</button><button class="btn sm ${bugs ? 'on' : ''}" data-act="fbTab" data-v="bugs">Fehlermeldungen (${D.bugs.length})</button></div>
       <div class="panel">${rows(sorted, row, bugs ? 'Keine Fehlermeldungen.' : 'Noch keine Vorschläge.')}</div>`;
@@ -1874,7 +1986,7 @@ const SEC = {
 };
 
 /* ---------- Anzeige ---------- */
-const IC = { chat:'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12zM8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01', start:'M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', pinnwand:'M4 5h16v11H8l-4 4z', aufgaben:'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9',
+const IC = { hilfe:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 1 1 4.6 2.5c-.9.6-1.7 1.2-1.7 2.5M12 17h.01', chat:'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12zM8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01', start:'M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', pinnwand:'M4 5h16v11H8l-4 4z', aufgaben:'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9',
   kalender:'M5 4h14a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM4 9h16M8 2v4M16 2v4', auftritte:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
   suche:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5', vormerken:'M6 3h12v18l-6-4-6 4z', finanzen:'M3 7h18v12H3zM3 11h18M16 15h2', sponsoren:'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z',
   kostueme:'M8 3l-5 3 2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z', merch:'M5 8h14l-1 12H6zM9 8a3 3 0 0 1 6 0', tanz:'M9 18V6l10-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM19 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',
@@ -1913,6 +2025,7 @@ function render() {
   ensureSeen(); $('verLine').textContent = VERSION; $('more').hidden = true;
   applyMotto(); renderNav(); $('main').innerHTML = SEC[UI.sec]();
   markSeen();
+  if (UI.sec === 'hilfe' && UI.helpOpen) { const el = $('hlp_' + UI.helpOpen); if (el && el.scrollIntoView) setTimeout(() => el.scrollIntoView({ block:'start', behavior:'smooth' }), 60); UI.helpOpen = ''; }
   chatEnsure(); chatBadge();
   gratulieren();
 }
@@ -2239,12 +2352,19 @@ const ACT = {
   chatToggle() { if (!chatOn()) return; CH.open = !CH.open; if (CH.open) { CH.conv = CH.conv || ''; } chatRender(); chatBadge(); if (CH.open && CH.conv) { const t = $('chatText'); if (t && t.focus && !(window.matchMedia && matchMedia('(pointer:coarse)').matches)) t.focus(); } },
   chatConv(d) { CH.conv = d.id || ''; CH.err = ''; CH.open = true; chatRender(); chatBadge(); renderNav(); if (CH.conv) { const t = $('chatText'); if (t && t.focus && !(window.matchMedia && matchMedia('(pointer:coarse)').matches)) t.focus(); } },
   chatSend() {
-    const ta = $('chatText'), c = CH.conv; if (!ta || !c || !chatOn()) return; const text = ta.value.trim().slice(0, 1000); if (!text) return;
+    const ta = $('chatText'), c = CH.conv; if (!ta || !c) return; const text = ta.value.trim().slice(0, 1000); if (!text) return;
+    if (c === 'bot') { ta.value = ''; botAsk(text); return; }
+    if (!chatOn()) return;
     ta.value = ''; CH.err = ''; const m = { id:uid('c'), von:D.me, t:Date.now(), text }; (CH.pend[c] = CH.pend[c] || {})[m.id] = m; chatPaint(c);
     CLOUD.update(cPath(c), cur => { const a = Array.isArray(cur) ? cur : []; if (!a.some(x => x.id === m.id)) a.push(m); return a.slice(-300); })
       .catch(() => { delete CH.pend[c][m.id]; CH.err = 'Senden fehlgeschlagen. Bitte noch einmal versuchen.'; const t2 = $('chatText'); if (t2 && !t2.value) t2.value = text; const e = $('chatErr'); if (e) e.textContent = CH.err; chatPaint(c); });
   },
   chatDel(d) { if (!chatOn()) return; const id = d.id; CLOUD.update(cPath(d.c), cur => (Array.isArray(cur) ? cur : []).filter(x => x.id !== id || !(x.von === D.me || can('verwaltung')))).catch(() => { CH.err = 'Löschen fehlgeschlagen.'; const e = $('chatErr'); if (e) e.textContent = CH.err; }); },
+  botOpen() { CH.open = true; CH.conv = 'bot'; CH.err = ''; botLoad(); chatRender(); chatBadge(); },
+  botAsk(d) { botAsk(d.q); },
+  botTopic(d) { CH.open = false; chatRender(); UI.helpOpen = d.id || ''; UI.hq = ''; if (location.hash === '#hilfe') render(); else location.hash = '#hilfe'; },
+  botFb() { CH.open = false; chatRender(); ACT.bugOpen(); },
+  helpAll(d) { UI.helpAll = d.v === '1'; render(); },
   callGo(d) { if (typeof callStart !== 'function') return; const ids = d.c === 'g' ? D.members.filter(m => m.id !== D.me && isOnline(m.id)).map(m => m.id) : [d.c]; callStart(ids, d.k); },
   callAccept:() => callAccept(), callDecline:() => callDecline(), callHang:() => callEnd(''), callMic:() => callMic(), callCam:() => callCam(),
   gtAdd() { if (can('gruppe')) openEdit('gruppe', null, { datum:UI.calAnchor || todayISO() }); },
@@ -2378,6 +2498,7 @@ document.addEventListener('click', e => {
   if (ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset, b);
 });
 document.addEventListener('input', e => {
+  if (e.target && e.target.id === 'helpQ') { UI.hq = e.target.value; const l = $('helpList'); if (l) l.innerHTML = helpListHTML(); return; }
   const t = e.target, k = t && t.dataset && t.dataset.th; if (!k || me().rolle !== 'admin') return;
   const d = thDraft(), v = t.type === 'checkbox' ? t.checked : t.value; UI.thMsg = '';
   if (k.indexOf('c.') === 0) d.c[k.slice(2)] = v; else d[k] = v; applyTheme(d);
