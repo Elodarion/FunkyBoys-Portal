@@ -374,6 +374,14 @@
   .hlpsteps { margin:12px 0 4px; padding-left:22px; display:flex; flex-direction:column; gap:8px; max-width:70ch; } .hlpimg { width:100%; max-width:760px; border-radius:14px; border:1px solid var(--line); margin:12px 0 4px; display:block; background:var(--soft); }
   .hlptip { background:var(--accent-bg); border-radius:12px; padding:10px 14px; margin:8px 0; font-size:14px; max-width:70ch; }
   #helpQ { width:100%; } .rtab { border-collapse:collapse; font-size:13px; margin-top:10px; min-width:560px; } .rtab th, .rtab td { padding:6px 8px; border-bottom:1px solid var(--line); text-align:center; } .rtab th:first-child, .rtab td:first-child { text-align:left; } .rtab .me { background:var(--accent-bg); font-weight:700; } .rtab td { color:var(--good,#2f8f5b); }
+  /* Karte */
+  .kmap { height:430px; border-radius:16px; border:1px solid var(--line); overflow:hidden; margin:10px 0; background:var(--soft); position:relative; z-index:0; }
+  .kpin { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:13px; border:2px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,.4); }
+  .kdot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+  .ktab { border-collapse:collapse; width:100%; font-size:14px; min-width:640px; } .ktab th, .ktab td { padding:8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } .ktab th { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+  .kgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-bottom:10px; }
+  .leaflet-container { font-family:inherit; } .leaflet-popup-content { color:#222; font-size:14px; } .leaflet-popup-content a { color:#1b5fd0; }
+  @media (max-width:820px) { .kmap { height:340px; } }
 .gate { position:fixed; inset:0; background:#2e1d12; z-index:100; display:flex; align-items:center; justify-content:center; padding:16px; overflow:auto; }
   .gate[hidden], .syncerr[hidden] { display:none; }
   .gbox { background:#fff; color:#222; max-width:440px; width:100%; border-radius:10px; padding:22px; display:flex; flex-direction:column; gap:12px; }
@@ -446,7 +454,7 @@ function seed0() {
     motto:{ farbwelt:'western', titel:'Cowboys / Western', session:'' },
     members:[],
     events: RAW_EVENTS.map(convEvent),
-    zusagen:{}, regOk:{},
+    zusagen:{}, regOk:{}, karte:{}, geo:{},
     buchungen:[
       { id:'b1', typ:'A', kat:'Anmeldegebühren', betrag:25, text:'Schlicher Danzenacht 13.11.2026', datum:'' },
       { id:'b2', typ:'A', kat:'Anmeldegebühren', betrag:150, text:'Männerballett Meisterschaft Güsten (100 € kommen zurück)', datum:'' },
@@ -870,8 +878,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.25', BUILD = 55;
+const VERSION = '2.26', BUILD = 56;
 const CHANGELOG = [
+  { v:'2.26', datum:'2026-11-16', punkte:['Neu: Karte & Fahrten bei den Auftritten. Alle Auftritte und Suchvorschläge auf einer OpenStreetMap-Karte, Route per Klick, Entfernung, Fahrzeit und Fahrtkosten je Auftritt und je Monat','Auswertung für Tage mit mehreren Auftritten: Reihenfolge, Fahrzeit dazwischen, machbar oder nicht, gesparte Kilometer; Einstellungen für Startort, Kilometersatz, Auftrittsdauer und Puffer'] },
   { v:'2.25', datum:'2026-11-16', punkte:['Registrierungsstatus erkennt frühere Anmeldungen jetzt auch an Aktivität (Zusage, Abstimmung, Beitrag) und lässt sich pro Person von Hand auf „angemeldet“ setzen'] },
   { v:'2.24', datum:'2026-11-16', punkte:['Verwaltung zeigt bei jedem Mitglied, ob es sich schon angemeldet hat, wann es zuletzt aktiv war, und wer noch keine E-Mail hinterlegt hat; wer noch fehlt, bekommt per Knopf eine Mail'] },
   { v:'2.23', datum:'2026-11-16', punkte:['Hilfe-Assistent kennt Rollen und Rechte: Fragt jemand nach etwas, das seine Rolle nicht darf, sagt er das, nennt die zuständigen Rollen und Personen und bietet an, sie anzuschreiben','„Was darf ich?“ und „Wer darf …?“ werden beantwortet; neue Rechte-Übersicht in „Hilfe & Anleitung“ mit allen Rollen, Rechten und Zusatzrechten'] },
@@ -1343,11 +1352,11 @@ function askConfirm(text, yes) {
 
 /* ---------- Rubriken ---------- */
 const NAV = [ ['', 'Überblick'], ['start','Start'], ['pinnwand','Pinnwand'], ['aufgaben','Aufgaben'], ['kalender','Kalender'],
-  ['', 'Planung'], ['auftritte','Auftritte'], ['suche','Suche','auftritte'], ['vormerken','Vormerken','auftritte'], ['finanzen','Finanzen'], ['sponsoren','Sponsoren'], ['kostueme','Kostüme'], ['merch','Teamausstattung & Merch'], ['tanz','Tanz'], ['requisiten','Requisiten'], ['training','Training'], ['trainerinnen','Trainerinnen'], ['social','Social Media'],
+  ['', 'Planung'], ['auftritte','Auftritte'], ['suche','Suche','auftritte'], ['vormerken','Vormerken','auftritte'], ['karte','Karte & Fahrten','auftritte'], ['finanzen','Finanzen'], ['sponsoren','Sponsoren'], ['kostueme','Kostüme'], ['merch','Teamausstattung & Merch'], ['tanz','Tanz'], ['requisiten','Requisiten'], ['training','Training'], ['trainerinnen','Trainerinnen'], ['social','Social Media'],
   ['', 'Gruppe'], ['mitglieder','Mitglieder'], ['kontakte','Veranstalter'], ['dateien','Dateien'], ['hilfe','Hilfe & Anleitung'], ['feedback','Feedback & Fehler'], ['versionen','Versionen'], ['postfach','Postfach'], ['verwaltung','Verwaltung'] ];
 const hiddenSec = s => (s === 'postfach' && !can('postfach')) || (s === 'verwaltung' && !can('verwaltung'));
 const grpOf = s => { let g = ''; for (const n of NAV) { if (!n[0]) g = n[1]; else if (n[0] === s) return n[2] ? g + ' · ' + NAV.find(x => x[0] === n[2])[1] : g; } return ''; };
-const evTabs = () => { const n = funde().filter(f => !D.sucheDone[f.id]).length; return `<div class="tabs"><a href="#auftritte" class="${UI.sec === 'auftritte' ? 'on' : ''}">Termine</a><a href="#suche" class="${UI.sec === 'suche' ? 'on' : ''}">Suche nach neuen Auftritten${n ? ' (' + n + ')' : ''}</a><a href="#vormerken" class="${UI.sec === 'vormerken' ? 'on' : ''}">Vormerken ${nextSess()}</a></div>`; };
+const evTabs = () => { const n = funde().filter(f => !D.sucheDone[f.id]).length; return `<div class="tabs"><a href="#auftritte" class="${UI.sec === 'auftritte' ? 'on' : ''}">Termine</a><a href="#suche" class="${UI.sec === 'suche' ? 'on' : ''}">Suche nach neuen Auftritten${n ? ' (' + n + ')' : ''}</a><a href="#vormerken" class="${UI.sec === 'vormerken' ? 'on' : ''}">Vormerken ${nextSess()}</a><a href="#karte" class="${UI.sec === 'karte' ? 'on' : ''}">Karte & Fahrten</a></div>`; };
 const head = (t, p, btn) => `<div class="head"><span class="crumb">${grpOf(UI.sec)}</span><h2>${t}</h2>${btn || ''}${p ? `<p>${p}</p>` : ''}</div>`;
 const addBtn = (col, label) => can(col) ? `<button class="btn pri" data-act="edit" data-col="${col}">${label}</button>` : '';
 const editBtn = (col, id) => can(col) ? `<button class="btn sm" data-act="edit" data-col="${col}" data-id="${id}">Bearbeiten</button>` : '';
@@ -1558,6 +1567,9 @@ const GUIDE = [
   { id:'zusage', t:'Zu- und Absagen für Auftritte', r:'all', sec:'auftritte', img:'auftritte', kw:'auftritt zusagen absagen zusage absage dabei kann nicht termin turnier teilnehmen anmelden status filter suche',
     steps:['Öffne „Auftritte“. Dort stehen alle Termine in der Reihenfolge, in der sie stattfinden.','Tippe bei jedem Termin auf „Ich bin dabei“ oder „Ich kann nicht“. Dein Eintrag ist sofort für alle sichtbar, bei der Gruppe steht dann zum Beispiel „Dabei 4 · Absage 1 · offen 7“.','Du kannst deine Antwort jederzeit ändern. Tippe dazu noch einmal auf den gleichen Knopf, dann wird sie zurückgenommen.','Mit der Suche und den Filtern („Angemeldet“, „Ausstehend“, „Abgesagt“) findest du schnell einen bestimmten Termin. Vergangene Termine blendest du mit dem Häkchen ein.'],
     tip:'Der Status („Angemeldet“, „Angefragt“ …) zeigt, ob die Gruppe schon beim Veranstalter angemeldet ist. Deine Zusage ist davon unabhängig.' },
+  { id:'karte', t:'Karte & Fahrten: Wo sind die Auftritte, wie weit ist es?', r:'all', sec:'karte', img:'auftritte', kw:'karte maps landkarte fahrt fahrten fahrstrecke strecke route kilometer entfernung fahrzeit fahrtkosten kilometergeld mehrere auftritte ein tag am selben tag zwei ort wo anfahrt navigation',
+    steps:['Öffne „Auftritte“ und dort den Reiter „Karte & Fahrten“. Alle Auftritte mit Ort stehen als Nummern auf der Karte.','Tippe auf eine Markierung, dann siehst du die Route vom Startort zum Auftritt mit Kilometern und Fahrzeit.','Unter der Karte stehen Fahrten und Kosten je Monat. Der Bereich „Mehrere Auftritte an einem Tag“ zeigt, ob zwei Termine am gleichen Tag zeitlich machbar sind und wie viele Kilometer das spart.','Passt eine Markierung nicht, ziehen Admin und Trainerinnen sie an die richtige Stelle. Startort, Kilometersatz, Auftrittsdauer und Puffer änderst du in den Einstellungen unten.'],
+    tip:'Fahrzeiten sind Richtwerte aus der Routenberechnung. Ohne Verbindung rechnet das Portal grob mit Luftlinie, das ist dann als Schätzung markiert.' },
   { id:'abwesenheit', t:'Urlaub und Abwesenheiten eintragen', r:'all', sec:'kalender', img:'kalender', kw:'kalender urlaub abwesend abwesenheit fußball spiel verhindert krank nicht da zeitraum wiederkehrend wochentag eintragen pdf spielplan ansicht monat woche',
     steps:['Öffne „Kalender“ und tippe auf „+ Abwesenheit“. Oder tippe im Monatskalender direkt auf den Tag.','Wähle die Art: „Einzelner Tag“, „Zeitraum“ (zum Beispiel Urlaub) oder „Wiederkehrend“ (zum Beispiel Fußball jeden Samstag, mit Wochentag).','Gib einen Titel ein und speichere. Die Gruppe sieht damit, wann du nicht kannst, und kann Termine passend planen.','Mit „Spielplan als PDF einlesen“ übernimmst du Spieltermine aus einer PDF.','Oben wechselst du zwischen Kalender, Arbeitswoche, Zeitstrahl und Liste. Training, Gruppentermine und Auftritte stehen automatisch für alle drin.'],
     tip:'Ändern oder löschen kannst du nur deine eigenen Einträge (und der Admin alle).' },
@@ -1704,9 +1716,149 @@ function regSummary() {
   const c = { ja:0, nein:0, keine:0, pruefe:0 }; D.members.forEach(m => c[regState(m)]++);
   return `<div class="sub" style="margin:4px 0 8px;max-width:70ch"><b>${c.ja} von ${D.members.length}</b> haben sich angemeldet${c.nein ? ', <b>' + c.nein + ' noch nicht</b>' : ''}${c.keine ? ', bei ' + c.keine + ' fehlt die E-Mail-Adresse' : ''}. „Angemeldet“ heißt: Die Person hat das Portal mit Login geöffnet. Ältere Logins sieht das Portal nicht direkt, es erkennt sie nur an Aktivität (Zusage, Abstimmung, Beitrag). Sonst springt der Status auf Grün, sobald die Person das Portal das nächste Mal öffnet, oder du markierst sie von Hand.</div>`;
 }
+/* ---------- Karte & Fahrstrecken ---------- */
+const KM = { map:null, layer:null, route:null, busy:false, msg:'', mem:{}, last:0, leafP:null, view:null, days:'' };
+const kcfg = () => Object.assign({ home:'Jülich-Güsten', lat:null, lon:null, satz:0.30, dauer:90, puffer:30 }, D.karte || {});
+const hav = (a, b) => { const R = 6371, rad = x => x * Math.PI / 180, dl = rad(b.lat - a.lat), dn = rad(b.lon - a.lon), h = Math.sin(dl / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
+const kSleep = ms => new Promise(r => setTimeout(r, ms));
+async function nominatim(q) {
+  const wait = Math.max(0, 1100 - (Date.now() - KM.last)); if (wait) await kSleep(wait); KM.last = Date.now();
+  const r = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=de&q=' + encodeURIComponent(q)); if (!r.ok) throw new Error('Geocoding ' + r.status);
+  const j = await r.json(); return j && j[0] ? { lat:+j[0].lat, lon:+j[0].lon } : null;
+}
+async function osrm(pts, geom) {
+  const key = pts.map(p => p.lat.toFixed(4) + ',' + p.lon.toFixed(4)).join(';') + (geom ? 'g' : ''); if (KM.mem[key]) return KM.mem[key];
+  try {
+    const r = await fetch('https://router.project-osrm.org/route/v1/driving/' + pts.map(p => p.lon + ',' + p.lat).join(';') + '?overview=' + (geom ? 'full' : 'false') + '&geometries=geojson'); const j = await r.json();
+    if (j && j.code === 'Ok' && j.routes && j.routes[0]) { const o = { km:j.routes[0].distance / 1000, min:Math.round(j.routes[0].duration / 60), geo:geom ? j.routes[0].geometry.coordinates : null, est:false }; KM.mem[key] = o; return o; }
+  } catch (e) {}
+  let km = 0; for (let i = 0; i < pts.length - 1; i++) km += hav(pts[i], pts[i + 1]) * 1.3;
+  return { km, min:Math.round(km / 55 * 60), geo:geom ? pts.map(p => [p.lon, p.lat]) : null, est:true };
+}
+const kQ = x => (x.maps || x.standort || x.ort || '').trim();
+function kItems() {
+  const t = todayISO(), out = [];
+  D.events.forEach(e => { const st = statusInfo(e.status); if (!e.datum || st.b === 'declined' || (!UI.kAll && e.datum < t)) return; if (!kQ(e)) return; out.push({ key:'e:' + e.id, kind:'e', id:e.id, name:e.name, datum:e.datum, zeit:e.zeit || '', ort:e.standort || e.maps || '', q:kQ(e), b:st.b }); });
+  if (UI.kFunde !== false) funde().forEach(f => { if (D.sucheDone[f.id] === 'uebernommen') return; const q = kQ(f); if (!q) return; out.push({ key:'f:' + f.id, kind:'f', id:f.id, name:f.name, datum:f.datum, zeit:f.zeit || '', ort:f.ort || '', q, b:'idea' }); });
+  return out.sort((a, b) => (a.datum + a.zeit).localeCompare(b.datum + b.zeit));
+}
+const kHomeKey = c => c.lat == null ? '' : c.lat.toFixed(3) + ',' + c.lon.toFixed(3);
+async function kEnsure(force) {
+  if (KM.busy) return; KM.busy = true; let n = 0, fail = 0; D.geo = D.geo || {};
+  try {
+    const its = kItems(), c = kcfg();
+    if (c.lat == null || force === 'home') { KM.msg = 'Suche Startort …'; kPaintMsg(); const h = await nominatim(c.home); if (h) { D.karte = Object.assign({}, D.karte || {}, { lat:h.lat, lon:h.lon }); } else { KM.msg = 'Startort „' + c.home + '“ nicht gefunden. Bitte genauer eintragen.'; return; } }
+    const hc = kcfg(), hk = kHomeKey(hc);
+    for (const it of its) {
+      let g = D.geo[it.key];
+      if (!g || (!g.manual && g.q !== it.q)) { KM.msg = 'Suche Ort ' + (++n) + ' …'; kPaintMsg(); let pos = null; try { pos = await nominatim(it.q); } catch (e) { fail++; }
+        g = D.geo[it.key] = pos ? { q:it.q, lat:pos.lat, lon:pos.lon } : { q:it.q, fail:1 }; }
+      if (g.lat != null && (g.km == null || g.h !== hk || force === 'all')) { KM.msg = 'Berechne Strecke …'; kPaintMsg(); const r = await osrm([{ lat:hc.lat, lon:hc.lon }, g]); g.km = r.km; g.min = r.min; g.est = r.est; g.h = hk; }
+    }
+    save();
+  } catch (e) { KM.msg = 'Berechnung abgebrochen: ' + (e.message || e); }
+  finally { KM.busy = false; if (!/abgebrochen|nicht gefunden/.test(KM.msg)) KM.msg = fail ? fail + ' Ort(e) konnten nicht abgefragt werden (Internetverbindung?).' : ''; if (UI.sec === 'karte') { render(); } }
+}
+function kPaintMsg() { const el = $('kMsg'); if (el) el.textContent = KM.msg; }
+const kFmtMin = m => m >= 60 ? Math.floor(m / 60) + ' Std. ' + (m % 60 ? pad(m % 60) + ' Min.' : '') : m + ' Min.';
+const kHM = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
+const kMin = t => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? +m[1] * 60 + +m[2] : null; };
+const kCol = b => ({ confirmed:'#2f8f5b', pending:'#d98a12', idea:'#7c5cff' }[b] || '#8a7a5e');
+const kKm = n => (Math.round(n * 10) / 10).toLocaleString('de-DE', { maximumFractionDigits:1 }) + ' km';
+const kEur = n => n.toLocaleString('de-DE', { style:'currency', currency:'EUR' });
+function kStats(its) {
+  const c = kcfg(), rows = its.filter(i => i.kind === 'e' && D.geo && D.geo[i.key] && D.geo[i.key].km != null), tot = rows.reduce((s, i) => s + 2 * D.geo[i.key].km, 0), months = {};
+  rows.forEach(i => { const m = i.datum.slice(0, 7); months[m] = (months[m] || 0) + 2 * D.geo[i.key].km; });
+  const far = rows.slice().sort((a, b) => D.geo[b.key].km - D.geo[a.key].km)[0];
+  return { n:rows.length, tot, cost:tot * c.satz, months, far, avg:rows.length ? tot / rows.length : 0, est:rows.some(i => D.geo[i.key].est) };
+}
+function kDays(its) {
+  const by = {}; its.forEach(i => { (by[i.datum] = by[i.datum] || []).push(i); });
+  return Object.entries(by).filter(([d, l]) => l.length > 1 && l.every(i => D.geo && D.geo[i.key] && D.geo[i.key].lat != null)).sort((a, b) => a[0].localeCompare(b[0]));
+}
+async function kDayCalc(date, list) {
+  const c = kcfg(), H = { lat:c.lat, lon:c.lon }, st = list.slice().sort((a, b) => (a.zeit || '99:99').localeCompare(b.zeit || '99:99')), pts = [H, ...st.map(i => D.geo[i.key]), H], legs = [];
+  for (let i = 0; i < pts.length - 1; i++) legs.push(await osrm([pts[i], pts[i + 1]]));
+  const comb = legs.reduce((s, l) => s + l.km, 0), sep = st.reduce((s, i) => s + 2 * (D.geo[i.key].km || 0), 0), est = legs.some(l => l.est);
+  const tr = st.map((it, i) => { if (!i) return null; const a = kMin(st[i - 1].zeit), b = kMin(it.zeit); if (a == null || b == null) return { v:'?', slack:null }; const arr = a + c.dauer + legs[i].min, slack = b - c.puffer - arr; return { v:slack >= 0 ? 'ok' : slack >= -30 ? 'tight' : 'no', slack, arr }; });
+  const first = kMin(st[0].zeit), last = kMin(st[st.length - 1].zeit);
+  return { date, st, legs, comb, sep, est, tr, depart:first != null ? first - c.puffer - legs[0].min : null, back:last != null ? last + c.dauer + legs[legs.length - 1].min : null, save:sep - comb };
+}
+function kDayHTML(r) {
+  const c = kcfg(), pill = t => t ? (t.v === 'ok' ? `<span class="pill good">machbar, ${kFmtMin(t.slack)} Luft</span>` : t.v === 'tight' ? `<span class="pill warn">knapp, ${kFmtMin(-t.slack)} zu wenig Puffer</span>` : t.v === 'no' ? `<span class="pill bad">nicht machbar, ${kFmtMin(-t.slack)} zu spät</span>` : '<span class="pill">Uhrzeit fehlt</span>') : '';
+  return `<div class="row" style="align-items:flex-start"><div class="grow"><b>${esc(fmtDate(r.date))}</b> <span class="pill">${r.st.length} Termine</span>${r.est ? ' <span class="pill warn">geschätzt</span>' : ''}
+    <div class="sub" style="margin-top:6px">${r.st.map((i, k) => `${k ? `<div style="margin:4px 0 4px 14px">↓ ${kFmtMin(r.legs[k].min)} Fahrt (${kKm(r.legs[k].km)}) ${pill(r.tr[k])}</div>` : `<div style="margin:0 0 4px 14px">Start ${esc(c.home)}: ↓ ${kFmtMin(r.legs[0].min)} Fahrt (${kKm(r.legs[0].km)})</div>`}<div><b>${esc(i.zeit || '??:??')}</b> ${esc(i.name)} ${i.kind === 'f' ? '<span class="pill vio">Vorschlag</span>' : ''} <span style="color:var(--faint)">${esc(i.ort)}</span></div>`).join('')}
+      <div style="margin:4px 0 0 14px">↓ ${kFmtMin(r.legs[r.legs.length - 1].min)} Heimfahrt (${kKm(r.legs[r.legs.length - 1].km)})</div></div>
+    <div class="sub" style="margin-top:6px">Zusammen ${kKm(r.comb)}${r.depart != null ? ', Abfahrt ca. ' + kHM(r.depart) + ' Uhr, zurück ca. ' + kHM(r.back) + ' Uhr' : ''}. Einzeln wären es ${kKm(r.sep)}, ${r.save > 0 ? 'ihr spart ' + kKm(r.save) + ' (' + kEur(r.save * c.satz) + ')' : 'mehr Strecke zusammen ' + kKm(-r.save)}.</div></div>
+    <button class="btn sm" data-act="kDayRoute" data-d="${esc(r.date)}">Auf Karte</button></div>`;
+}
+async function kDaysFill() {
+  const box = $('kDays'); if (!box) return; const its = kItems(), days = kDays(its), sig = days.map(([d, l]) => d + l.map(i => i.key + (D.geo[i.key].km | 0)).join()).join('|') + kcfg().dauer + kcfg().puffer + kHomeKey(kcfg());
+  if (!days.length) { box.innerHTML = '<div class="empty">Keine Tage mit mehreren Terminen. Sobald an einem Tag zwei Auftritte oder ein Auftritt und ein Vorschlag liegen, erscheint hier die Auswertung.</div>'; return; }
+  if (KM.days && KM.days.sig === sig) { box.innerHTML = KM.days.html; return; }
+  box.innerHTML = '<div class="empty">Berechne Strecken …</div>';
+  try { const res = []; for (const [d, l] of days) res.push(await kDayCalc(d, l)); const html = '<div class="rows">' + res.map(kDayHTML).join('') + '</div>'; KM.days = { sig, html, res }; if ($('kDays')) $('kDays').innerHTML = html; } catch (e) { if ($('kDays')) $('kDays').innerHTML = '<div class="empty">Auswertung nicht möglich.</div>'; }
+}
+function loadLeaflet() {
+  if (window.L) return Promise.resolve(); if (KM.leafP) return KM.leafP;
+  KM.leafP = new Promise((res, rej) => { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'vendor/leaflet.css'; document.head.appendChild(l); const s = document.createElement('script'); s.src = 'vendor/leaflet.js'; s.onload = res; s.onerror = () => { KM.leafP = null; rej(); }; document.head.appendChild(s); });
+  return KM.leafP;
+}
+async function kMapInit() {
+  const el = $('kmap'); if (!el) return;
+  try { await loadLeaflet(); } catch (e) { el.innerHTML = '<div class="empty" style="padding:20px">Die Karte konnte nicht geladen werden. Die Tabelle unten funktioniert trotzdem.</div>'; return; }
+  const el2 = $('kmap'); if (!el2 || el2._k) return; el2._k = 1;
+  if (KM.map) { try { KM.map.remove(); } catch (e) {} KM.map = null; }
+  const c = kcfg(), its = kItems().filter(i => D.geo && D.geo[i.key] && D.geo[i.key].lat != null);
+  const map = L.map(el2, { zoomControl:true, attributionControl:true }); KM.map = map; KM.route = null;
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:18, attribution:'© OpenStreetMap-Mitwirkende' }).addTo(map);
+  const pts = [], pin = (col, txt) => L.divIcon({ className:'', html:`<span class="kpin" style="background:${col}">${txt}</span>`, iconSize:[30, 30], iconAnchor:[15, 15], popupAnchor:[0, -16] });
+  if (c.lat != null) { L.marker([c.lat, c.lon], { icon:pin('#d6336c', '⌂') }).addTo(map).bindPopup('<b>Start:</b> ' + esc(c.home)); pts.push([c.lat, c.lon]); }
+  its.forEach((i, n) => { const g = D.geo[i.key], m = L.marker([g.lat, g.lon], { icon:pin(kCol(i.b), i.kind === 'f' ? '?' : String(n + 1)), draggable:can('events') && i.kind === 'e' }).addTo(map);
+    m.bindPopup(`<b>${esc(i.name)}</b><br>${esc(fmtDate(i.datum))}${i.zeit ? ', ' + esc(i.zeit) + ' Uhr' : ''}<br>${esc(i.ort)}${g.km != null ? '<br>' + kKm(g.km) + ', ' + kFmtMin(g.min) + (g.est ? ' (geschätzt)' : '') : ''}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(i.q)}" target="_blank" rel="noopener">Navigation in Google Maps</a>`);
+    m.on('click', () => kShowRoute([i.key]));
+    m.on('dragend', () => { const p = m.getLatLng(); D.geo[i.key] = { q:i.q, lat:p.lat, lon:p.lng, manual:true }; save(); kEnsure(); });
+    pts.push([g.lat, g.lon]); });
+  if (KM.view) map.setView(KM.view.c, KM.view.z); else if (pts.length > 1) map.fitBounds(pts, { padding:[30, 30] }); else map.setView(pts[0] || [50.9, 6.3], pts.length ? 11 : 8);
+  map.on('moveend', () => { const ct = map.getCenter(); KM.view = { c:[ct.lat, ct.lng], z:map.getZoom() }; });
+  setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 200);
+}
+async function kShowRoute(keys) {
+  if (!KM.map || !window.L) return; const c = kcfg(), H = { lat:c.lat, lon:c.lon }; if (c.lat == null) return;
+  const pts = [H, ...keys.map(k => D.geo[k]).filter(g => g && g.lat != null), H]; if (pts.length < 3) return;
+  const r = await osrm(pts, true); if (KM.route) { KM.map.removeLayer(KM.route); KM.route = null; }
+  KM.route = L.polyline(r.geo.map(p => [p[1], p[0]]), { color:'#ff7a45', weight:5, opacity:.85, dashArray:r.est ? '8 8' : null }).addTo(KM.map); KM.map.fitBounds(KM.route.getBounds(), { padding:[30, 30] });
+  KM.msg = 'Route: ' + kKm(r.km) + ', ' + kFmtMin(r.min) + ' Fahrt' + (r.est ? ' (geschätzt, Routing-Dienst nicht erreichbar)' : '') + (keys.length === 1 ? ' hin und zurück' : ''); kPaintMsg();
+}
+function kartePage() {
+  const c = kcfg(), its = kItems(), s = kStats(its), ed = can('events'), miss = its.filter(i => !D.geo || !D.geo[i.key] || (D.geo[i.key].lat == null && !D.geo[i.key].fail) || (D.geo[i.key].lat != null && D.geo[i.key].km == null));
+  const row = (i, n) => { const g = (D.geo || {})[i.key] || {}; return `<tr><td><b>${i.kind === 'f' ? '?' : n}</b></td><td>${esc(i.name)} ${i.kind === 'f' ? '<span class="pill vio">Vorschlag</span>' : ''}<div class="sub">${esc(fmtDate(i.datum))}${i.zeit ? ', ' + esc(i.zeit) + ' Uhr' : ''} · ${esc(i.ort)}</div></td>
+    <td>${g.lat == null ? (g.fail ? '<span class="pill bad">Ort nicht gefunden</span>' : '–') : kKm(g.km || 0) + (g.est ? ' ~' : '')}</td><td>${g.min != null ? kFmtMin(g.min) : '–'}</td><td>${g.km != null && i.kind === 'e' ? kKm(2 * g.km) : '–'}</td><td>${g.km != null && i.kind === 'e' ? kEur(2 * g.km * c.satz) : '–'}</td>
+    <td style="white-space:nowrap">${g.lat != null ? `<button class="btn sm" data-act="kRoute" data-k="${esc(i.key)}">Route</button> ` : ''}<a class="btn sm" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(i.q)}" target="_blank" rel="noopener">Navigation</a></td></tr>`; };
+  let n = 0;
+  return head('Karte & Fahrten', 'Wo die Auftritte sind, wie weit es ist und was das Fahren kostet. Ort kommt aus „Standort“ oder „Adresse für Karte“ beim Auftritt. Ein Klick auf eine Markierung zeigt die Route.', ed ? '<button class="btn pri" data-act="kCalc">Strecken berechnen</button>' : '') + evTabs() +
+    `<div class="panel"><div class="chips"><button class="btn sm ${UI.kAll ? '' : 'on'}" data-act="kToggle" data-k="kAll" data-v="0">Kommende Termine</button><button class="btn sm ${UI.kAll ? 'on' : ''}" data-act="kToggle" data-k="kAll" data-v="1">Alle Termine</button>
+        <label class="chk"><input type="checkbox" data-act="kFunde" ${UI.kFunde !== false ? 'checked' : ''}> Vorschläge aus der Suche zeigen</label><span class="sub" id="kMsg" role="status" style="margin-left:auto">${esc(KM.msg)}${KM.busy ? '' : miss.length ? miss.length + ' Termine noch ohne Strecke. Auf „Strecken berechnen“ tippen.' : ''}</span></div>
+      <div id="kmap" class="kmap"></div>
+      <div class="chips" style="font-size:13px"><span><i class="kdot" style="background:#d6336c"></i>Start</span><span><i class="kdot" style="background:#2f8f5b"></i>bestätigt</span><span><i class="kdot" style="background:#d98a12"></i>noch offen</span><span><i class="kdot" style="background:#7c5cff"></i>Vorschlag aus der Suche</span>${ed ? '<span class="sub">Markierung ziehen, wenn der Ort nicht stimmt.</span>' : ''}</div></div>
+    <div class="kpis"><div class="kpi"><small>Fahrstrecke geplant</small><b>${kKm(s.tot)}</b><span>${s.n} Auftritte, Hin- und Rückfahrt${s.est ? ', teils geschätzt' : ''}</span></div>
+      <div class="kpi"><small>Fahrtkosten</small><b>${kEur(s.cost)}</b><span>mit ${c.satz.toLocaleString('de-DE')} € pro km</span></div>
+      <div class="kpi"><small>Im Schnitt</small><b>${kKm(s.avg)}</b><span>${s.far ? 'weitester: ' + esc(s.far.name.slice(0, 28)) + ', ' + kKm(D.geo[s.far.key].km) + ' einfach' : 'noch keine Daten'}</span></div></div>
+    ${Object.keys(s.months).length ? `<div class="panel"><div class="ph"><h3>Fahrstrecke pro Monat</h3></div><div class="rows">${Object.entries(s.months).sort().map(([m, v]) => `<div class="row"><div class="grow"><b>${MON[+m.slice(5) - 1]} ${m.slice(0, 4)}</b></div><span>${kKm(v)}</span><span class="sub">${kEur(v * c.satz)}</span></div>`).join('')}</div></div>` : ''}
+    <div class="panel"><div class="ph"><h3>Mehrere Auftritte an einem Tag</h3></div><div class="sub" style="max-width:70ch">Für Tage mit zwei oder mehr Terminen (auch mit Vorschlägen aus der Suche) wird die Route zusammen gerechnet. Grundlage: Auftritt dauert ${c.dauer} Min., ${c.puffer} Min. Puffer vor jedem Auftritt.</div><div id="kDays"></div></div>
+    <div class="panel"><div class="ph"><h3>Alle Fahrten</h3></div>${its.length ? `<div class="scroll"><table class="ktab"><thead><tr><th>#</th><th>Auftritt</th><th>Entfernung</th><th>Fahrzeit</th><th>Hin und zurück</th><th>Kosten</th><th></th></tr></thead><tbody>${its.map(i => row(i, i.kind === 'e' ? ++n : 0)).join('')}</tbody></table></div>` : '<div class="empty">Noch keine Auftritte mit Ort. Trage beim Auftritt einen Standort ein.</div>'}
+      <div class="sub">Strecke und Zeit kommen vom Routing-Dienst OpenStreetMap/OSRM (Auto, ohne Verkehr). „~“ heißt: nur geschätzt (Luftlinie mal 1,3), weil der Dienst nicht erreichbar war.</div></div>
+    ${ed ? `<div class="panel"><div class="ph"><h3>Einstellungen</h3></div><div class="kgrid">
+      <label class="f" for="kHome">Startort (zum Beispiel Hallenadresse oder Ortsname)<input id="kHome" value="${esc(c.home)}"></label>
+      <label class="f" for="kSatz">Kilometersatz in €<input id="kSatz" type="number" step="0.01" min="0" inputmode="decimal" value="${c.satz}"></label>
+      <label class="f" for="kDauer">Dauer eines Auftritts in Min.<input id="kDauer" type="number" min="10" step="5" value="${c.dauer}"></label>
+      <label class="f" for="kPuf">Puffer vor dem Auftritt in Min.<input id="kPuf" type="number" min="0" step="5" value="${c.puffer}"></label></div>
+      <div><button class="btn dark" data-act="kSave">Speichern und neu berechnen</button></div></div>` : ''}`;
+}
 const FB_PILL = { Neu:'vio', Offen:'vio', Geplant:'warn', 'In Arbeit':'warn', Umgesetzt:'good', Behoben:'good', Abgelehnt:'bad' };
 const FB_CLOSED = ['Umgesetzt', 'Abgelehnt', 'Behoben'];
 const SEC = {
+  karte() { return kartePage(); },
   hilfe() {
     return head('Hilfe & Anleitung', 'Schritt für Schritt erklärt, wie du im Portal arbeitest, mit Bildern. Du siehst zuerst die Anleitungen für deine Rolle (' + (ROLES[me().rolle] || '') + '). Auf „Alle Anleitungen“ kannst du auch den Rest ansehen.', chatOn() ? '<button class="btn pri" data-act="botOpen">Hilfe-Assistent fragen</button>' : '') +
       `<div class="panel"><input id="helpQ" type="search" placeholder="Was möchtest du wissen? (z. B. Urlaub, Zusage, Beitrag)" value="${esc(UI.hq || '')}" aria-label="Anleitung durchsuchen" autocomplete="off">
@@ -2046,7 +2198,7 @@ const SEC = {
 };
 
 /* ---------- Anzeige ---------- */
-const IC = { hilfe:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 1 1 4.6 2.5c-.9.6-1.7 1.2-1.7 2.5M12 17h.01', chat:'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12zM8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01', start:'M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', pinnwand:'M4 5h16v11H8l-4 4z', aufgaben:'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9',
+const IC = { karte:'M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z', hilfe:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 1 1 4.6 2.5c-.9.6-1.7 1.2-1.7 2.5M12 17h.01', chat:'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12zM8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01', start:'M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', pinnwand:'M4 5h16v11H8l-4 4z', aufgaben:'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9',
   kalender:'M5 4h14a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM4 9h16M8 2v4M16 2v4', auftritte:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
   suche:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5', vormerken:'M6 3h12v18l-6-4-6 4z', finanzen:'M3 7h18v12H3zM3 11h18M16 15h2', sponsoren:'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z',
   kostueme:'M8 3l-5 3 2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z', merch:'M5 8h14l-1 12H6zM9 8a3 3 0 0 1 6 0', tanz:'M9 18V6l10-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM19 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',
@@ -2086,6 +2238,7 @@ function render() {
   applyMotto(); renderNav(); $('main').innerHTML = SEC[UI.sec]();
   markSeen();
   if (UI.sec === 'hilfe' && UI.helpOpen) { const el = $('hlp_' + UI.helpOpen); if (el && el.scrollIntoView) setTimeout(() => el.scrollIntoView({ block:'start', behavior:'smooth' }), 60); UI.helpOpen = ''; }
+  if (UI.sec === 'karte') { kMapInit(); kDaysFill(); }
   chatEnsure(); chatBadge();
   gratulieren();
 }
@@ -2288,6 +2441,13 @@ const ACT = {
     D.zeiten = v; save(); closeDlg(); render(); },
   anw(d) { const a = D.anwesend[d.id] || (D.anwesend[d.id] = {}); a[d.m] = !a[d.m]; save(); render(); },
   vote(d) { const u = D.umfragen.find(x => x.id === d.id); if (u.stimmen[D.me] === +d.v) delete u.stimmen[D.me]; else u.stimmen[D.me] = +d.v; save(); render(); },
+  kCalc() { if (!can('events')) return; KM.msg = ''; kEnsure('all'); },
+  kSave() { if (!can('events')) return; const n = x => +String($(x).value).replace(',', '.'), old = kcfg(), home = $('kHome').value.trim() || old.home;
+    D.karte = Object.assign({}, D.karte || {}, { home, satz:Math.max(0, n('kSatz') || 0), dauer:Math.max(10, n('kDauer') || 90), puffer:Math.max(0, n('kPuf') || 0) }); if (home !== old.home) { D.karte.lat = null; D.karte.lon = null; } save(); KM.days = ''; kEnsure(home !== old.home ? 'home' : 'all'); render(); },
+  kToggle(d) { UI[d.k] = d.v === '1'; render(); },
+  kFunde(d, el) { UI.kFunde = el.checked; render(); },
+  kRoute(d) { kShowRoute([d.k]); },
+  kDayRoute(d) { const day = KM.days && KM.days.res && KM.days.res.find(r => r.date === d.d); if (day) kShowRoute(day.st.map(i => i.key)); },
   regOn(d) { if (!can('verwaltung')) return; (D.regOk = D.regOk || {})[d.id] = true; save(); render(); },
   regOff(d) { if (!can('verwaltung')) return; if (D.regOk) delete D.regOk[d.id]; save(); render(); },
   mailTo(d) { UI.mailTo = d.v; location.hash = '#postfach'; },
