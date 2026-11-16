@@ -878,8 +878,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.28', BUILD = 58;
+const VERSION = '2.29', BUILD = 59;
 const CHANGELOG = [
+  { v:'2.29', datum:'2026-11-16', punkte:['Neu: Posteingang im Postfach. Eingehende Mails der Gruppe werden live aus Gmail geladen, nach Art erkannt (Anfrage, Absage, Zeiten, Rechnung …) und mit Kalender, Abwesenheiten und Zusagen abgeglichen','Antwort wird vorbereitet (Zusage, Absage, Rückfrage, Zeiten …), du liest gegen und sendest im Verlauf','Aus einer Anfrage mit einem Klick Auftritt „Angefragt“ anlegen und Absender als Veranstalter-Kontakt übernehmen; neue Mails erscheinen in der Glocke'] },
   { v:'2.28', datum:'2026-11-16', punkte:['Karte & Fahrten: Tage mit mehreren Auftritten zeigen jetzt die reine Fahrzeit des ganzen Tages, Abfahrt und Rückkehr ab Güsten; Tage mit unbekanntem Ort werden mit Hinweis angezeigt statt ausgeblendet'] },
   { v:'2.27', datum:'2026-11-16', punkte:['Karte & Fahrten: Alle Strecken werden fest ab Güsten (Jülich) berechnet'] },
   { v:'2.26', datum:'2026-11-16', punkte:['Neu: Karte & Fahrten bei den Auftritten. Alle Auftritte und Suchvorschläge auf einer OpenStreetMap-Karte, Route per Klick, Entfernung, Fahrzeit und Fahrtkosten je Auftritt und je Monat','Auswertung für Tage mit mehreren Auftritten: Reihenfolge, Fahrzeit dazwischen, machbar oder nicht, gesparte Kilometer; Einstellungen für Startort, Kilometersatz, Auftrittsdauer und Puffer'] },
@@ -1470,10 +1471,12 @@ function news() {
   D.posts.forEach(p => { if (p.ts > (s.posts || 0) && p.von !== D.me) out.push({ sec:'pinnwand', art:'Pinnwand', titel:p.titel, von:p.von, ts:p.ts }); });
   D.umfragen.forEach(u => { if (u.ts > (s.posts || 0) && u.von !== D.me) out.push({ sec:'pinnwand', art:'Abstimmung', titel:u.frage, von:u.von, ts:u.ts }); });
   D.aufgaben.forEach(a => { if (a.ts > (s.aufgaben || 0) && a.von !== D.me) out.push({ sec:'aufgaben', art:a.wer === D.me ? 'Aufgabe für dich' : 'Aufgabe', titel:a.titel, von:a.von, ts:a.ts }); });
+  mbNews().forEach(x => out.push(x));
   const cn = chatUnreadN(); if (cn) { let lm = null; convIds().forEach(c => convUnread(c).forEach(m => { if (!lm || m.t > lm.t) lm = m; })); out.push({ sec:'', chat:1, art:'Chat', titel:cn === 1 ? lm.text.slice(0, 60) : cn + ' neue Nachrichten', von:lm.von, ts:lm.t }); }
   return out.sort((a, b) => b.ts - a.ts);
 }
 function markSeen() {
+  if (UI.sec === 'postfach' && MB.list.length) mbMarkSeen();
   const k = { pinnwand:'posts', aufgaben:'aufgaben' }[UI.sec]; if (!k || !D.seen[D.me]) return;
   if (!news().some(x => x.sec === UI.sec)) return;
   D.seen[D.me][k] = Date.now(); save(); renderNav();
@@ -1481,7 +1484,7 @@ function markSeen() {
 function newsPanel() {
   const n = news(); if (!n.length) return '';
   return `<div class="panel"><div class="ph"><h3>Neu für dich</h3><button class="btn sm" data-act="bellRead">Alles gelesen</button></div>
-    ${rows(n.slice(0, 5), x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b><div class="sub">${x.art} · von ${esc(mname(x.von))} · ${fmtTs(x.ts)}</div></div>${x.chat ? '<button class="btn sm" data-act="chatToggle">öffnen</button>' : `<a href="#${x.sec}">ansehen</a>`}</div>`, '')}</div>`;
+    ${rows(n.slice(0, 5), x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b><div class="sub">${x.art} · ${x.vt ? esc(x.vt) : 'von ' + esc(mname(x.von))} · ${fmtTs(x.ts)}</div></div>${x.chat ? '<button class="btn sm" data-act="chatToggle">öffnen</button>' : `<a href="#${x.sec}">ansehen</a>`}</div>`, '')}</div>`;
 }
 /* ---------- Chat (Blase unten rechts), Einzelchats, Online-Status ---------- */
 const CH = { last:{}, reg:{}, m:{}, pend:{}, pres:{}, subs:new Set(), unsubs:[], hb:null, sub:false, err:'', open:false, conv:'', seen:{} };
@@ -1572,6 +1575,9 @@ const GUIDE = [
   { id:'karte', t:'Karte & Fahrten: Wo sind die Auftritte, wie weit ist es?', r:'all', sec:'karte', img:'auftritte', kw:'karte maps landkarte fahrt fahrten fahrstrecke strecke route kilometer entfernung fahrzeit fahrtkosten kilometergeld mehrere auftritte ein tag am selben tag zwei ort wo anfahrt navigation',
     steps:['Öffne „Auftritte“ und dort den Reiter „Karte & Fahrten“. Alle Auftritte mit Ort stehen als Nummern auf der Karte.','Tippe auf eine Markierung, dann siehst du die Route vom Startort zum Auftritt mit Kilometern und Fahrzeit.','Unter der Karte stehen Fahrten und Kosten je Monat. Der Bereich „Mehrere Auftritte an einem Tag“ zeigt, ob zwei Termine am gleichen Tag zeitlich machbar sind und wie viele Kilometer das spart.','Passt eine Markierung nicht, ziehen Admin und Trainerinnen sie an die richtige Stelle. Startort, Kilometersatz, Auftrittsdauer und Puffer änderst du in den Einstellungen unten.'],
     tip:'Fahrzeiten sind Richtwerte aus der Routenberechnung. Ohne Verbindung rechnet das Portal grob mit Luftlinie, das ist dann als Schätzung markiert.' },
+  { id:'posteingang', t:'Posteingang: Mails lesen und Antworten vorbereiten lassen', r:['admin','trainerin'], can:'postfach', sec:'postfach', img:'verwaltung', kw:'lege erstelle posteingang postfach mail mails eingang eingehende nachricht antwort antworten beantworten vorschlag vorbereiten anfrage einladung zusage absage veranstalter gmail neue mail glocke',
+    steps:['Öffne „Postfach“. Oben steht der Posteingang mit den letzten Mails der Gruppe. Neue Mails erscheinen auch in der Glocke.','Tippe auf „Öffnen“. Das Portal erkennt, worum es geht (zum Beispiel Anfrage, Absage, Frage zu Zeiten oder Rechnung), und gleicht ein genanntes Datum mit Kalender, Training und Abwesenheiten ab. Dazu steht, wie viele Tänzer an dem Tag können.','Wähle eine vorbereitete Antwort. Der Vorschlag ist hervorgehoben. Die Antwort nutzt Motto, Tänzerzahl und Zeiten aus dem Portal. Lies sie gegen und ändere, was nötig ist.','Mit „Im Verlauf antworten“ geht die Antwort sofort über die Gmail-Adresse der Gruppe raus. Mit „Als Entwurf speichern“ legst du sie nur ab.','Zusätzlich gibt es Knöpfe, um aus einer Anfrage einen Auftritt „Angefragt“ anzulegen, den Absender als Veranstalter-Kontakt zu übernehmen oder den Status eines Auftritts bei Bestätigung oder Absage zu ändern.'],
+    tip:'Die Mails werden nur live aus Gmail gezeigt und nicht im Portal gespeichert. Nichts wird ohne deinen Klick verschickt.' },
   { id:'abwesenheit', t:'Urlaub und Abwesenheiten eintragen', r:'all', sec:'kalender', img:'kalender', kw:'kalender urlaub abwesend abwesenheit fußball spiel verhindert krank nicht da zeitraum wiederkehrend wochentag eintragen pdf spielplan ansicht monat woche',
     steps:['Öffne „Kalender“ und tippe auf „+ Abwesenheit“. Oder tippe im Monatskalender direkt auf den Tag.','Wähle die Art: „Einzelner Tag“, „Zeitraum“ (zum Beispiel Urlaub) oder „Wiederkehrend“ (zum Beispiel Fußball jeden Samstag, mit Wochentag).','Gib einen Titel ein und speichere. Die Gruppe sieht damit, wann du nicht kannst, und kann Termine passend planen.','Mit „Spielplan als PDF einlesen“ übernimmst du Spieltermine aus einer PDF.','Oben wechselst du zwischen Kalender, Arbeitswoche, Zeitstrahl und Liste. Training, Gruppentermine und Auftritte stehen automatisch für alle drin.'],
     tip:'Ändern oder löschen kannst du nur deine eigenen Einträge (und der Admin alle).' },
@@ -1718,6 +1724,134 @@ function regSummary() {
   const c = { ja:0, nein:0, keine:0, pruefe:0 }; D.members.forEach(m => c[regState(m)]++);
   return `<div class="sub" style="margin:4px 0 8px;max-width:70ch"><b>${c.ja} von ${D.members.length}</b> haben sich angemeldet${c.nein ? ', <b>' + c.nein + ' noch nicht</b>' : ''}${c.keine ? ', bei ' + c.keine + ' fehlt die E-Mail-Adresse' : ''}. „Angemeldet“ heißt: Die Person hat das Portal mit Login geöffnet. Ältere Logins sieht das Portal nicht direkt, es erkennt sie nur an Aktivität (Zusage, Abstimmung, Beitrag). Sonst springt der Status auf Grün, sobald die Person das Portal das nächste Mal öffnet, oder du markierst sie von Hand.</div>`;
 }
+/* ---------- Posteingang: Mails lesen, erkennen, Antwort vorbereiten ---------- */
+const MB = { list:[], busy:false, err:'', ts:0, seen:{}, timer:null, open:'', reply:null, msg:'' };
+try { MB.seen = JSON.parse((typeof localStorage !== 'undefined' && localStorage.getItem('fb_mail_seen')) || '{}') || {}; } catch (e) { MB.seen = {}; }
+const mbSaveSeen = () => { try { localStorage.setItem('fb_mail_seen', JSON.stringify(MB.seen)); } catch (e) {} };
+const mbOn = () => apiOn() && can('postfach') && !!D.me;
+const MB_MON = { januar:1, februar:2, märz:3, april:4, mai:5, juni:6, juli:7, august:8, september:9, oktober:10, november:11, dezember:12 };
+function mbDates(t) {
+  const out = new Set(extractDates(t)), today = todayISO(), y = +today.slice(0, 4); let m;
+  const mk = (dd, mm, yy) => { const dt = new Date(yy, mm - 1, dd); if (dt.getMonth() !== mm - 1 || dt.getDate() !== dd) return; let iso = `${yy}-${pad(mm)}-${pad(dd)}`; if (!yy) return; out.add(iso); };
+  const re1 = /\b(\d{1,2})\.(\d{1,2})\.(?![\d])/g; while ((m = re1.exec(t))) { let yy = y, iso = `${yy}-${pad(+m[2])}-${pad(+m[1])}`; if (iso < today) yy++; mk(+m[1], +m[2], yy); }
+  const re2 = /\b(\d{1,2})\.\s*(januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember)\s*(\d{4})?/g;
+  while ((m = re2.exec(t))) { let yy = m[3] ? +m[3] : y, mm = MB_MON[m[2]]; if (!m[3] && `${yy}-${pad(mm)}-${pad(+m[1])}` < today) yy++; mk(+m[1], mm, yy); }
+  return [...out].sort();
+}
+function mbTime(t) {
+  const m = /\b(\d{1,2})[:.](\d{2})\s*uhr/.exec(t) || /\bum (\d{1,2})[:.](\d{2})\b/.exec(t) || /\b(\d{1,2})()\s*uhr/.exec(t); if (!m) return '';
+  const h = +m[1], mi = +(m[2] || 0); return h < 24 && mi < 60 ? pad(h) + ':' + pad(mi) : '';
+}
+const MB_CATS = {
+  rechnung:['Rechnung / Gage / Kosten', 'warn'], absage:['Absage vom Veranstalter', 'bad'], anfrage:['Anfrage für einen Auftritt', 'good'], zeiten:['Frage zu Zeiten und Ablauf', ''],
+  orga:['Technik / Organisation', ''], bestaetigung:['Bestätigung / Anmeldung', 'good'], dank:['Dank', ''], sonst:['Sonstiges', '']
+};
+function mbCat(m) {
+  const t = (m.subject + ' ' + m.body).toLowerCase(), has = r => r.test(t);
+  if (has(/rechnung|\bgage\b|vergütung|honorar|überweis|startgeld|gebühr|spendenquittung/)) return 'rechnung';
+  if (has(/absage|abgesagt|müssen.{0,40}absagen|fällt.{0,12}aus|leider.{0,50}(nicht stattfinden|ausfallen|absagen)/)) return 'absage';
+  if (has(/einlad|anfrage|anfragen|gastspiel|hättet ihr (zeit|lust|interesse)|würdet ihr|könntet ihr.{0,40}(auftreten|tanzen)|auftreten bei uns|bei uns (auftreten|tanzen)/)) return 'anfrage';
+  if (has(/uhrzeit|wann .{0,30}(dran|auftret|ankommen|da sein|beginn)|zeitplan|ablauf|programmfolge|startzeit|eintreffen|auftrittszeit|wie lange (dauert|tanzt)/)) return 'zeiten';
+  if (has(/musik|usb|\bstick\b|aufbau|umkleide|parkplatz|bühne|technik|mikro|anreise|verpflegung|getränke/)) return 'orga';
+  if (has(/bestätig|eingeplant|zusage|angemeldet|in unser programm|aufgenommen|wir freuen uns.{0,40}(dabei|euch)/)) return 'bestaetigung';
+  if (has(/danke|dankeschön|vielen dank|schöner abend|toll.{0,25}(auftritt|abend)/)) return 'dank';
+  if (has(/auftritt|auftreten|veranstaltung|session|sitzung|turnier|\bball\b|show|tanz/)) return 'anfrage';
+  return 'sonst';
+}
+const mbClean = s => String(s || '').replace(/^\s*((aw|re|wg|fwd?)\s*:\s*)+/i, '').trim();
+function mbEvent(m) {
+  const mail = (m.mail || '').toLowerCase(), ds = mbDates(m.subject + ' ' + m.body), ev = D.events.filter(e => e.datum);
+  let e = ds.length ? ev.find(x => x.datum === ds[0] && (!mail || (x.inhaber || '').toLowerCase().includes(mail))) || ev.find(x => x.datum === ds[0] && x.name && (m.subject + ' ' + m.body).toLowerCase().includes(x.name.toLowerCase())) : null;
+  if (!e && mail) e = ev.filter(x => (x.inhaber || '').toLowerCase().includes(mail) && x.datum >= todayISO()).sort((a, b) => a.datum.localeCompare(b.datum))[0] || null;
+  return e || null;
+}
+function mbAnalyze(m) {
+  const cat = mbCat(m), ds = mbDates(m.subject + '\n' + m.body), zeit = mbTime((m.subject + '\n' + m.body).toLowerCase()), ev = mbEvent(m), datum = ev && ev.datum || ds[0] || '';
+  const a = { cat, ds, zeit, ev, datum, ctx:null };
+  if (datum) {
+    const b = freeBusy(datum, { mids:[], z1:'', z2:'' }), tz = D.members.filter(x => TANZT(x.rolle)), abw = b.who.filter(w => TANZT(w.m.rolle));
+    const andere = D.events.filter(e => e.datum === datum && (!ev || e.id !== ev.id) && statusInfo(e.status).b !== 'declined');
+    const conf = b.conf.filter(c => !(ev && c === 'Auftritt ' + ev.name));
+    const avail = tz.length - abw.length, v = (conf.length || avail < Math.ceil(tz.length * 0.5)) ? 'belegt' : abw.length ? 'knapp' : 'frei';
+    a.ctx = { v, conf, abw:abw.map(w => w.m.name), avail, total:tz.length, andere, z:ev ? zCount(ev) : null, km:ev && D.geo && D.geo['e:' + ev.id] ? D.geo['e:' + ev.id].km : null };
+  }
+  return a;
+}
+function mbPrep(m) { m.a = mbAnalyze(m); return m; }
+function mbWho(m) { return m.name || m.mail; }
+function mbDraft(m, k) {
+  const a = m.a || mbAnalyze(m), e = a.ev || { id:'', name:mbClean(m.subject) || 'eurer Veranstaltung', datum:a.datum, zeit:a.zeit, inhaber:(m.name ? m.name + ' ' : '') + '(' + m.mail + ')' }, d = tplData(e);
+  if (!a.datum) d.wann = 'dem genannten Termin'; else if (!e.zeit && a.zeit) d.wann = fmtDate(a.datum).slice(4) + ' um ' + a.zeit + ' Uhr';
+  const re = 'Re: ' + mbClean(m.subject), name = a.ev ? a.ev.name : (mbClean(m.subject) || 'eurer Veranstaltung'), g = d.gruss;
+  const uebersicht = d.zeilen.length ? '\n\nUnser Auftritt im Überblick:\n' + d.zeilen.join('\n') : '';
+  const T = {
+    zusage:`${d.anrede},\n\nvielen Dank für eure Einladung zu „${name}“ am ${d.wann}. Wir kommen sehr gerne und sind dabei.\n\nZur Planung für euch: Wir sind mit ${d.taenzer} Tänzern` + (d.trainer || d.betreuer ? ' und Begleitung' : '') + ` dabei.${uebersicht}\n\nDie Musik bringen wir auf einem eigenen USB-Stick mit. Könnt ihr uns noch sagen, wann wir dran sind und ab wann wir vor Ort sein sollen?\n\n${g}`,
+    absage:`${d.anrede},\n\nvielen Dank für eure Einladung zu „${name}“ am ${d.wann}. Leider können wir an diesem Termin nicht dabei sein. Das tut uns leid, wir hätten sehr gerne bei euch getanzt.\n\nWir würden uns freuen, wenn ihr in der nächsten Session wieder an uns denkt.\n\n${g}`,
+    rueckfrage:`${d.anrede},\n\nvielen Dank für eure Anfrage zu „${name}“. Wir haben Interesse und wollen das gerne genau planen. Könnt ihr uns dazu noch ein paar Angaben schicken?\n\n- Genauer Termin und Uhrzeit\n- Ort und Adresse\n- Wann wir dran wären und wie lange der Auftritt sein darf\n- Größe der Bühne oder Tanzfläche\n- Parkmöglichkeiten und Umkleide\n\nDanach melden wir uns schnell bei euch.\n\n${g}`,
+    zeiten:`${d.anrede},\n\nvielen Dank für eure Nachfrage zu „${name}“. Zu uns:\n\n- Wir kommen mit ${d.taenzer} Tänzern` + (d.zeilen.length ? '\n' + d.zeilen.join('\n') : '') + `\n- Die Musik bringen wir auf einem eigenen USB-Stick mit\n\nWenn ihr noch etwas von uns braucht, sagt gerne Bescheid.\n\n${g}`,
+    orga:`${d.anrede},\n\nvielen Dank für die Nachricht zu „${name}“. Die Musik bringen wir auf einem eigenen USB-Stick mit. Wir schauen uns die übrigen Punkte an und melden uns dazu bei euch.\n\n${g}`,
+    bestaetigung:`${d.anrede},\n\nvielen Dank für die Bestätigung zu „${name}“ am ${d.wann}. Wir freuen uns sehr darauf.\n\nSobald ihr den Ablauf kennt, schickt uns gerne die Auftrittszeit und die Zeit, ab der wir vor Ort sein sollen.\n\n${g}`,
+    absageDank:`${d.anrede},\n\nvielen Dank für die Info zu „${name}“. Schade, aber wir verstehen das. Wir würden uns freuen, wenn ihr in der nächsten Session wieder an uns denkt.\n\n${g}`,
+    rechnung:`${d.anrede},\n\nvielen Dank für eure Nachricht. Wir geben das an unsere Kasse weiter und melden uns bei euch.\n\n${g}`,
+    dank:`${d.anrede},\n\nvielen Dank für die netten Worte. Uns hat es richtig Spaß gemacht. Wir kommen gerne wieder und freuen uns, wenn ihr in der nächsten Session wieder an uns denkt.\n\n${g}`,
+    sonst:`${d.anrede},\n\nvielen Dank für deine Nachricht. Wir schauen uns das an und melden uns bald bei dir.\n\n${g}`
+  };
+  return { betreff:re, text:T[k] || T.sonst };
+}
+function mbKinds(m) {
+  const a = m.a || mbAnalyze(m), v = a.ctx && a.ctx.v;
+  const K = { zusage:['Zusage', 'Wir sind dabei, mit Tänzerzahl und Zeiten'], absage:['Absage', 'Wir können an dem Termin nicht'], rueckfrage:['Rückfrage', 'Termin, Ort, Zeit und Bühne erfragen'], zeiten:['Zeiten und Angaben schicken', 'Tänzerzahl, Aufmarsch, Tanz, Abmarsch'], orga:['Kurz bestätigen', 'Musik per USB-Stick, Rest folgt'], bestaetigung:['Danke für die Bestätigung', 'Frage nach Auftrittszeit'], absageDank:['Danke für die Info', 'Schade, bis zur nächsten Session'], rechnung:['An die Kasse weitergeben', 'Eingangsbestätigung'], dank:['Gern geschehen', 'Danke zurück'], sonst:['Eingangsbestätigung', 'Wir melden uns'] };
+  const by = { anfrage:a.ds.length ? (v === 'belegt' ? ['absage', 'rueckfrage', 'zusage'] : ['zusage', 'rueckfrage', 'absage']) : ['rueckfrage', 'zusage', 'absage'], absage:['absageDank'], zeiten:['zeiten'], orga:['orga'], bestaetigung:['bestaetigung'], rechnung:['rechnung'], dank:['dank'], sonst:['sonst', 'rueckfrage'] }[a.cat];
+  return by.map((k, i) => ({ k, l:K[k][0], hint:K[k][1], rec:i === 0 && by.length > 1 || by.length === 1 }));
+}
+function mbCtxHTML(m) {
+  const a = m.a, c = a.ctx; if (!c) return '<div class="sub">Kein Datum in der Mail erkannt, deshalb gibt es keinen Abgleich mit dem Kalender.</div>';
+  const pill = c.v === 'frei' ? '<span class="pill good">Termin sieht frei aus</span>' : c.v === 'knapp' ? '<span class="pill warn">Termin knapp</span>' : '<span class="pill bad">Termin belegt</span>';
+  const lines = [`${pill} <b>${esc(fmtDate(a.datum))}</b>${a.zeit ? ' um ' + esc(a.zeit) + ' Uhr' : ''}`, `Verfügbare Tänzer laut Kalender: <b>${c.avail} von ${c.total}</b>${c.abw.length ? ' (abwesend: ' + esc(c.abw.join(', ')) + ')' : ''}`];
+  if (c.conf.length) lines.push('Schon an dem Tag: ' + esc(c.conf.join(', ')));
+  if (a.ev) lines.push(`Gehört zu <b>${esc(a.ev.name)}</b>, Status ${esc(statusInfo(a.ev.status).l)}` + (c.z ? `, bisher ${c.z.ja} Zusagen, ${c.z.nein} Absagen, ${c.z.offen} offen` : '') + (c.km != null ? `, ${esc(kKm(c.km))} ab Güsten` : ''));
+  return lines.map(x => `<div class="sub" style="margin:3px 0">${x}</div>`).join('');
+}
+function mbRow(m) {
+  const a = m.a, cat = MB_CATS[a.cat], open = MB.open === m.id, R = MB.reply && MB.reply.id === m.id ? MB.reply : null;
+  let h = `<div class="row" style="align-items:flex-start"><div class="grow"><b>${esc(m.subject || '(ohne Betreff)')}</b> ${m.unread && !m.own ? '<span class="pill warn">neu</span>' : ''} <span class="pill ${cat[1]}">${cat[0]}</span>${m.own ? ' <span class="pill">zuletzt von euch</span>' : ''}
+    <div class="sub">${esc(mbWho(m))} · ${esc(new Date(m.date).toLocaleString('de-DE', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }))}${m.count > 1 ? ' · ' + m.count + ' Mails im Verlauf' : ''}${m.files ? ' · ' + m.files + ' Anhang' : ''}</div>`;
+  if (!open) h += `<div class="sub" style="color:var(--faint)">${esc(m.body.replace(/\s+/g, ' ').slice(0, 110))}</div>`;
+  h += `</div><button class="btn sm" data-act="mbOpen" data-id="${esc(m.id)}">${open ? 'Zuklappen' : 'Öffnen'}</button></div>`;
+  if (open) {
+    const kon = kontakte(true).some(c => (c.mail || '').toLowerCase() === (m.mail || '').toLowerCase());
+    h += `<div class="panel" style="margin:6px 0 12px"><div style="white-space:pre-wrap;font-size:14px;max-height:260px;overflow:auto">${esc(m.body || '(kein Text)')}</div>
+      <div style="margin-top:10px"><b>Erkannt</b> ${mbCtxHTML(m)}</div>
+      <div class="chips" style="margin-top:10px">${mbKinds(m).map(k => `<button class="btn sm ${k.rec ? 'pri' : ''}" data-act="mbDraft" data-id="${esc(m.id)}" data-k="${k.k}" title="${esc(k.hint)}">${k.l}${k.rec ? ' (Vorschlag)' : ''}</button>`).join('')}</div>
+      <div class="chips" style="margin-top:6px">${can('events') && a.cat === 'anfrage' && a.datum && !a.ev ? `<button class="btn sm" data-act="mbEvent" data-id="${esc(m.id)}">Als Auftritt anlegen</button>` : ''}${can('events') && a.ev && a.cat === 'bestaetigung' && statusInfo(a.ev.status).b !== 'confirmed' ? `<button class="btn sm" data-act="mbStatus" data-id="${esc(m.id)}" data-s="Bestätigt">Auftritt auf „Bestätigt“ setzen</button>` : ''}${can('events') && a.ev && a.cat === 'absage' && statusInfo(a.ev.status).b !== 'declined' ? `<button class="btn sm" data-act="mbStatus" data-id="${esc(m.id)}" data-s="Nein">Auftritt auf „Abgesagt“ setzen</button>` : ''}${can('events') && m.mail && !kon && !m.own ? `<button class="btn sm" data-act="mbKontakt" data-id="${esc(m.id)}">Absender als Veranstalter-Kontakt anlegen</button>` : ''}${m.unread ? `<button class="btn sm" data-act="mbRead" data-id="${esc(m.id)}">Als gelesen markieren</button>` : ''}</div>
+      ${R ? `<div style="margin-top:12px"><label class="f" for="mrBetreff">Betreff<input id="mrBetreff" value="${esc(R.betreff)}"></label><label class="f" for="mrText">Antwort an ${esc(mbWho(m))} (bitte gegenlesen)<textarea id="mrText" rows="12">${esc(R.text)}</textarea></label>
+        <div class="chips"><button class="btn dark" data-act="mbSend" data-id="${esc(m.id)}">Im Verlauf antworten</button><button class="btn" data-act="mbSave" data-id="${esc(m.id)}">Als Entwurf speichern</button></div></div>` : ''}</div>`;
+  }
+  return h;
+}
+function mbPanel() {
+  if (!can('postfach')) return '';
+  if (!apiOn()) return `<div class="panel"><div class="ph"><h3>Posteingang</h3></div><div class="empty">Der Posteingang braucht die Verbindung zum Google-Konto der Gruppe.</div></div>`;
+  const neu = MB.list.filter(m => m.unread && !m.own).length;
+  return `<div class="panel"><div class="ph"><h3>Posteingang${neu ? ' (' + neu + ' neu)' : ''}</h3><button class="btn sm" data-act="mbRefresh">${MB.busy ? 'Lade …' : 'Aktualisieren'}</button></div>
+    <div class="sub" style="color:var(--muted)">${MB.ts ? 'Stand ' + esc(new Date(MB.ts).toLocaleTimeString('de-DE', { hour:'2-digit', minute:'2-digit' })) + '. ' : ''}Die Mails werden live aus Gmail geladen und nicht im Portal gespeichert. Das Portal erkennt, worum es geht, gleicht mit Kalender und Zusagen ab und bereitet die Antwort vor. Gesendet wird erst nach deinem Klick.</div>
+    ${MB.err ? `<div class="err">${esc(MB.err)}</div>` : ''}${MB.msg ? `<div class="sub" role="status" style="color:var(--muted)">${esc(MB.msg)}</div>` : ''}
+    <div class="rows">${MB.list.length ? MB.list.map(mbRow).join('') : `<div class="empty">${MB.busy ? 'Lade Mails …' : MB.ts ? 'Der Posteingang ist leer.' : 'Noch nicht geladen.'}</div>`}</div></div>`;
+}
+async function mailFetch(force) {
+  if (!mbOn() || MB.busy) return; if (!force && Date.now() - MB.ts < 4 * 60 * 1000) return;
+  MB.busy = true; MB.err = ''; if (UI.sec === 'postfach') render();
+  try { const j = await apiCall('inbox', {}); MB.list = (j.threads || []).map(mbPrep); MB.ts = Date.now(); }
+  catch (e) { MB.err = /Unbekannte Aktion/.test(e.message) ? 'Das Google-Skript kennt den Posteingang noch nicht. Es muss einmal neu eingerichtet werden (Anleitung in der Verwaltung oder bei Dan).' : 'Posteingang konnte nicht geladen werden: ' + e.message; MB.ts = Date.now(); }
+  finally { MB.busy = false; renderNav(); if (UI.sec === 'postfach') { if (!MB.err) mbMarkSeen(); render(); } }
+}
+function mbMarkSeen() { let ch = false; MB.list.forEach(m => { if (MB.seen[m.id] !== m.msgId) { MB.seen[m.id] = m.msgId; ch = true; } }); if (ch) { mbSaveSeen(); renderNav(); } }
+function mailEnsure() {
+  if (!mbOn()) return; if (!MB.timer) { MB.timer = setInterval(() => { if (!document.hidden) mailFetch(); }, 5 * 60 * 1000); setTimeout(() => mailFetch(), 1500); }
+  if (UI.sec === 'postfach') mailFetch();
+}
+const mbNews = () => mbOn() ? MB.list.filter(m => m.unread && !m.own && MB.seen[m.id] !== m.msgId).map(m => ({ sec:'postfach', art:'Neue Mail', titel:m.subject || '(ohne Betreff)', von:'', vt:'von ' + mbWho(m), ts:m.date })) : [];
+
 /* ---------- Karte & Fahrstrecken ---------- */
 const KM = { map:null, layer:null, route:null, busy:false, msg:'', mem:{}, last:0, leafP:null, view:null, days:'' };
 const KHOME = { home:'Güsten (Jülich)', lat:50.9355, lon:6.3640 };
@@ -2165,7 +2299,7 @@ const SEC = {
   postfach() {
     const ev = [...upcoming(), ...sortedEvents().filter(isPast).slice(-5).reverse()], k = kontakte().filter(c => c.mail);
     return head('Postfach', 'Mails im Namen der Funky Boys schreiben und über die Gmail-Adresse der Gruppe verschicken.' + (apiOn() ? '' : ' Das Verschicken ist noch nicht verbunden, bis dahin gibt es nur Entwürfe.')) +
-      `<div class="panel"><div class="ph"><h3>Neue Mail</h3><span class="sub" style="color:var(--muted);font-size:13px">Absender: Funky Boys &lt;${esc(D.absender)}&gt;</span></div>
+      mbPanel() + `<div class="panel"><div class="ph"><h3>Neue Mail</h3><span class="sub" style="color:var(--muted);font-size:13px">Absender: Funky Boys &lt;${esc(D.absender)}&gt;</span></div>
         <label class="f" for="mAn">An<input id="mAn" type="text" list="mList" value="${esc(UI.mailTo)}" placeholder="E-Mail-Adresse"></label><datalist id="mList">${k.map(c => `<option value="${esc(c.mail)}">${esc(c.name)}</option>`).join('')}</datalist>
         <div class="two"><label class="f" for="mEv">Auftritt<select id="mEv">${ev.map(e => `<option value="${e.id}">${fmtDate(e.datum).slice(4)} ${esc(e.name)}</option>`).join('')}</select></label>
           <label class="f" for="mTpl">Vorlage<select id="mTpl"><option value="anmeldung">Anmeldung</option><option value="zeiten">Auftrittszeit erfragen</option><option value="absage">Absage</option><option value="dank">Danke nach dem Auftritt</option></select></label></div>
@@ -2244,7 +2378,7 @@ function render() {
   markSeen();
   if (UI.sec === 'hilfe' && UI.helpOpen) { const el = $('hlp_' + UI.helpOpen); if (el && el.scrollIntoView) setTimeout(() => el.scrollIntoView({ block:'start', behavior:'smooth' }), 60); UI.helpOpen = ''; }
   if (UI.sec === 'karte') { kMapInit(); kDaysFill(); }
-  chatEnsure(); chatBadge();
+  chatEnsure(); chatBadge(); mailEnsure();
   gratulieren();
 }
 function route() { AI.msg = ''; UI.vmMsg = ''; UI.sec = (location.hash || '#start').slice(1); if (UI.sec !== 'verwaltung') { UI.thDraft = null; UI.thMsg = ''; } render(); window.scrollTo(0, 0); }
@@ -2455,6 +2589,21 @@ const ACT = {
   kDayRoute(d) { const day = KM.days && KM.days.res && KM.days.res.find(r => r.date === d.d); if (day) kShowRoute(day.st.map(i => i.key)); },
   regOn(d) { if (!can('verwaltung')) return; (D.regOk = D.regOk || {})[d.id] = true; save(); render(); },
   regOff(d) { if (!can('verwaltung')) return; if (D.regOk) delete D.regOk[d.id]; save(); render(); },
+  mbOpen(d) { MB.open = MB.open === d.id ? '' : d.id; if (MB.reply && MB.reply.id !== d.id) MB.reply = null; MB.msg = ''; render(); },
+  mbRefresh() { MB.msg = ''; mailFetch(true); },
+  mbDraft(d) { const m = MB.list.find(x => x.id === d.id); if (!m) return; const r = mbDraft(m, d.k); MB.reply = { id:m.id, k:d.k, betreff:r.betreff, text:r.text }; MB.msg = ''; render(); },
+  mbSave(d) { const m = MB.list.find(x => x.id === d.id); if (!m || !can('postfach')) return; const betreff = $('mrBetreff').value.trim(), text = $('mrText').value.trim(); if (!betreff || !text) return;
+    D.mails.push({ id:uid('ml'), an:m.mail, betreff, text, von:D.me, datum:todayISO() }); MB.reply = null; MB.msg = 'Entwurf gespeichert (weiter unten bei den Entwürfen).'; save(); render(); },
+  mbSend(d) { const m = MB.list.find(x => x.id === d.id); if (!m || !can('postfach')) return; const betreff = $('mrBetreff').value.trim(), text = $('mrText').value.trim(); if (!text) return;
+    askConfirmSend('Antwort an ' + mbWho(m) + ' jetzt verschicken?', async () => { try { await apiCall('reply', { id:m.id, text }); D.mails.push({ id:uid('ml'), an:m.mail, betreff:betreff || 'Re: ' + m.subject, text, von:D.me, datum:todayISO(), gesendet:true }); m.unread = false; MB.reply = null; MB.msg = 'Die Antwort an ' + mbWho(m) + ' wurde im Verlauf verschickt.'; } catch (e) { MB.msg = 'Verschicken fehlgeschlagen: ' + e.message; } save(); render(); }); },
+  mbRead(d) { const m = MB.list.find(x => x.id === d.id); if (!m) return; apiCall('read', { id:m.id }).then(() => { m.unread = false; renderNav(); render(); }).catch(e => { MB.msg = 'Konnte nicht als gelesen markieren: ' + e.message; render(); }); },
+  mbEvent(d) { const m = MB.list.find(x => x.id === d.id); if (!m || !can('events') || !m.a.datum) return; const a = m.a;
+    D.events.push({ id:uid('e'), name:mbClean(m.subject).slice(0, 80) || 'Anfrage per Mail', datum:a.datum, zeit:a.zeit, ende:'', art:'', status:'Angefragt', standort:'', inhaber:(m.name ? m.name + ' ' : '') + '(' + m.mail + ')', gebuehr:'', notizen:'Per Mail angefragt am ' + fmtDate(todayISO()) + '. Bitte Ort und Details prüfen.' });
+    m.a = mbAnalyze(m); MB.msg = 'Als Auftritt „Angefragt“ angelegt. Ort und Name bitte unter Auftritte prüfen.'; save(); render(); },
+  mbStatus(d) { const m = MB.list.find(x => x.id === d.id); if (!m || !can('events') || !m.a.ev) return; m.a.ev.status = d.s; m.a = mbAnalyze(m); MB.msg = 'Status bei „' + m.a.ev.name + '“ geändert.'; save(); render(); },
+  mbKontakt(d) { const m = MB.list.find(x => x.id === d.id); if (!m || !can('events') || !m.mail) return;
+    if (kontakte(true).some(c => (c.mail || '').toLowerCase() === m.mail.toLowerCase())) { MB.msg = 'Diesen Kontakt gibt es schon.'; render(); return; }
+    (D.kontakte = D.kontakte || []).push({ id:uid('k'), name:m.name || m.mail, mail:m.mail }); MB.msg = 'Kontakt angelegt. Doppelte erkennt die Veranstalter-Liste und schlägt das Zusammenführen vor.'; save(); render(); },
   mailTo(d) { UI.mailTo = d.v; location.hash = '#postfach'; },
   tpl() { const e = D.events.find(x => x.id === $('mEv').value); if (!e) return; const k = $('mTpl').value, d = tplData(e), t = TPL[k](e, d);
     $('mBetreff').value = t[0]; $('mText').value = t[1]; if (!$('mAn').value.trim() && d.mail) $('mAn').value = d.mail;
@@ -2541,10 +2690,10 @@ const ACT = {
     D.aufgaben.push({ id:uid('a'), titel:(d.col === 'bugs' ? 'Fehler: ' : 'Vorschlag: ') + x.titel, bereich:'Sonstiges', wer:D.me, von:D.me, bis:'', done:false, ts:Date.now() });
     x.aufgabe = true; if (x.status === 'Neu') x.status = 'Geplant'; else if (x.status === 'Offen') x.status = 'In Arbeit'; save(); render(); },
   bellOpen() { const n = news();
-    openDlg(`<h3>Neu für dich</h3>${n.length ? `<div class="rows">${n.map(x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b><div class="sub">${x.art} · von ${esc(mname(x.von))} · ${fmtTs(x.ts)}</div></div><button class="btn sm" data-act="bellGo" data-sec="${x.sec}">Ansehen</button></div>`).join('')}</div>` : '<div class="empty">Nichts Neues auf der Pinnwand oder bei den Aufgaben.</div>'}
+    openDlg(`<h3>Neu für dich</h3>${n.length ? `<div class="rows">${n.map(x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b><div class="sub">${x.art} · ${x.vt ? esc(x.vt) : 'von ' + esc(mname(x.von))} · ${fmtTs(x.ts)}</div></div><button class="btn sm" data-act="bellGo" data-sec="${x.sec}">Ansehen</button></div>`).join('')}</div>` : '<div class="empty">Nichts Neues auf der Pinnwand oder bei den Aufgaben.</div>'}
       <div class="acts">${n.length ? '<button class="btn dark" data-act="bellRead">Alles gelesen</button>' : ''}<button class="btn" data-act="close">Schließen</button></div>`); },
   bellGo(d) { closeDlg(); if (location.hash === '#' + d.sec) render(); else location.hash = '#' + d.sec; },
-  bellRead() { D.seen[D.me] = { posts:Date.now(), aufgaben:Date.now() }; convIds().forEach(c => { CH.seen[c] = Date.now(); }); chatSave(); chatBadge(); save(); if (!$('dlg').hidden) closeDlg(); render(); },
+  bellRead() { MB.list.forEach(m => { MB.seen[m.id] = m.msgId; }); mbSaveSeen(); D.seen[D.me] = { posts:Date.now(), aufgaben:Date.now() }; convIds().forEach(c => { CH.seen[c] = Date.now(); }); chatSave(); chatBadge(); save(); if (!$('dlg').hidden) closeDlg(); render(); },
   reload() { location.reload(); },
   trSerieOpen(d) { if (!can('trainings')) return; const sr = d.id ? D.trSerien.find(x => x.id === d.id) : { wochentag:'6', von:todayISO(), bis:'', zeit:'11:00', zeitBis:'13:00', ort:'', thema:'' };
     FORM = { col:'trSerie', id:d.id || '' };

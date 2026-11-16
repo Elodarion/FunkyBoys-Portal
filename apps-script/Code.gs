@@ -2,6 +2,7 @@
  * Funky Boys Portal – Google Apps Script (Dateiablage in Drive + Mailversand).
  * Läuft im Google-Konto der Funky Boys. Jede Anfrage trägt das Firebase-Login-Token
  * des Portal-Nutzers; das Skript prüft es und schaut nach, ob die Adresse im Portal freigeschaltet ist.
+ * Neu: Posteingang lesen, im Verlauf antworten, als gelesen markieren (Gmail der Gruppe).
  * Es sind keine Passwörter oder Schlüssel nötig (der Firebase-Webschlüssel ist öffentlich).
  */
 const FIREBASE_API_KEY = 'AIzaSyACAImQ3HoiXHNIK8QAmioE8VEoIWa4voA';
@@ -15,6 +16,7 @@ const MAX_BYTES = 20 * 1024 * 1024;
 function setup() {
   FOLDERS.forEach(getFolder_);
   MailApp.getRemainingDailyQuota();
+  GmailApp.getInboxUnreadCount();
   UrlFetchApp.fetch('https://www.google.com', { muteHttpExceptions: true });
   Logger.log('Fertig. Ordner "' + ROOT_NAME + '" liegt in deinem Drive.');
 }
@@ -29,6 +31,9 @@ function doPost(e) {
       case 'download': return out_(download_(r));
       case 'delete': return out_(delete_(r, u));
       case 'mail': return out_(mail_(r, u));
+      case 'inbox': return out_(inbox_(r, u));
+      case 'reply': return out_(reply_(r, u));
+      case 'read': return out_(read_(r, u));
       default: throw new Error('Unbekannte Aktion.');
     }
   } catch (err) { return out_({ ok: false, error: String(err && err.message || err) }); }
@@ -101,4 +106,42 @@ function mail_(r, u) {
   if (!betreff || !text) throw new Error('Betreff und Text dürfen nicht leer sein.');
   MailApp.sendEmail({ to: an, subject: betreff, body: text, name: SENDER_NAME });
   return { ok: true };
+}
+
+/* ---------- Posteingang (Gmail der Gruppe) ---------- */
+function mayMail_(u) {
+  if (!u.adm && u.rolle !== 'trainerin' && u.rolle !== 'admin') throw new Error('Du darfst das Postfach der Gruppe nicht lesen.');
+}
+function me_() { return String(Session.getEffectiveUser().getEmail() || '').toLowerCase(); }
+function parseFrom_(f) {
+  f = String(f || ''); const m = /^\s*"?([^"<]*?)"?\s*<([^>]+)>\s*$/.exec(f);
+  return m ? { name: m[1].trim(), mail: m[2].trim().toLowerCase() } : { name: '', mail: f.trim().toLowerCase() };
+}
+function stripQuote_(t) {
+  t = String(t || '').replace(/\r/g, ''); const cut = t.search(/\n(Am .{5,90} schrieb|On .{5,90} wrote|-{2,} ?(Original|Ursprüngliche)|Von: .+\nGesendet:)/);
+  if (cut > 0) t = t.slice(0, cut);
+  return t.split('\n').filter(function (l) { return l.charAt(0) !== '>'; }).join('\n').trim();
+}
+/** Letzte Mails im Posteingang. Nichts davon wird im Portal gespeichert, es wird jedes Mal live abgefragt. */
+function inbox_(r, u) {
+  mayMail_(u); const mine = me_(), out = [];
+  GmailApp.search('in:inbox -category:promotions -category:social newer_than:60d', 0, 25).forEach(function (th) {
+    const ms = th.getMessages(), last = ms[ms.length - 1], f = parseFrom_(last.getFrom());
+    out.push({ id: th.getId(), msgId: last.getId(), name: f.name, mail: f.mail, own: f.mail === mine, subject: th.getFirstMessageSubject().slice(0, 200), date: last.getDate().getTime(),
+      unread: th.isUnread(), count: ms.length, files: last.getAttachments().length, body: stripQuote_(last.getPlainBody()).slice(0, 3500) });
+  });
+  return { ok: true, threads: out };
+}
+/** Antwortet im bestehenden Verlauf an den letzten Absender, der nicht die Gruppe selbst ist. */
+function reply_(r, u) {
+  mayMail_(u); const text = String(r.text || '').trim().slice(0, 20000); if (!text) throw new Error('Der Text darf nicht leer sein.');
+  const th = GmailApp.getThreadById(String(r.id)); if (!th) throw new Error('Mail nicht gefunden.');
+  const ms = th.getMessages(), mine = me_(); let target = null;
+  for (let i = ms.length - 1; i >= 0; i--) { if (parseFrom_(ms[i].getFrom()).mail !== mine) { target = ms[i]; break; } }
+  if (!target) throw new Error('In diesem Verlauf gibt es nichts, worauf du antworten kannst.');
+  target.reply(text, { name: SENDER_NAME }); th.markRead();
+  return { ok: true };
+}
+function read_(r, u) {
+  mayMail_(u); const th = GmailApp.getThreadById(String(r.id)); if (!th) throw new Error('Mail nicht gefunden.'); th.markRead(); return { ok: true };
 }
