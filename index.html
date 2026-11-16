@@ -432,7 +432,7 @@ function seed0() {
       { id:'d2', titel:'Hauptteil Saloon', art:'Choreo-Teil', status:'In Arbeit', notiz:'', demo:true },
       { id:'d3', titel:'Musikschnitt Session 2026/27', art:'Musik', status:'In Arbeit', notiz:'', demo:true } ],
     zeiten:{ aufmarsch:'', tanz:'', abmarsch:'' },
-    merch:[],
+    merch:[], kontakte:[],
     requisiten:[
       { id:'r1', name:'Saloon-Schwingtür', anzahl:1, wo:'', zustand:'In Arbeit', notiz:'', demo:true },
       { id:'r2', name:'Lasso', anzahl:8, wo:'', zustand:'Fertig', notiz:'', demo:true } ],
@@ -708,8 +708,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.16', BUILD = 46;
+const VERSION = '2.17', BUILD = 47;
 const CHANGELOG = [
+  { v:'2.17', datum:'2026-11-16', punkte:['Veranstalter-Kontakte lassen sich bearbeiten: Telefon, Ort und Notizen ergänzen, Angaben ändern, Kontakte ausblenden oder selbst anlegen. Die automatische Liste aus den Auftritten bleibt'] },
   { v:'2.16', datum:'2026-11-16', punkte:['Design-Editor unter Verwaltung: Farben, Schriftarten, Rundung, Glas-Effekt und Banner-Bild für alle einstellen, dazu vier Vorlagen (Neon-Violett, Nachtblau, Navy-Dashboard, Hell)'] },
   { v:'2.15', datum:'2026-11-16', punkte:['Mehr Farbe: hellere Flächen, farbige Symbole im Menü je Gruppe, Kennzahlen in eigenen Farben und farbige Kopfleisten an den Karten'] },
   { v:'2.14', datum:'2026-11-16', punkte:['Das Banner auf der Startseite hat zu jedem Motto ein eigenes Bild: Wüste mit Kaktus, Konfetti, Wellen oder Scheinwerfer'] },
@@ -782,8 +783,8 @@ const ALL = Object.keys(ROLES), MIT_ROLLE = ALL.filter(r => r !== 'taenzer'), TA
 const CAN = { events:['admin','trainerin','auftritte'], buchungen:['admin','kasse'], beitraege:['admin','kasse'], kostueme:['admin','trainerin','kostuem','betreuer'], tanz:['admin','trainerin'],
   requisiten:['admin','trainerin','requisit'], trainings:['admin','trainerin'], members:['admin'], aufgaben:MIT_ROLLE, posts:ALL, umfragen:ALL, dateien:['admin','trainerin'],
   postfach:['admin','trainerin'], verwaltung:['admin'], social:ALL.filter(r => r !== 'betreuer'), socialOk:['trainerin'] };
-CAN.merch = ['admin']; CAN.fremde = ['admin','trainerin']; CAN.sponsoren = ['admin','kasse']; CAN.kalender = ALL;
-const RIGHTS = [['Auftritte bearbeiten','events'],['Pinnwand und Abstimmungen','posts'],['Aufgaben anlegen','aufgaben'],['Kalender: eigene Termine eintragen','kalender'],['Fremde Aufgaben und Abstimmungen ändern','fremde'],['Dateien hochladen','dateien'],['Buchungen und Budget','buchungen'],['Beiträge aller sehen und pflegen','beitraege'],['Sponsoren pflegen','sponsoren'],
+CAN.kontakte = ['admin','trainerin','auftritte']; CAN.merch = ['admin']; CAN.fremde = ['admin','trainerin']; CAN.sponsoren = ['admin','kasse']; CAN.kalender = ALL;
+const RIGHTS = [['Auftritte bearbeiten','events'],['Pinnwand und Abstimmungen','posts'],['Aufgaben anlegen','aufgaben'],['Kalender: eigene Termine eintragen','kalender'],['Fremde Aufgaben und Abstimmungen ändern','fremde'],['Dateien hochladen','dateien'],['Buchungen und Budget','buchungen'],['Beiträge aller sehen und pflegen','beitraege'],['Sponsoren pflegen','sponsoren'], ['Veranstalter-Kontakte pflegen','kontakte'],
   ['Kostüme pflegen','kostueme'],['Teamausstattung und Merch pflegen','merch'],['Requisiten pflegen','requisiten'],['Tanz bearbeiten','tanz'],['Training und Anwesenheit','trainings'],['Social-Media-Posts vorschlagen','social'],['Social-Media-Posts freigeben','socialOk'],['Mails im Namen der Gruppe','postfach'],['Mitglieder pflegen','members']];
 const FIX = (k, r) => r === 'admin' && (k === 'members' || k === 'verwaltung');   // der Admin kann sich nicht selbst aussperren
 const roleCan = (k, r) => FIX(k, r) || ((D.rechte && D.rechte[k]) || CAN[k]).includes(r);
@@ -955,17 +956,25 @@ function fin() {
 }
 
 /* ---------- Kontakte aus den Terminen ---------- */
-function kontakte() {
+function kontakteBase() {
   const map = {};
   D.events.forEach(e => {
     if (!e.inhaber) return;
     const mail = (e.inhaber.match(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/) || [''])[0], url = (e.inhaber.match(/https?:\/\/[^\s)]+/) || [''])[0];
     let name = e.inhaber.replace(/\(.*?\)/g, '').trim(); if (name === mail) name = '';
     const k = (name || mail).toLowerCase(); if (!k) return;
-    const c = map[k] || (map[k] = { name, mail:'', url:'', events:[] });
+    const c = map[k] || (map[k] = { key:k, name, mail:'', url:'', telefon:'', ort:'', notiz:'', events:[] });
     if (mail) c.mail = mail; if (url) c.url = url; if (!c.events.includes(e.name)) c.events.push(e.name);
   });
-  return Object.values(map).sort((a, b) => (a.name || a.mail).localeCompare(b.name || b.mail));
+  return map;
+}
+function kontakte(all) {
+  const map = kontakteBase(), ov = D.kontakte || [], list = Object.values(map).map(c => {
+    const o = ov.find(x => x.key === c.key); if (!o) return c;
+    return Object.assign(c, { rid:o.id, hide:!!o.hide, name:o.name || c.name, mail:o.mail || c.mail, url:o.url || c.url, telefon:o.telefon || '', ort:o.ort || '', notiz:o.notiz || '' });
+  });
+  ov.filter(x => !x.key).forEach(o => list.push({ key:'', rid:o.id, manual:true, hide:!!o.hide, name:o.name || '', mail:o.mail || '', url:o.url || '', telefon:o.telefon || '', ort:o.ort || '', notiz:o.notiz || '', events:[] }));
+  return list.filter(c => all || !c.hide).sort((a, b) => (a.name || a.mail).localeCompare(b.name || b.mail));
 }
 
 /* ---------- Vormerken: Veranstalter-Datenbank für die nächste Session ---------- */
@@ -1019,6 +1028,8 @@ const C = {
   veranstalter:{ t:'Veranstalter', f:[ { k:'verein', l:'Verein oder Tanzgruppe', req:1 }, { k:'veranstaltung', l:'Veranstaltung' }, { k:'monat', l:'Üblicher Monat', t:'select', o:VM_MON },
     { k:'ort', l:'Ort / Halle' }, { k:'art', l:'Art', t:'select', o:['Turnier','Showtanz','Gastauftritt'] }, { k:'person', l:'Ansprechperson (nur Name)' }, { k:'email', l:'E-Mail' }, { k:'telefon', l:'Telefon' },
     { k:'web', l:'Webseite oder Instagram' }, { k:'gebuehr', l:'Startgeld' }, { k:'stand', l:'Stand für die nächste Session', t:'select', o:VM_STAND }, { k:'notiz', l:'Notizen (Erfahrung, Termin dieser Session, Anmeldeweg)', t:'area' } ] },
+  kontakte:{ t:'Veranstalter-Kontakt', f:[ { k:'name', l:'Name (Verein oder Ansprechperson)', req:1 }, { k:'mail', l:'E-Mail' }, { k:'telefon', l:'Telefon' }, { k:'url', l:'Webseite oder Instagram' },
+    { k:'ort', l:'Ort / Halle' }, { k:'notiz', l:'Notiz (z. B. Erfahrung, bester Weg zur Anmeldung)', t:'area' }, { k:'hide', l:'In der Liste', t:'select', o:[['','anzeigen'],['1','ausblenden']] } ] },
   umfragen:{ t:'Abstimmung', f:[ { k:'frage', l:'Frage', req:1 }, { k:'opts', l:'Antworten, mit Komma getrennt', t:'list', req:1 } ] },
   feedback:{ t:'Vorschlag', f:[ { k:'titel', l:'Was sollen wir ändern oder ergänzen', req:1 }, { k:'text', l:'Genauer beschrieben', t:'area' },
     { k:'status', l:'Stand (nur Admin)', t:'select', adm:1, o:['Neu','Geplant','In Arbeit','Umgesetzt','Abgelehnt'] } ] },
@@ -1050,15 +1061,15 @@ function fieldHTML(f, v) {
   const type = { number:'number', date:'date', time:'time' }[f.t] || 'text';
   return `<label class="f" for="${id}">${f.l}${f.req ? ' *' : ''}<input id="${id}" type="${type}" ${type === 'number' ? 'step="0.01" min="0" inputmode="decimal"' : ''} value="${esc(Array.isArray(val) ? val.join(', ') : val)}"></label>`;
 }
-function mayOpen(col, id) { if (['buchungen', 'beitraege', 'sponsoren'].includes(col)) return can(col); if (col === 'trainings') return can('trainings'); if (col === 'kalender') { if (!can('kalender')) return false; const e = id && D.kalender.find(x => x.id === id); return !e || mayEditCal(e); } return true; }
+function mayOpen(col, id) { if (['buchungen', 'beitraege', 'sponsoren', 'kontakte'].includes(col)) return can(col); if (col === 'trainings') return can('trainings'); if (col === 'kalender') { if (!can('kalender')) return false; const e = id && D.kalender.find(x => x.id === id); return !e || mayEditCal(e); } return true; }
 function openEdit(col, id, preset) {
   if (!mayOpen(col, id)) return;
-  const cfg = C[col], item = id ? D[col].find(x => x.id === id) : null;
-  FORM = { col, id };
-  openDlg(`<h3>${item ? cfg.t + ' bearbeiten' : cfg.t + ' anlegen'}</h3>${fieldsOf(cfg).map(f => fieldHTML(f, item ? item[f.k] : (preset || {})[f.k])).join('')}
+  const cfg = C[col], item = id ? D[col].find(x => x.id === id) : null, eff = col === 'kontakte' && item ? kontakte(true).find(c => c.rid === id) : null;
+  FORM = { col, id, key:(preset || {}).key || (item && item.key) || '' };
+  openDlg(`<h3>${item ? cfg.t + ' bearbeiten' : cfg.t + ' anlegen'}</h3>${col === 'kontakte' && FORM.key ? '<div class="sub" style="color:var(--muted)">Dieser Kontakt stammt aus der Auftrittsplanung. Deine Änderungen überschreiben die Angaben dort, bleiben aber erhalten, auch wenn die Termine sich ändern.</div>' : ''}${fieldsOf(cfg).map(f => fieldHTML(f, eff ? (f.k === 'hide' ? (eff.hide ? '1' : '') : eff[f.k]) : item ? item[f.k] : (preset || {})[f.k])).join('')}
     <div class="err" id="fErr" hidden></div>
     <div class="acts"><button class="btn dark" data-act="saveForm">Speichern</button><button class="btn" data-act="close">Abbrechen</button>
-    ${item ? '<button class="btn" data-act="delForm" style="color:var(--bad)">Löschen</button>' : ''}</div>`);
+    ${item ? `<button class="btn" data-act="delForm" style="color:var(--bad)">${col === 'kontakte' && item.key ? 'Auf Automatik zurücksetzen' : 'Löschen'}</button>` : ''}</div>`);
 }
 function saveForm() {
   if (!mayOpen(FORM.col, FORM.id)) { closeDlg(); return; }
@@ -1072,9 +1083,11 @@ function saveForm() {
     }
     rec[f.k] = v;
   }
+  if (FORM.col === 'kontakte' && FORM.key) { const b = kontakteBase()[FORM.key] || {}; ['name', 'mail', 'url'].forEach(k => { if (rec[k] === (b[k] || '')) rec[k] = ''; }); }
   if (FORM.id) { const it = D[FORM.col].find(x => x.id === FORM.id); Object.assign(it, rec); delete it.demo; }
   else {
     const it = Object.assign({ id:uid(FORM.col[0]) }, rec);
+    if (FORM.col === 'kontakte' && FORM.key) it.key = FORM.key;
     if (FORM.col === 'posts') { it.von = D.me; it.datum = todayISO(); }
     if (FORM.col === 'umfragen') { it.stimmen = {}; it.von = D.me; }
     if (FORM.col === 'aufgaben') { it.done = false; it.von = D.me; }
@@ -1461,10 +1474,15 @@ const SEC = {
       ${done.length ? `<div class="panel"><div class="ph"><h3>Gepostet (${done.length})</h3></div>${rows(done, row, '')}</div>` : ''}`;
   },
   kontakte() {
-    const k = kontakte();
-    return head('Veranstalter-Kontakte', 'Entsteht automatisch aus den Ansprechpartnern in der Auftrittsplanung. Die Datenbank für die nächste Session steht unter <a href="#vormerken">Auftritte · Vormerken</a>.') +
-      `<div class="panel">${rows(k, c => `<div class="row"><div class="grow"><b>${esc(c.name || c.mail)}</b><div class="sub">${c.mail ? linkify(c.mail) : 'keine E-Mail hinterlegt'}${c.url ? ' · ' + linkify(c.url) : ''}<br>${c.events.map(esc).join(', ')}</div></div>
-        ${c.mail && can('postfach') ? `<button class="btn sm" data-act="mailTo" data-v="${esc(c.mail)}">Mail schreiben</button>` : ''}</div>`, 'Noch keine Ansprechpartner bei den Terminen eingetragen.')}</div>`;
+    const k = kontakte(true), shown = k.filter(c => !c.hide), hid = k.filter(c => c.hide), ok = can('kontakte');
+    const row = c => `<div class="row"><div class="grow"><b>${esc(c.name || c.mail)}</b>${c.manual ? ' <span class="pill vio">selbst angelegt</span>' : c.rid ? ' <span class="pill">bearbeitet</span>' : ''}${c.hide ? ' <span class="pill warn">ausgeblendet</span>' : ''}
+        <div class="sub">${c.mail ? linkify(c.mail) : 'keine E-Mail hinterlegt'}${c.telefon ? ' · ' + esc(c.telefon) : ''}${c.url ? ' · ' + linkify(c.url) : ''}${c.ort ? ' · ' + esc(c.ort) : ''}${c.events.length ? '<br>' + c.events.map(esc).join(', ') : ''}</div>
+        ${c.notiz ? `<div class="n" style="font-size:13px;color:var(--muted);background:var(--soft);border-radius:10px;padding:8px 12px;margin-top:6px;white-space:pre-wrap">${esc(c.notiz)}</div>` : ''}</div>
+        ${c.mail && can('postfach') ? `<button class="btn sm" data-act="mailTo" data-v="${esc(c.mail)}">Mail schreiben</button>` : ''}
+        ${ok ? (c.rid ? `<button class="btn sm" data-act="edit" data-col="kontakte" data-id="${c.rid}">Bearbeiten</button>` : `<button class="btn sm" data-act="kontaktNew" data-key="${esc(c.key)}">Bearbeiten</button>`) : ''}</div>`;
+    return head('Veranstalter-Kontakte', 'Entsteht automatisch aus den Ansprechpartnern in der Auftrittsplanung. Du kannst jeden Kontakt ergänzen, ändern oder ausblenden und eigene anlegen. Die Datenbank für die nächste Session steht unter <a href="#vormerken">Auftritte · Vormerken</a>.', addBtn('kontakte', '+ Kontakt')) +
+      `<div class="panel">${rows(shown, row, 'Noch keine Ansprechpartner bei den Terminen eingetragen.')}</div>` +
+      (hid.length ? `<div class="panel"><div class="ph"><h3>Ausgeblendet (${hid.length})</h3><button class="btn sm" data-act="kontakteTog">${UI.kHid ? 'Verbergen' : 'Anzeigen'}</button></div>${UI.kHid ? rows(hid, row, '') : ''}</div>` : '');
   },
   dateien() {
     const ord = ['Anmeldungen','Belege & Verträge','Musik','Kostüme','Fotos & Videos','Sonstiges'];
@@ -1739,7 +1757,7 @@ async function btImportHandle(file) {
 }
 const ACT = {
   edit:d => openEdit(d.col, d.id), close:closeDlg, saveForm,
-  delForm() { const { col, id } = FORM; if (!mayOpen(col, id)) return; askConfirm('Der Eintrag wird gelöscht.', () => { D[col] = D[col].filter(x => x.id !== id); if (col === 'members' && D.me === id) D.me = D.members[0].id; }); },
+  delForm() { const { col, id } = FORM; if (!mayOpen(col, id)) return; askConfirm(col === 'kontakte' && (D.kontakte.find(x => x.id === id) || {}).key ? 'Deine Änderungen an diesem Kontakt werden entfernt. Er wird wieder automatisch aus den Auftritten gefüllt.' : 'Der Eintrag wird gelöscht.', () => { D[col] = D[col].filter(x => x.id !== id); if (col === 'members' && D.me === id) D.me = D.members[0].id; }); },
   zusage(d) { const z = D.zusagen[d.id] || (D.zusagen[d.id] = {}); z[D.me] = z[D.me] === d.v ? '' : d.v; save(); $('evList') ? $('evList').innerHTML = evListHTML() : render(); },
   evFilter(d) { UI.filter = d.v; render(); }, evPast(d, el) { UI.past = el.checked; render(); },
   task(d, el) { const a = D.aufgaben.find(x => x.id === d.id); if (a && mayTickTask(a)) a.done = el.checked; save(); render(); },
@@ -1784,6 +1802,8 @@ const ACT = {
   extraSave() { const id = FORM && FORM.extra; if (!id) return; const picked = [...$('dlgBox').querySelectorAll('.xr')].filter(c => c.checked && !c.disabled).map(c => c.value);
     if (!D.extra) D.extra = {}; if (picked.length) D.extra[id] = picked; else delete D.extra[id]; save(); closeDlg(); render(); },
   saveMotto() { D.motto = Object.assign({}, D.motto, { titel:$('moTitel').value.trim() || D.motto.titel, session:$('moSession').value.trim(), farbwelt:$('moFarbe').value }); save(); render(); },
+  kontaktNew(d) { if (!can('kontakte')) return; const c = kontakte(true).find(x => x.key === d.key && !x.manual); if (!c) return; openEdit('kontakte', null, { key:c.key, name:c.name, mail:c.mail, telefon:c.telefon, url:c.url, ort:c.ort, notiz:c.notiz }); },
+  kontakteTog() { UI.kHid = !UI.kHid; render(); },
   thPreset(d) { const p = THEMES[d.k]; if (!p || me().rolle !== 'admin') return; UI.thDraft = JSON.parse(JSON.stringify({ c:p.c, fh:p.fh, fb:p.fb, rs:p.rs, glass:p.glass, art:(UI.thDraft || {}).art || 'auto' })); UI.thMsg = ''; render(); },
   thRs(d) { if (me().rolle !== 'admin') return; thDraft().rs = +d.v; applyTheme(UI.thDraft); UI.thMsg = ''; render(); },
   thSave() { if (me().rolle !== 'admin') return; D.motto = Object.assign({}, D.motto, { theme:JSON.parse(JSON.stringify(thDraft())) }); save(); UI.thDraft = null; UI.thMsg = 'Gespeichert. Das Design gilt jetzt für alle.'; render(); },
