@@ -2,7 +2,7 @@
  * Funky Boys Portal – Google Apps Script (Dateiablage in Drive + Mailversand).
  * Läuft im Google-Konto der Funky Boys. Jede Anfrage trägt das Firebase-Login-Token
  * des Portal-Nutzers; das Skript prüft es und schaut nach, ob die Adresse im Portal freigeschaltet ist.
- * Neu: Posteingang lesen, im Verlauf antworten, als gelesen markieren (Gmail der Gruppe).
+ * Neu: Posteingang lesen, im Verlauf antworten, als gelesen markieren, in Gmail-Ordner (Labels) ablegen, in den Papierkorb (Gmail der Gruppe).
  * Es sind keine Passwörter oder Schlüssel nötig (der Firebase-Webschlüssel ist öffentlich).
  */
 const FIREBASE_API_KEY = 'AIzaSyACAImQ3HoiXHNIK8QAmioE8VEoIWa4voA';
@@ -34,6 +34,8 @@ function doPost(e) {
       case 'inbox': return out_(inbox_(r, u));
       case 'reply': return out_(reply_(r, u));
       case 'read': return out_(read_(r, u));
+      case 'file': return out_(file_(r, u));
+      case 'trash': return out_(trash_(r, u));
       default: throw new Error('Unbekannte Aktion.');
     }
   } catch (err) { return out_({ ok: false, error: String(err && err.message || err) }); }
@@ -130,7 +132,7 @@ function inbox_(r, u) {
     out.push({ id: th.getId(), msgId: last.getId(), name: f.name, mail: f.mail, own: f.mail === mine, subject: th.getFirstMessageSubject().slice(0, 200), date: last.getDate().getTime(),
       unread: th.isUnread(), count: ms.length, files: last.getAttachments().length, body: stripQuote_(last.getPlainBody()).slice(0, 3500) });
   });
-  return { ok: true, threads: out };
+  return { ok: true, threads: out, labels: GmailApp.getUserLabels().map(function (l) { return l.getName(); }).sort() };
 }
 /** Antwortet im bestehenden Verlauf an den letzten Absender, der nicht die Gruppe selbst ist. */
 function reply_(r, u) {
@@ -144,4 +146,15 @@ function reply_(r, u) {
 }
 function read_(r, u) {
   mayMail_(u); const th = GmailApp.getThreadById(String(r.id)); if (!th) throw new Error('Mail nicht gefunden.'); th.markRead(); return { ok: true };
+}
+/** Legt den Verlauf unter einem bestehenden Gmail-Ordner (Label) ab und nimmt ihn aus dem Posteingang. Ohne Label wird nur archiviert. */
+function file_(r, u) {
+  mayMail_(u); const th = GmailApp.getThreadById(String(r.id)); if (!th) throw new Error('Mail nicht gefunden.');
+  const name = String(r.label || '').trim();
+  if (name) { const lb = GmailApp.getUserLabelByName(name); if (!lb) throw new Error('Den Ordner „' + name + '“ gibt es in Gmail nicht.'); th.addLabel(lb); }
+  th.markRead(); th.moveToArchive(); return { ok: true };
+}
+/** Papierkorb, nicht endgültig gelöscht: Gmail hält die Mail noch 30 Tage. */
+function trash_(r, u) {
+  mayMail_(u); const th = GmailApp.getThreadById(String(r.id)); if (!th) throw new Error('Mail nicht gefunden.'); th.moveToTrash(); return { ok: true };
 }
