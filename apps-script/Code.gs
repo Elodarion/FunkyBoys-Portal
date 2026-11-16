@@ -147,11 +147,15 @@ function reply_(r, u) {
 function read_(r, u) {
   mayMail_(u); const th = GmailApp.getThreadById(String(r.id)); if (!th) throw new Error('Mail nicht gefunden.'); th.markRead(); return { ok: true };
 }
-/** Legt den Verlauf unter einem bestehenden Gmail-Ordner (Label) ab und nimmt ihn aus dem Posteingang. Ohne Label wird nur archiviert. */
+/** Legt den Verlauf unter einem Gmail-Ordner (Label) ab, legt ihn bei r.create neu an, und nimmt ihn aus dem Posteingang. Ohne Label wird nur archiviert. */
 function file_(r, u) {
   mayMail_(u); const th = GmailApp.getThreadById(String(r.id)); if (!th) throw new Error('Mail nicht gefunden.');
   const name = String(r.label || '').trim();
-  if (name) { const lb = GmailApp.getUserLabelByName(name); if (!lb) throw new Error('Den Ordner „' + name + '“ gibt es in Gmail nicht.'); th.addLabel(lb); }
+  if (name) {
+    let lb = GmailApp.getUserLabelByName(name);
+    if (!lb) { if (!r.create) throw new Error('Den Ordner „' + name + '“ gibt es in Gmail nicht.'); if (name.length > 100) throw new Error('Der Ordnername ist zu lang.'); lb = GmailApp.createLabel(name); }
+    th.addLabel(lb);
+  }
   th.markRead(); th.moveToArchive(); return { ok: true };
 }
 /** Papierkorb, nicht endgültig gelöscht: Gmail hält die Mail noch 30 Tage. */
