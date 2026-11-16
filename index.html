@@ -469,7 +469,7 @@ function seed0() {
   return {
     me:'m1',
     sponsoren:[ { id:'sp1', name:'Beispiel-Sponsor', betrag:100, datum:'2026-10-05', art:'Geldspende', status:'Eingegangen', kontakt:'', notiz:'', demo:true } ],
-    veranstalter:vmSeed(), sucheDone:{}, rechte:null, extra:{}, gratuliert:{}, seedIds:RAW_EVENTS.map(e => e.id),
+    veranstalter:vmSeed(), sucheDone:{}, rechte:null, extra:{}, gratuliert:{}, gr:{}, seedIds:RAW_EVENTS.map(e => e.id),
     absender:'',
     motto:{ farbwelt:'western', titel:'Cowboys / Western', session:'' },
     members:[],
@@ -898,8 +898,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.40', BUILD = 70;
+const VERSION = '2.41', BUILD = 71;
 const CHANGELOG = [
+  { v:'2.41', datum:'2026-11-16', punkte:['Jede und jeder pflegt die eigenen Größen selbst: Schuhgröße, Shirt, Hose, Jacke/Weste, Hut und Sonstiges (Button „Meine Größen“ bei Mitglieder, Kostüme und Teamausstattung). Der Admin kann weiter alle bearbeiten.'] },
   { v:'2.40', datum:'2026-11-16', punkte:['Einträge aus Kostüme, Requisiten und Teamausstattung erscheinen in Finanzen unter „Offene Posten (unter Vorbehalt)“, mit oder ohne Betrag.','Die Kasse entscheidet pro Posten: verbuchen (Betrag und Datum), streichen oder offen lassen. Erst beim Verbuchen zählt es im Kassenstand.','In den Rubriken steht je Eintrag „offen in der Kasse“, „gebucht“ oder „von Kasse gestrichen“.'] },
   { v:'2.39', datum:'2026-11-16', punkte:['Geburtstage mit vollem Datum (inklusive Jahr) für alle sichtbar, dazu die Liste „Alle Geburtstage“ auf der Startseite.','Untere Leiste auffälliger: heller Rand, größere Icons, kräftige Markierung der aktuellen Rubrik.','Mehr-Menü: die Icons der Rubriken sind wieder sichtbar.'] },
   { v:'2.38', datum:'2026-11-16', punkte:['Die Spenden-Abgabe startet bei 0 %. Den Standard stellt die Kasse selbst unter Sponsoren > Standard-Abgabe ein.'] },
@@ -1027,6 +1028,10 @@ function bdayPanel() {
     ${!withDate.length ? '<div class="empty">Noch keine Geburtsdaten eingetragen.</div>' : rows(soon, x => `<div class="row"><div class="grow"><b>${esc(x.m.name)}</b><div class="sub">${x.b.label}</div></div>
       <span class="pill ${x.b.days === 0 ? 'good' : x.b.days <= 7 ? 'warn' : ''}">${x.b.days === 0 ? 'heute' : x.b.days === 1 ? 'morgen' : 'in ' + x.b.days + ' Tagen'}</span></div>`, 'In den nächsten 30 Tagen hat niemand Geburtstag.')}</div>`;
 }
+const GR_F = [['schuh', 'Schuhgröße'], ['shirt', 'Shirt'], ['hose', 'Hose'], ['jacke', 'Jacke / Weste'], ['hut', 'Hut'], ['sonst', 'Sonstiges']];
+const grText = m => { const g = (D.gr || {})[m.id] || {}, t = GR_F.filter(f => g[f[0]]).map(f => f[1] + ' ' + g[f[0]]).join(' · '); return t || m.groessen || ''; };
+const grMay = id => id === D.me || can('members');
+const grBtn = m => grMay(m.id) ? `<button class="btn sm" data-act="grEdit" data-id="${esc(m.id)}">${m.id === D.me ? 'Meine Größen' : 'Größen'}</button>` : '';
 function bdayAllHTML() {
   const l = D.members.filter(m => bday(m.geburt)).map(m => ({ m, b:bday(m.geburt) })).sort((a, b) => a.b.days - b.b.days);
   return l.map(x => { const j = +x.m.geburt.slice(0, 4), age = j ? new Date(dObj(todayISO()).getTime() + x.b.days * 864e5).getFullYear() - j : 0;
@@ -1301,7 +1306,7 @@ const C = {
   gruppe:{ t:'Gruppentermin', f:[ { k:'titel', l:'Was (z. B. Zusatztraining, Treffen, Teamevent)', req:1 }, { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Von (Uhrzeit)', t:'time' }, { k:'zeitBis', l:'Bis (Uhrzeit)', t:'time' }, { k:'ort', l:'Ort' }, { k:'notiz', l:'Notiz', t:'area' } ] },
   trainings:{ t:'Training', f:[ { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Von (Uhrzeit)', t:'time' }, { k:'zeitBis', l:'Bis (Uhrzeit)', t:'time' }, { k:'ort', l:'Ort' }, { k:'thema', l:'Thema' } ] },
   members:{ t:'Mitglied', f:[ { k:'name', l:'Name', req:1 }, { k:'rolle', l:'Rolle', t:'select', o:Object.entries(ROLES) }, { k:'geburt', l:'Geburtsdatum', t:'date' }, { k:'telefon', l:'Telefon' }, { k:'email', l:'E-Mail' },
-    { k:'groessen', l:'Größen (Hut, Hemd, Hose, Schuh)' }, { k:'notfall', l:'Notfallkontakt' } ] },
+    { k:'notfall', l:'Notfallkontakt' } ] },
   aufgaben:{ t:'Aufgabe', f:[ { k:'titel', l:'Was ist zu tun', req:1 }, { k:'bereich', l:'Bereich', t:'select', o:['Auftritte','Finanzen','Kostüme','Tanz','Requisiten','Training','Sonstiges'] },
     { k:'wer', l:'Wer', t:'select', o:memOpts }, { k:'bis', l:'Bis wann', t:'date' } ] },
   posts:{ t:'Beitrag an der Pinnwand', f:[ { k:'titel', l:'Überschrift', req:1 }, { k:'text', l:'Text', t:'area' } ] },
@@ -2307,8 +2312,8 @@ const SEC = {
       `<div class="panel"><div class="ph"><h3>Teile</h3><span class="amt">Summe ${eur(total)}</span></div>
         ${rows(D.kostueme, k => `<div class="row"><div class="grow"><b>${esc(k.teil)}</b>${demo(k)}<div class="sub">${+k.anzahl || 0} × ${eur(k.preis)}${k.notiz ? ' · ' + esc(k.notiz) : ''}</div></div>
           <span class="pill ${cls[k.status] || ''}">${esc(k.status)}</span>${linkPill(k)}<span class="amt">${eur((+k.anzahl || 0) * (+k.preis || 0))}</span>${editBtn('kostueme', k.id)}</div>`, 'Noch keine Teile angelegt.')}</div>
-      <div class="panel"><div class="ph"><h3>Größen der Tänzer</h3><a href="#mitglieder">bei Mitgliedern pflegen</a></div>
-        ${rows(d, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}</div><span class="sub">${m.groessen ? esc(m.groessen) : 'noch nicht eingetragen'}</span></div>`, '')}</div>`;
+      <div class="panel"><div class="ph"><h3>Größen der Tänzer</h3><span class="sub">jede und jeder pflegt die eigenen</span></div>
+        ${rows(d, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}</div><span class="sub">${grText(m) ? esc(grText(m)) : 'noch nicht eingetragen'}</span>${grBtn(m)}</div>`, '')}</div>`;
   },
   tanz() {
     const z = D.zeiten, t = [secs(z.aufmarsch), secs(z.tanz), secs(z.abmarsch)], sum = t.every(x => x != null) ? mmss(t[0] + t[1] + t[2]) : 'offen';
@@ -2328,8 +2333,8 @@ const SEC = {
       <div class="panel"><div class="ph"><h3>Anschaffungen</h3><span class="amt">Gesamtwert ohne Retouren ${eur(total)}</span></div>
         ${rows(D.merch, x => `<div class="row"><div class="grow"><b>${esc(x.artikel)}</b><div class="sub">${esc(x.kat || '')}${x.kat ? ' · ' : ''}${+x.anzahl || 0} × ${eur(x.wert)}${x.notiz ? ' · ' + esc(x.notiz) : ''}</div></div>
           <span class="pill ${cls[x.status] || ''}">${esc(x.status)}</span>${linkPill(x)}<span class="amt">${eur(val(x))}</span>${editBtn('merch', x.id)}</div>`, 'Noch keine Anschaffungen geplant.')}</div>
-      <div class="panel"><div class="ph"><h3>Größen der Tänzer</h3><a href="#mitglieder">bei Mitgliedern pflegen</a></div>
-        ${rows(D.members.filter(m => TANZT(m.rolle)), m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}</div><span class="sub">${m.groessen ? esc(m.groessen) : 'noch nicht eingetragen'}</span></div>`, '')}</div>`;
+      <div class="panel"><div class="ph"><h3>Größen der Tänzer</h3><span class="sub">jede und jeder pflegt die eigenen</span></div>
+        ${rows(D.members.filter(m => TANZT(m.rolle)), m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}</div><span class="sub">${grText(m) ? esc(grText(m)) : 'noch nicht eingetragen'}</span>${grBtn(m)}</div>`, '')}</div>`;
   },
   requisiten() {
     const cls = { Fertig:'good', 'In Arbeit':'warn', 'Reparatur nötig':'bad' };
@@ -2358,8 +2363,8 @@ const SEC = {
   },
   mitglieder() {
     return head('Mitglieder', 'Kontakte, Geburtsdatum, Größen und Notfallkontakt. Pflegen darf das der Admin.', addBtn('members', '+ Mitglied')) +
-      `<div class="panel">${rows(D.members, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}<div class="sub">${[m.telefon, m.email].filter(Boolean).map(linkify).join(' · ') || 'Kontakt noch nicht eingetragen'}${m.geburt ? '<br>Geburtstag: ' + fmtDate(m.geburt).slice(4) : ''}${m.groessen ? '<br>Größen: ' + esc(m.groessen) : ''}${can('members') && m.notfall ? '<br>Notfall: ' + esc(m.notfall) : ''}</div></div>
-        <span class="pill ${m.rolle === 'admin' ? 'vio' : ''}">${ROLES[m.rolle]}</span>${editBtn('members', m.id)}</div>`, '')}</div>`;
+      `<div class="panel">${rows(D.members, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}<div class="sub">${[m.telefon, m.email].filter(Boolean).map(linkify).join(' · ') || 'Kontakt noch nicht eingetragen'}${m.geburt ? '<br>Geburtstag: ' + fmtDate(m.geburt).slice(4) : ''}${grText(m) ? '<br>Größen: ' + esc(grText(m)) : ''}${can('members') && m.notfall ? '<br>Notfall: ' + esc(m.notfall) : ''}</div></div>
+        <span class="pill ${m.rolle === 'admin' ? 'vio' : ''}">${ROLES[m.rolle]}</span>${grBtn(m)}${editBtn('members', m.id)}</div>`, '')}</div>`;
   },
   aufgaben() {
     const open = D.aufgaben.filter(a => !a.done), done = D.aufgaben.filter(a => a.done);
@@ -2989,6 +2994,9 @@ const ACT = {
     LINK[d.col].up(it, { text:LINK[d.col].name(it), anzahl:+it.anzahl || 1, betrag:bet }); it.bezahlt = dat; delete it.vb; linkItemSave(d.col, it); save(); closeDlg(); render(); },
   vbDrop(d) { if (!can('buchungen')) return; const it = (D[d.col] || []).find(x => x.id === d.id); if (!it) return; it.vb = 'x'; save(); render(); },
   vbReopen(d) { if (!can('buchungen')) return; const it = (D[d.col] || []).find(x => x.id === d.id); if (!it) return; delete it.vb; save(); render(); },
+  grEdit(d) { if (!grMay(d.id)) return; const m = D.members.find(x => x.id === d.id); if (!m) return; const g = (D.gr || {})[m.id] || {};
+    openDlg(`<h3>Größen: ${esc(m.name)}</h3><div class="sub">Für Kostüme, Shirts und Schuhe. Leer lassen, was du nicht weißt.</div>${GR_F.map(f => `<label class="f" for="gr_${f[0]}">${f[1]}<input id="gr_${f[0]}" type="text" value="${esc(g[f[0]] || (f[0] === 'sonst' && !Object.keys(g).length ? m.groessen || '' : ''))}" autocomplete="off"></label>`).join('')}<div class="acts"><button class="btn dark" data-act="grSave" data-id="${esc(m.id)}">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  grSave(d) { if (!grMay(d.id)) return; const g = {}; GR_F.forEach(f => { const v = ($('gr_' + f[0]).value || '').trim().slice(0, 40); if (v) g[f[0]] = v; }); D.gr = D.gr || {}; D.gr[d.id] = g; save(); closeDlg(); render(); },
   bdayAll() { openDlg(`<h3>Alle Geburtstage</h3><div class="rows">${bdayAllHTML()}</div><div class="acts"><button class="btn" data-act="close">Schließen</button></div>`); },
   searchOpen() { openDlg(`<h3>Suche im ganzen Portal</h3><label class="f" for="gq"><input id="gq" type="search" placeholder="Name, Text, Ort, Betrag oder Datum" autocomplete="off" aria-label="Suche im ganzen Portal"></label><div id="gRes" role="status" aria-live="polite"></div><div class="acts"><button class="btn" data-act="close">Schließen</button></div>`); const q = $('gq'); if (q && q.focus) q.focus(); },
   goSearch(d) { const q = $('gq') ? $('gq').value.trim() : ''; closeDlg(); UI.rq = q; if (d.sec === 'auftritte') UI.q = q; UI._keep = true; if (location.hash === '#' + d.sec) { UI._keep = false; render(); window.scrollTo(0, 0); } else location.hash = '#' + d.sec; },
