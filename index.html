@@ -432,7 +432,7 @@ function seed0() {
       { id:'d2', titel:'Hauptteil Saloon', art:'Choreo-Teil', status:'In Arbeit', notiz:'', demo:true },
       { id:'d3', titel:'Musikschnitt Session 2026/27', art:'Musik', status:'In Arbeit', notiz:'', demo:true } ],
     zeiten:{ aufmarsch:'', tanz:'', abmarsch:'' },
-    merch:[], kontakte:[], vereine:[],
+    merch:[], kontakte:[], vereine:[], gruppe:[],
     requisiten:[
       { id:'r1', name:'Saloon-Schwingtür', anzahl:1, wo:'', zustand:'In Arbeit', notiz:'', demo:true },
       { id:'r2', name:'Lasso', anzahl:8, wo:'', zustand:'Fertig', notiz:'', demo:true } ],
@@ -708,8 +708,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.18', BUILD = 48;
+const VERSION = '2.19', BUILD = 49;
 const CHANGELOG = [
+  { v:'2.19', datum:'2026-11-16', punkte:['Gruppentermine für alle (Zusatztraining, Treffen, Teamevent): Admin und Trainerinnen legen sie an, sie stehen im Kalender bei allen','Kalender: neue Ansicht „Freie Zeiten finden“ mit Zeitraum, Wochentagen, Uhrzeit und Personenauswahl, Treffer lassen sich direkt als Gruppentermin eintragen'] },
   { v:'2.18', datum:'2026-11-16', punkte:['Veranstalter nach Verein oder Gruppe sortiert, neue Verwaltung für Vereine','Doppelte Kontakte erkennen und zusammenführen: behalten wird der Eintrag mit den meisten Angaben, Zusammenführung lässt sich wieder trennen','Kontakte per Sammelfenster Vereinen zuordnen','Im Auftritt Ansprechpartner und Verein auswählbar; Termin zeigt Verein, Telefon und Mail automatisch'] },
   { v:'2.17', datum:'2026-11-16', punkte:['Veranstalter-Kontakte lassen sich bearbeiten: Telefon, Ort und Notizen ergänzen, Angaben ändern, Kontakte ausblenden oder selbst anlegen. Die automatische Liste aus den Auftritten bleibt'] },
   { v:'2.16', datum:'2026-11-16', punkte:['Design-Editor unter Verwaltung: Farben, Schriftarten, Rundung, Glas-Effekt und Banner-Bild für alle einstellen, dazu vier Vorlagen (Neon-Violett, Nachtblau, Navy-Dashboard, Hell)'] },
@@ -767,10 +768,12 @@ function calEntries(iso) { let l = D.kalender.filter(e => occursOn(e, iso)); if 
 const MCOL = ['#2A5CAA', '#B5471F', '#2E7D4F', '#7A3E9D', '#B08400', '#0F7C8C', '#A3352A', '#5D6B1F', '#6B4E2E'];
 const mcol = id => MCOL[Math.max(0, D.members.findIndex(m => m.id === id)) % MCOL.length];
 const calMembers = () => UI.calMine ? D.members.filter(m => m.id === D.me) : UI.calMid ? D.members.filter(m => m.id === UI.calMid) : D.members;
-const CAL_KINDS = [['abw', 'Abwesenheiten'], ['tr', 'Training'], ['ev', 'Auftritte']];
+const CAL_KINDS = [['abw', 'Abwesenheiten'], ['tr', 'Training'], ['gt', 'Gruppentermine'], ['ev', 'Auftritte']];
+const gtOn = iso => (D.gruppe || []).filter(g => g.datum === iso), gtZeit = g => g.zeit ? g.zeit + (g.zeitBis ? '–' + g.zeitBis : '') + ' Uhr' : '';
 function dayItems(iso) {
   const out = [];
   if (!UI.calHide.tr) trOn(iso).forEach(t => out.push({ k:'tr', id:t.id, label:'Training ' + (t.zeit || ''), short:'Training', title:'Training ' + trZeit(t) + (t.ort ? ', ' + t.ort : ''), col:'#2E7D4F', solid:true }));
+  if (!UI.calHide.gt) gtOn(iso).forEach(g => out.push({ k:'gt', id:g.id, label:(g.zeit ? g.zeit + ' ' : '') + g.titel, short:g.titel, title:'Gruppentermin: ' + g.titel + (g.zeit ? ' ' + gtZeit(g) : '') + (g.ort ? ', ' + g.ort : ''), col:'#7A3E9D', solid:true }));
   if (!UI.calHide.ev) D.events.filter(e => e.datum === iso).forEach(e => out.push({ k:'ev', id:e.id, label:(e.zeit ? e.zeit + ' ' : '') + e.name, short:e.name, title:'Auftritt: ' + e.name, col:'#B5471F', solid:true }));
   if (!UI.calHide.abw) calEntries(iso).forEach(e => out.push({ k:'kl', id:e.id, label:mname(e.mid).split(' ')[0] + ': ' + e.titel, short:mname(e.mid).split(' ')[0] + ': ' + e.titel, title:mname(e.mid) + ': ' + e.titel, col:mcol(e.mid) }));
   return out;
@@ -784,7 +787,7 @@ const ALL = Object.keys(ROLES), MIT_ROLLE = ALL.filter(r => r !== 'taenzer'), TA
 const CAN = { events:['admin','trainerin','auftritte'], buchungen:['admin','kasse'], beitraege:['admin','kasse'], kostueme:['admin','trainerin','kostuem','betreuer'], tanz:['admin','trainerin'],
   requisiten:['admin','trainerin','requisit'], trainings:['admin','trainerin'], members:['admin'], aufgaben:MIT_ROLLE, posts:ALL, umfragen:ALL, dateien:['admin','trainerin'],
   postfach:['admin','trainerin'], verwaltung:['admin'], social:ALL.filter(r => r !== 'betreuer'), socialOk:['trainerin'] };
-CAN.kontakte = ['admin','trainerin','auftritte']; CAN.merch = ['admin']; CAN.fremde = ['admin','trainerin']; CAN.sponsoren = ['admin','kasse']; CAN.kalender = ALL;
+CAN.kontakte = ['admin','trainerin','auftritte']; CAN.merch = ['admin']; CAN.fremde = ['admin','trainerin']; CAN.sponsoren = ['admin','kasse']; CAN.gruppe = ['admin','trainerin']; CAN.kalender = ALL;
 const RIGHTS = [['Auftritte bearbeiten','events'],['Pinnwand und Abstimmungen','posts'],['Aufgaben anlegen','aufgaben'],['Kalender: eigene Termine eintragen','kalender'],['Fremde Aufgaben und Abstimmungen ändern','fremde'],['Dateien hochladen','dateien'],['Buchungen und Budget','buchungen'],['Beiträge aller sehen und pflegen','beitraege'],['Sponsoren pflegen','sponsoren'], ['Veranstalter-Kontakte pflegen','kontakte'],
   ['Kostüme pflegen','kostueme'],['Teamausstattung und Merch pflegen','merch'],['Requisiten pflegen','requisiten'],['Tanz bearbeiten','tanz'],['Training und Anwesenheit','trainings'],['Social-Media-Posts vorschlagen','social'],['Social-Media-Posts freigeben','socialOk'],['Mails im Namen der Gruppe','postfach'],['Mitglieder pflegen','members']];
 const FIX = (k, r) => r === 'admin' && (k === 'members' || k === 'verwaltung');   // der Admin kann sich nicht selbst aussperren
@@ -1072,6 +1075,7 @@ const C = {
     { k:'status', l:'Status', t:'select', o:MERCH_ST }, { k:'notiz', l:'Notiz (z. B. Lieferant, Größen)', t:'area' } ] },
   requisiten:{ t:'Requisit', f:[ { k:'name', l:'Bezeichnung', req:1 }, { k:'anzahl', l:'Anzahl', t:'number' }, { k:'wo', l:'Lagerort / wer hat es' },
     { k:'zustand', l:'Zustand', t:'select', o:['Idee','In Arbeit','Fertig','Reparatur nötig'] }, { k:'notiz', l:'Notiz (z. B. Transport)', t:'area' } ] },
+  gruppe:{ t:'Gruppentermin', f:[ { k:'titel', l:'Was (z. B. Zusatztraining, Treffen, Teamevent)', req:1 }, { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Von (Uhrzeit)', t:'time' }, { k:'zeitBis', l:'Bis (Uhrzeit)', t:'time' }, { k:'ort', l:'Ort' }, { k:'notiz', l:'Notiz', t:'area' } ] },
   trainings:{ t:'Training', f:[ { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Von (Uhrzeit)', t:'time' }, { k:'zeitBis', l:'Bis (Uhrzeit)', t:'time' }, { k:'ort', l:'Ort' }, { k:'thema', l:'Thema' } ] },
   members:{ t:'Mitglied', f:[ { k:'name', l:'Name', req:1 }, { k:'rolle', l:'Rolle', t:'select', o:Object.entries(ROLES) }, { k:'geburt', l:'Geburtsdatum', t:'date' }, { k:'telefon', l:'Telefon' }, { k:'email', l:'E-Mail' },
     { k:'groessen', l:'Größen (Hut, Hemd, Hose, Schuh)' }, { k:'notfall', l:'Notfallkontakt' } ] },
@@ -1118,7 +1122,7 @@ function fieldHTML(f, v) {
   const type = { number:'number', date:'date', time:'time' }[f.t] || 'text', dl = f.list ? f.list() : null;
   return `<label class="f" for="${id}">${f.l}${f.req ? ' *' : ''}<input id="${id}" type="${type}" ${dl ? `list="dl_${f.k}" autocomplete="off"` : ''} ${type === 'number' ? 'step="0.01" min="0" inputmode="decimal"' : ''} value="${esc(Array.isArray(val) ? val.join(', ') : val)}">${dl ? `<datalist id="dl_${f.k}">${dl.map(x => `<option value="${esc(x)}">`).join('')}</datalist>` : ''}</label>`;
 }
-function mayOpen(col, id) { if (['buchungen', 'beitraege', 'sponsoren', 'kontakte'].includes(col)) return can(col); if (col === 'vereine') return can('kontakte'); if (col === 'trainings') return can('trainings'); if (col === 'kalender') { if (!can('kalender')) return false; const e = id && D.kalender.find(x => x.id === id); return !e || mayEditCal(e); } return true; }
+function mayOpen(col, id) { if (['buchungen', 'beitraege', 'sponsoren', 'kontakte'].includes(col)) return can(col); if (col === 'vereine') return can('kontakte'); if (col === 'gruppe') return can('gruppe'); if (col === 'trainings') return can('trainings'); if (col === 'kalender') { if (!can('kalender')) return false; const e = id && D.kalender.find(x => x.id === id); return !e || mayEditCal(e); } return true; }
 function openEdit(col, id, preset) {
   if (!mayOpen(col, id)) return;
   const cfg = C[col], item = id ? D[col].find(x => x.id === id) : null, eff = col === 'kontakte' && item ? kontakte(true).find(c => c.rid === id) : null;
@@ -1204,8 +1208,8 @@ function calUpcoming() {
   return out;
 }
 function calRow([d, x]) {
-  const e = x.k === 'kl' ? D.kalender.find(k => k.id === x.id) : null, ed = x.k === 'tr' ? editBtn('trainings', x.id) : e && mayEditCal(e) ? editBtn('kalender', e.id) : '';
-  const who = x.k === 'tr' ? 'Alle · Training' : x.k === 'ev' ? 'Auftritt' : mname(e.mid), what = x.k === 'kl' ? e.titel + (e.typ === 'wiederkehrend' ? ' (wiederkehrend)' : '') : x.title;
+  const e = x.k === 'kl' ? D.kalender.find(k => k.id === x.id) : null, ed = x.k === 'tr' ? editBtn('trainings', x.id) : x.k === 'gt' ? editBtn('gruppe', x.id) : e && mayEditCal(e) ? editBtn('kalender', e.id) : '';
+  const who = x.k === 'tr' ? 'Alle · Training' : x.k === 'gt' ? 'Alle · Gruppentermin' : x.k === 'ev' ? 'Auftritt' : mname(e.mid), what = x.k === 'gt' ? x.title.replace('Gruppentermin: ', '') : x.k === 'kl' ? e.titel + (e.typ === 'wiederkehrend' ? ' (wiederkehrend)' : '') : x.title;
   return `<div class="row"><span style="width:10px;height:10px;border-radius:50%;background:${x.col};flex:none"></span><div class="grow"><b>${esc(who)}</b><div class="sub">${esc(what)} · ${fmtDate(d)}</div></div>${ed}</div>`;
 }
 const calAgenda = () => rows(calUpcoming().slice(0, 8), calRow, 'In den nächsten Monaten ist nichts eingetragen.');
@@ -1238,6 +1242,43 @@ function calZeitstrahl() {
     ${members.map(m => `<tr><th>${esc(m.name)}</th>${days.map(d => { const es = D.kalender.filter(e => e.mid === m.id && occursOn(e, d)); return `<td class="${es.length ? 'busy' : ''}" title="${esc(es.map(e => e.titel).join(', '))}">${es.length ? '●' : ''}</td>`; }).join('')}</tr>`).join('')}
   </tbody></table></div>
   <p class="sub" style="margin-top:4px">● = an diesem Tag nicht verfügbar. Spalten ohne Punkte eignen sich am besten für Termine oder Teamevents.</p>`;
+}
+/* ---------- Freie Zeiten finden ---------- */
+const toMin = t => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? +m[1] * 60 + +m[2] : null; };
+function freeFS() { if (!UI.fs) UI.fs = { von:'', bis:'', wd:[1, 1, 1, 1, 1, 1, 1], mids:[], z1:'', z2:'', min:0, strict:true }; const f = UI.fs; if (!f.von) f.von = todayISO(); if (!f.bis) f.bis = addDays(f.von, 42); return f; }
+function freeBusy(iso, f) {
+  /* Zeitfenster wählen -> Terminüberschneidung; Abwesenheiten blockieren den ganzen Tag */
+  const a = toMin(f.z1), b = toMin(f.z2), win = a != null && b != null && b > a, conf = [];
+  const hit = (zv, zb) => { if (!win) return true; const s = toMin(zv), e = zb ? toMin(zb) : (s != null ? s + 120 : null); if (s == null) return true; return s < b && e > a; };
+  trOn(iso).forEach(t => { if (hit(t.zeit, t.zeitBis)) conf.push('Training ' + trZeit(t)); });
+  gtOn(iso).forEach(g => { if (hit(g.zeit, g.zeitBis)) conf.push(g.titel + (g.zeit ? ' ' + gtZeit(g) : '')); });
+  D.events.filter(e => e.datum === iso).forEach(e => { if (hit(e.zeit, e.ende)) conf.push('Auftritt ' + e.name); });
+  const who = D.members.filter(m => (!f.mids.length || f.mids.includes(m.id))).map(m => ({ m, abw:D.kalender.filter(e => e.mid === m.id && occursOn(e, iso)).map(e => e.titel) })).filter(x => x.abw.length);
+  return { conf, who };
+}
+function freeDays(f) {
+  const out = []; let iso = f.von; const people = D.members.filter(m => !f.mids.length || f.mids.includes(m.id));
+  for (let i = 0; i < 400 && iso <= f.bis; i++, iso = addDays(iso, 1)) {
+    if (!f.wd[wdFromJS(dObj(iso).getDay())]) continue; const b = freeBusy(iso, f);
+    if (b.conf.length) continue; out.push({ iso, who:b.who, free:people.length - b.who.length, of:people.length });
+  }
+  return out;
+}
+function calFrei() {
+  const f = freeFS(), days = freeDays(f), perfect = days.filter(d => !d.who.length), part = days.filter(d => d.who.length && d.free >= Math.max(1, Math.ceil(d.of * 0.7))).sort((a, b) => (b.free - a.free) || (a.iso < b.iso ? -1 : 1));
+  const line = (d, ok) => `<div class="row"><span style="width:10px;height:10px;border-radius:50%;background:${ok ? '#2E7D4F' : '#B08400'};flex:none"></span><div class="grow"><b>${esc(fmtDate(d.iso))}</b><div class="sub">${ok ? 'Alle sind frei' : d.free + ' von ' + d.of + ' frei · fehlen: ' + d.who.map(x => esc(x.m.name.split(' ')[0]) + ' (' + esc(x.abw.join(', ')) + ')').join(', ')}</div></div>${can('gruppe') ? `<button class="btn sm" data-act="gtAddOn" data-d="${d.iso}" data-z1="${esc(f.z1)}" data-z2="${esc(f.z2)}">Als Gruppentermin eintragen</button>` : ''}</div>`;
+  return `<div class="panel"><div class="ph"><h3>Freie Zeiten finden</h3></div>
+    <div class="sub" style="color:var(--muted)">Zeigt Tage, an denen niemand eine Abwesenheit hat und kein Training, Gruppentermin oder Auftritt dazwischenkommt. Abwesenheiten gelten für den ganzen Tag. Mit einem Zeitfenster werden Tage mit Terminen zu anderen Uhrzeiten trotzdem angezeigt.</div>
+    <div class="chips" style="gap:12px;align-items:flex-end">
+      <label class="f" style="min-width:140px">Von<input type="date" data-act="fsIn" data-k="von" value="${esc(f.von)}"></label>
+      <label class="f" style="min-width:140px">Bis<input type="date" data-act="fsIn" data-k="bis" value="${esc(f.bis)}"></label>
+      <label class="f" style="min-width:110px">Uhrzeit ab<input type="time" data-act="fsIn" data-k="z1" value="${esc(f.z1)}"></label>
+      <label class="f" style="min-width:110px">Uhrzeit bis<input type="time" data-act="fsIn" data-k="z2" value="${esc(f.z2)}"></label></div>
+    <div class="chips"><span class="sub" style="align-self:center">Wochentage:</span>${['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((w, i) => `<button class="btn sm ${f.wd[i] ? 'on' : ''}" data-act="fsWd" data-i="${i}" aria-pressed="${!!f.wd[i]}">${w}</button>`).join('')}
+      <button class="btn sm" data-act="fsPreset" data-v="we">Nur Wochenende</button><button class="btn sm" data-act="fsPreset" data-v="wt">Nur Werktage</button></div>
+    <div class="chips"><span class="sub" style="align-self:center">Wer muss können:</span><button class="btn sm ${f.mids.length ? '' : 'on'}" data-act="fsMid" data-id="">Alle</button>${D.members.map(m => `<button class="btn sm ${f.mids.includes(m.id) ? 'on' : ''}" data-act="fsMid" data-id="${m.id}" aria-pressed="${f.mids.includes(m.id)}">${esc(m.name.split(' ')[0])}</button>`).join('')}</div></div>
+    <div class="panel"><div class="ph"><h3>Alle haben Zeit (${perfect.length})</h3></div>${rows(perfect.slice(0, 30), d => line(d, true), 'In diesem Zeitraum gibt es keinen Tag, an dem alle können. Unten stehen Tage mit wenigen Ausfällen.')}</div>
+    <div class="panel"><div class="ph"><h3>Fast alle haben Zeit (${part.length})</h3></div>${rows(part.slice(0, 30), d => line(d, false), 'Keine passenden Tage mit wenigen Ausfällen.')}</div>`;
 }
 const fmtTs = ts => ts ? new Date(ts).toLocaleDateString('de-DE') : '';
 function ensureSeen() {
@@ -1454,14 +1495,14 @@ const SEC = {
       ${done.length ? `<div class="panel"><div class="ph"><h3>Erledigt (${done.length})</h3></div>${rows(done, taskRow, '')}</div>` : ''}`;
   },
   kalender() {
-    const needsNav = UI.calView !== 'liste';
+    const needsNav = UI.calView !== 'liste' && UI.calView !== 'frei';
     const label = { liste:'', woche:calWeekLabel(), monat:calMonthLabel(), zeitstrahl:calRangeLabel() }[UI.calView];
-    const body = { liste:calListe, woche:calWoche, monat:calMonat, zeitstrahl:calZeitstrahl }[UI.calView]();
-    const cnt = { abw:0, tr:0, ev:0 }, a0 = UI.calAnchor.slice(0, 7);
+    const body = { liste:calListe, woche:calWoche, monat:calMonat, zeitstrahl:calZeitstrahl, frei:calFrei }[UI.calView]();
+    const cnt = { abw:0, tr:0, gt:0, ev:0 }, a0 = UI.calAnchor.slice(0, 7);
     D.kalender.forEach(e => { if (!UI.calMine || e.mid === D.me) { const f = e.typ === 'einzel' ? (e.datum || '').slice(0, 7) === a0 : e.typ === 'zeitraum' ? (e.von || '').slice(0, 7) <= a0 && (e.bis || e.von || '').slice(0, 7) >= a0 : true; if (f) cnt.abw++; } });
-    cnt.tr = D.trainings.filter(t => t.datum.slice(0, 7) === a0).length; cnt.ev = D.events.filter(t => (t.datum || '').slice(0, 7) === a0).length;
+    cnt.gt = (D.gruppe || []).filter(t => (t.datum || '').slice(0, 7) === a0).length; cnt.tr = D.trainings.filter(t => t.datum.slice(0, 7) === a0).length; cnt.ev = D.events.filter(t => (t.datum || '').slice(0, 7) === a0).length;
     return head('Kalender', 'Wer ist wann nicht da? Jeder trägt hier seine eigenen Termine ein – Fußballspiele, Urlaub oder wiederkehrende Termine. Training und Auftritte gelten für alle und stehen automatisch drin. So findet ihr leicht freie Tage für Events.',
-      `<div class="chips">${can('kalender') ? '<button class="btn pri" data-act="calAdd">+ Abwesenheit</button>' : ''}${can('trainings') ? '<button class="btn" data-act="trAddDay">+ Training</button>' : ''}<button class="btn" data-act="calPdfOpen">Spielplan als PDF einlesen</button></div>`) +
+      `<div class="chips">${can('kalender') ? '<button class="btn pri" data-act="calAdd">+ Abwesenheit</button>' : ''}${can('trainings') ? '<button class="btn" data-act="trAddDay">+ Training</button>' : ''}${can('gruppe') ? '<button class="btn" data-act="gtAdd">+ Gruppentermin</button>' : ''}<button class="btn" data-act="calPdfOpen">Spielplan als PDF einlesen</button></div>`) +
       `<div class="panel"><div class="chips">
         ${needsNav ? `<button class="btn sm" data-act="calNav" data-d="-1" aria-label="zurück">‹</button><button class="btn sm" data-act="calNav" data-d="0">Heute</button><button class="btn sm" data-act="calNav" data-d="1" aria-label="weiter">›</button><b style="margin:0 8px;font-size:17px">${label}</b>` : ''}
         <label style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:14px"><input type="checkbox" data-act="calMine" ${UI.calMine ? 'checked' : ''}>Nur meine</label>
@@ -1471,6 +1512,7 @@ const SEC = {
         <button class="btn sm ${UI.calView === 'woche' ? 'on' : ''}" data-act="calView" data-v="woche">Arbeitswoche</button>
         <button class="btn sm ${UI.calView === 'zeitstrahl' ? 'on' : ''}" data-act="calView" data-v="zeitstrahl">Zeitstrahl</button>
         <button class="btn sm ${UI.calView === 'liste' ? 'on' : ''}" data-act="calView" data-v="liste">Liste</button>
+        <button class="btn sm ${UI.calView === 'frei' ? 'on' : ''}" data-act="calView" data-v="frei">Freie Zeiten finden</button>
         <span class="sub" style="margin-left:auto;align-self:center">Filtern:</span>
         ${CAL_KINDS.map(k => `<button class="btn sm ${UI.calHide[k[0]] ? '' : 'on'}" data-act="calKind" data-v="${k[0]}" aria-pressed="${!UI.calHide[k[0]]}">${k[1]}${UI.calView === 'monat' ? ' ' + cnt[k[0]] : ''}</button>`).join('')}</div></div>
       <div class="list">${body}</div>
@@ -1952,7 +1994,13 @@ const ACT = {
   calKind(d) { UI.calHide[d.v] = !UI.calHide[d.v]; render(); },
   calMore(d) { UI.calMore = d.d; render(); },
   calDay(d) { if (!can('kalender')) return; openEdit('kalender', null, { mid:D.me, typ:'einzel', datum:d.d }); },
-  calChip(d) { if (d.k === 'tr') openEdit('trainings', d.id); else if (d.k === 'kl') openEdit('kalender', d.id); else if (d.k === 'ev') location.hash = '#auftritte'; },
+  calChip(d) { if (d.k === 'gt') { if (can('gruppe')) openEdit('gruppe', d.id); } else if (d.k === 'tr') openEdit('trainings', d.id); else if (d.k === 'kl') openEdit('kalender', d.id); else if (d.k === 'ev') location.hash = '#auftritte'; },
+  fsIn(d, el) { const f = freeFS(); f[d.k] = el.value; if (f.von && f.bis && f.bis < f.von) f.bis = f.von; render(); },
+  fsWd(d) { const f = freeFS(); f.wd[+d.i] = f.wd[+d.i] ? 0 : 1; render(); },
+  fsPreset(d) { const f = freeFS(); f.wd = d.v === 'we' ? [0, 0, 0, 0, 0, 1, 1] : [1, 1, 1, 1, 1, 0, 0]; render(); },
+  fsMid(d) { const f = freeFS(); if (!d.id) f.mids = []; else f.mids = f.mids.includes(d.id) ? f.mids.filter(x => x !== d.id) : [...f.mids, d.id]; render(); },
+  gtAddOn(d) { if (can('gruppe')) openEdit('gruppe', null, { datum:d.d, zeit:d.z1 || '', zeitBis:d.z2 || '' }); },
+  gtAdd() { if (can('gruppe')) openEdit('gruppe', null, { datum:UI.calAnchor || todayISO() }); },
   trAddDay() { openEdit('trainings', null, { datum:todayISO(), zeit:'11:00', zeitBis:'13:00' }); },
   calAdd() { if (!can('kalender')) return; openEdit('kalender', null, { mid:D.me, typ:'einzel' }); },
   calView(d) { UI.calView = d.v; render(); },
@@ -2100,7 +2148,7 @@ document.addEventListener('change', e => {
       UI.fileMsg = ok ? ok + (ok === 1 ? ' Datei hochgeladen.' : ' Dateien hochgeladen.') : UI.fileMsg; render(); })(); return; }
   if (t.id === 'pdfFile') { calPdfHandle(t.files[0]); return; }
   if (t.id === 'impFile') { btImportHandle(t.files[0]); return; }
-  if (t.dataset.act && (t.tagName === 'SELECT' || t.type === 'checkbox') && ACT[t.dataset.act]) ACT[t.dataset.act](t.dataset, t);
+  if (t.dataset.act && (t.tagName === 'SELECT' || t.type === 'checkbox' || t.type === 'date' || t.type === 'time') && ACT[t.dataset.act]) ACT[t.dataset.act](t.dataset, t);
 });
 document.addEventListener('input', e => { if (e.target.id === 'evSearch') { UI.q = e.target.value; $('evList').innerHTML = evListHTML(); } });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('dlg').hidden) closeDlg(); });
