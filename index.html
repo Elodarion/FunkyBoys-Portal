@@ -446,7 +446,7 @@ function seed0() {
     motto:{ farbwelt:'western', titel:'Cowboys / Western', session:'' },
     members:[],
     events: RAW_EVENTS.map(convEvent),
-    zusagen:{},
+    zusagen:{}, regOk:{},
     buchungen:[
       { id:'b1', typ:'A', kat:'Anmeldegebühren', betrag:25, text:'Schlicher Danzenacht 13.11.2026', datum:'' },
       { id:'b2', typ:'A', kat:'Anmeldegebühren', betrag:150, text:'Männerballett Meisterschaft Güsten (100 € kommen zurück)', datum:'' },
@@ -870,8 +870,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.24', BUILD = 54;
+const VERSION = '2.25', BUILD = 55;
 const CHANGELOG = [
+  { v:'2.25', datum:'2026-11-16', punkte:['Registrierungsstatus erkennt frühere Anmeldungen jetzt auch an Aktivität (Zusage, Abstimmung, Beitrag) und lässt sich pro Person von Hand auf „angemeldet“ setzen'] },
   { v:'2.24', datum:'2026-11-16', punkte:['Verwaltung zeigt bei jedem Mitglied, ob es sich schon angemeldet hat, wann es zuletzt aktiv war, und wer noch keine E-Mail hinterlegt hat; wer noch fehlt, bekommt per Knopf eine Mail'] },
   { v:'2.23', datum:'2026-11-16', punkte:['Hilfe-Assistent kennt Rollen und Rechte: Fragt jemand nach etwas, das seine Rolle nicht darf, sagt er das, nennt die zuständigen Rollen und Personen und bietet an, sie anzuschreiben','„Was darf ich?“ und „Wer darf …?“ werden beantwortet; neue Rechte-Übersicht in „Hilfe & Anleitung“ mit allen Rollen, Rechten und Zusatzrechten'] },
   { v:'2.22', datum:'2026-11-16', punkte:['Neue Rubrik „Hilfe & Anleitung“: Schritt-für-Schritt-Anleitungen mit Bildern, nach Rolle sortiert (alle, Trainerinnen, Kasse, Admin) und durchsuchbar','Hilfe-Assistent in der Chat-Blase: beantwortet Fragen zum Portal aus der Anleitung und führt zur passenden Seite'] },
@@ -1674,24 +1675,34 @@ function botExtra(m) {
   return h;
 }
 /* ---------- Registrierungs-Status (Verwaltung) ---------- */
+function regEvidence(m) {
+  if ((D.regOk || {})[m.id]) return 'manuell';
+  if (Object.values(D.zusagen || {}).some(z => z && (z[m.id] === 'ja' || z[m.id] === 'nein'))) return 'aktivität';
+  if ((D.umfragen || []).some(u => u.stimmen && m.id in u.stimmen)) return 'aktivität';
+  if ([...(D.posts || []), ...(D.feedback || []), ...(D.bugs || [])].some(x => x.von === m.id)) return 'aktivität';
+  return '';
+}
 function regState(m) {
-  if (!m.email) return 'keine';
-  if (m.id === D.me) return 'ja';
+  if (m.id === D.me) return m.email ? 'ja' : 'keine';
   if (!(m.id in CH.reg)) return 'pruefe';
-  return CH.reg[m.id] ? 'ja' : 'nein';
+  if (CH.reg[m.id] && m.email) return 'ja';
+  if (regEvidence(m)) return 'ja';
+  if (!m.email) return 'keine';
+  return 'nein';
 }
 function regPill(m) {
   if (!chatOn() || !can('verwaltung')) return '';
   const st = regState(m), l = CH.last[m.id], on = isOnline(m.id);
   if (st === 'keine') return ' <span class="pill warn">Keine E-Mail hinterlegt</span>';
   if (st === 'pruefe') return ' <span class="pill">prüfe …</span>';
-  if (st === 'nein') return ` <span class="pill bad">Noch nicht angemeldet</span> <button class="btn sm" data-act="mailTo" data-v="${esc(m.email)}">Mail schreiben</button>`;
-  return ` <span class="pill good">Angemeldet</span> <span class="sub">${on ? 'gerade online' : l ? 'zuletzt aktiv ' + agoTxt(l) : ''}</span>`;
+  if (st === 'nein') return ` <span class="pill bad">Noch nicht angemeldet</span> <button class="btn sm" data-act="mailTo" data-v="${esc(m.email)}">Mail schreiben</button> <button class="btn sm" data-act="regOn" data-id="${m.id}">Ist schon angemeldet</button>`;
+  const ev = !CH.reg[m.id] ? regEvidence(m) : '';
+  return ` <span class="pill good">Angemeldet</span> <span class="sub">${on ? 'gerade online' : l ? 'zuletzt aktiv ' + agoTxt(l) : ev === 'manuell' ? 'von dir so markiert' : 'war schon aktiv, Zeitpunkt noch unbekannt'}</span>${ev === 'manuell' ? ` <button class="btn sm" data-act="regOff" data-id="${m.id}">Markierung entfernen</button>` : ''}`;
 }
 function regSummary() {
   if (!chatOn() || !can('verwaltung')) return '';
   const c = { ja:0, nein:0, keine:0, pruefe:0 }; D.members.forEach(m => c[regState(m)]++);
-  return `<div class="sub" style="margin:4px 0 8px;max-width:70ch"><b>${c.ja} von ${D.members.length}</b> haben sich angemeldet${c.nein ? ', <b>' + c.nein + ' noch nicht</b>' : ''}${c.keine ? ', bei ' + c.keine + ' fehlt die E-Mail-Adresse' : ''}. „Angemeldet“ heißt: Die Person hat das Portal mindestens einmal mit Login geöffnet. Wer sich schon vor diesem Update eingeloggt hat, erscheint hier, sobald er das Portal das nächste Mal öffnet.</div>`;
+  return `<div class="sub" style="margin:4px 0 8px;max-width:70ch"><b>${c.ja} von ${D.members.length}</b> haben sich angemeldet${c.nein ? ', <b>' + c.nein + ' noch nicht</b>' : ''}${c.keine ? ', bei ' + c.keine + ' fehlt die E-Mail-Adresse' : ''}. „Angemeldet“ heißt: Die Person hat das Portal mit Login geöffnet. Ältere Logins sieht das Portal nicht direkt, es erkennt sie nur an Aktivität (Zusage, Abstimmung, Beitrag). Sonst springt der Status auf Grün, sobald die Person das Portal das nächste Mal öffnet, oder du markierst sie von Hand.</div>`;
 }
 const FB_PILL = { Neu:'vio', Offen:'vio', Geplant:'warn', 'In Arbeit':'warn', Umgesetzt:'good', Behoben:'good', Abgelehnt:'bad' };
 const FB_CLOSED = ['Umgesetzt', 'Abgelehnt', 'Behoben'];
@@ -2277,6 +2288,8 @@ const ACT = {
     D.zeiten = v; save(); closeDlg(); render(); },
   anw(d) { const a = D.anwesend[d.id] || (D.anwesend[d.id] = {}); a[d.m] = !a[d.m]; save(); render(); },
   vote(d) { const u = D.umfragen.find(x => x.id === d.id); if (u.stimmen[D.me] === +d.v) delete u.stimmen[D.me]; else u.stimmen[D.me] = +d.v; save(); render(); },
+  regOn(d) { if (!can('verwaltung')) return; (D.regOk = D.regOk || {})[d.id] = true; save(); render(); },
+  regOff(d) { if (!can('verwaltung')) return; if (D.regOk) delete D.regOk[d.id]; save(); render(); },
   mailTo(d) { UI.mailTo = d.v; location.hash = '#postfach'; },
   tpl() { const e = D.events.find(x => x.id === $('mEv').value); if (!e) return; const k = $('mTpl').value, d = tplData(e), t = TPL[k](e, d);
     $('mBetreff').value = t[0]; $('mText').value = t[1]; if (!$('mAn').value.trim() && d.mail) $('mAn').value = d.mail;
