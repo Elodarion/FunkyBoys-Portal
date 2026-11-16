@@ -95,7 +95,10 @@
   .amt { font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; }
   .amt.in { color:var(--good); } .amt.out { color:var(--bad); }
   .pill { font-size:11px; font-weight:600; letter-spacing:.3px; padding:3px 10px; border-radius:999px; background:var(--soft); border:1px solid var(--line); color:var(--muted); white-space:nowrap; }
-.rasterwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:14px; }
+.rsearch { display:flex; gap:8px; align-items:center; margin-top:12px; }
+  .rsearch input { flex:1; max-width:520px; padding:11px 14px; border-radius:12px; border:1px solid var(--line); background:var(--soft); color:inherit; font:inherit; min-height:44px; }
+  #gq { width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line); background:var(--soft); color:inherit; font:inherit; min-height:46px; }
+  .rasterwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:14px; }
   table.raster { border-collapse:collapse; font-size:13px; width:max-content; min-width:100%; }
   table.raster th, table.raster td { border:1px solid var(--line); padding:0; text-align:center; white-space:nowrap; }
   table.raster thead th { padding:8px 6px; background:var(--card); }
@@ -402,6 +405,7 @@
   <div class="top-in">
     <a class="brand" href="#start"><span class="badge" id="badge" aria-hidden="true"></span><span><b>Funky Boys</b><small id="mottoLine"></small></span></a>
     <div class="tools">
+      <button class="bell" id="srch" data-act="searchOpen" aria-label="Suche im ganzen Portal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15zM16 16l5 5"/></svg></button>
       <button class="bell" id="bell" data-act="bellOpen" aria-label="Benachrichtigungen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17v-6a6 6 0 0 1 12 0v6l1.5 2h-15zM10 21h4"/></svg><b id="bellCnt" hidden>0</b></button>
       <span class="who" id="whoBox"><span id="whoName"></span> <button class="btn sm" data-act="logout">Abmelden</button></span>
     </div>
@@ -457,7 +461,7 @@ function seed0() {
     motto:{ farbwelt:'western', titel:'Cowboys / Western', session:'' },
     members:[],
     events: RAW_EVENTS.map(convEvent),
-    zusagen:{}, regOk:{}, karte:{}, geo:{},
+    zusagen:{}, regOk:{}, karte:{}, geo:{}, spCfg:{},
     buchungen:[
       { id:'b1', typ:'A', kat:'Anmeldegebühren', betrag:25, text:'Schlicher Danzenacht 13.11.2026', datum:'' },
       { id:'b2', typ:'A', kat:'Anmeldegebühren', betrag:150, text:'Männerballett Meisterschaft Güsten (100 € kommen zurück)', datum:'' },
@@ -881,8 +885,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.35', BUILD = 65;
+const VERSION = '2.36', BUILD = 66;
 const CHANGELOG = [
+  { v:'2.36', datum:'2026-11-16', punkte:['Spenden: Abgabe an den Verein in Prozent (Standard 10 %, änderbar). Die Kasse bekommt automatisch den Betrag nach Abzug.','Sponsoren und Finanzen zeigen, wie viel in der Kasse landet und wie viel insgesamt an den Verein abgegeben wurde.','Suche pro Rubrik (Namen, Texte, Beträge, Daten) und Suche im ganzen Portal über die Lupe oben.'] },
   { v:'2.35', datum:'2026-11-16', punkte:['Buchungen: Als Einnahme gibt es jetzt die Kategorie „Spende“. Eine Spende, die in den Finanzen eingetragen wird, steht automatisch bei den Sponsoren, und Spenden aus den Sponsoren stehen als „Spende“ in den Buchungen und lassen sich dort bearbeiten. Gezählt wird jede Spende nur einmal'] },
   { v:'2.34', datum:'2026-11-16', punkte:['Finanzen und Rubriken Kostüme und Requisiten sind jetzt in beide Richtungen verknüpft: Ausgabe mit Kategorie Kostüme oder Requisiten (mit Datum und Anzahl) legt das Teil in der Rubrik an, und ein dort als bezahlt eingetragenes Teil erscheint als Ausgabe in den Finanzen','Änderungen auf einer Seite werden auf der anderen nachgezogen; Kostüme und Requisiten zeigen „gebucht am“, Buchungen den Link zur Rubrik','Buchung: Datum heißt jetzt „Datum (wann bezahlt)“, neues Feld Anzahl; Requisiten haben Kosten'] },
   { v:'2.33', datum:'2026-11-16', punkte:['Finanzen: Anmeldegebühren der Auftritte können Admin und Kasse jetzt komplett bearbeiten (Betrag, Status, Überweisungsdatum), löschen und neu eintragen'] },
@@ -1085,6 +1090,11 @@ const MERCH_ST = ['In Planung','Bestellt','In Zustellung','Ausgehändigt','Retou
 const KAT_A = ['Anmeldegebühren','Kostüme','Requisiten','Training','Fahrt & Verpflegung','Sonstiges'];
 const KAT_E = ['Spende','Preisgeld','Gage','Zuschuss Verein','Sonstiges'];   // Spenden gehören zur Rubrik Sponsoren (eine Spende in den Buchungen legt dort den Eintrag an)
 const spGeld = () => D.sponsoren.filter(x => x.art !== 'Sachspende' && x.status === 'Eingegangen');
+const r2 = v => Math.round(v * 100) / 100;
+const spDef = () => { const v = (D.spCfg || {}).abgabe; return v === '' || v == null || isNaN(+v) ? 10 : +v; };
+const spPct = x => x.abgabe === '' || x.abgabe == null || isNaN(+x.abgabe) ? 0 : +x.abgabe;
+const spAbg = x => r2((+x.betrag || 0) * spPct(x) / 100), spNet = x => r2((+x.betrag || 0) - spAbg(x));
+const spSub = x => spPct(x) > 0 ? `brutto ${eur(x.betrag)}, Abgabe ${String(spPct(x)).replace('.', ',')} % = ${eur(spAbg(x))}` : '';
 function beitragZahlt(b) { return (b.zahlungen || []).reduce((s, z) => s + (+z.betrag || 0), 0); }
 function beitragInfo(b) {
   const sum = beitragZahlt(b), betrag = +b.betrag || 0, rest = Math.max(0, betrag - sum);
@@ -1144,9 +1154,9 @@ function fin() {
   const sum = a => a.reduce((s, x) => s + (+x.betrag || 0), 0);
   if (!hasFin()) { const p = D.finpub || { einOhne:0, aus:0, beitr:0, offen:0, kat:{} }, spons = sum(spGeld()), ein = p.einOhne + spons; return { ein, aus:p.aus, saldo:ein - p.aus, beitr:p.beitr, offen:p.offen, kat:p.kat || {}, spons }; }
   const beitr = D.beitraege.reduce((s, b) => s + beitragZahlt(b), 0), offen = D.beitraege.reduce((s, b) => s + beitragInfo(b).rest, 0);
-  const spons = sum(spGeld()), ein = sum(D.buchungen.filter(b => b.typ === 'E')) + beitr + spons, aus = sum(D.buchungen.filter(b => b.typ === 'A'));
+  const spons = r2(spGeld().reduce((t, x) => t + spNet(x), 0)), abgabe = r2(spGeld().reduce((t, x) => t + spAbg(x), 0)), ein = sum(D.buchungen.filter(b => b.typ === 'E')) + beitr + spons, aus = sum(D.buchungen.filter(b => b.typ === 'A'));
   const kat = {}; D.buchungen.filter(b => b.typ === 'A').forEach(b => { kat[b.kat] = (kat[b.kat] || 0) + (+b.betrag || 0); });
-  return { ein, aus, saldo:ein - aus, beitr, offen, kat, spons };
+  return { ein, aus, saldo:ein - aus, beitr, offen, kat, spons, abgabe };
 }
 
 /* ---------- Kontakte aus den Terminen ---------- */
@@ -1248,14 +1258,14 @@ const C = {
   events:{ t:'Termin', f:[ { k:'name', l:'Name des Termins', req:1 }, { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Uhrzeit', t:'time' }, { k:'ende', l:'Ende', t:'time' },
     { k:'art', l:'Art', t:'select', o:['','Tunier','Showtanz'] }, { k:'status', l:'Status', t:'select', o:['Angefragt','Vorangemeldet','Angemeldet','Bestätigt','Nein'] },
     { k:'standort', l:'Standort' }, { k:'maps', l:'Adresse für Karte (optional)' }, { k:'kpick', l:'Ansprechpartner aus der Veranstalter-Liste wählen', t:'select', nosave:1, o:() => [['', '– selbst eintippen –'], ...kontakte().map(c => [kRef(c), (c.name || c.mail) + (c.vname ? ' · ' + c.vname : '')])] }, { k:'inhaber', l:'Kontakt / Ansprechpartner' }, { k:'vid', l:'Verein / Gruppe', t:'select', o:() => [['', '–'], ...(D.vereine || []).map(v => [v.id, v.name])] }, { k:'gebuehr', l:'Anmeldegebühr' }, { k:'notizen', l:'Notizen', t:'area' } ] },
-  buchungen:{ t:'Buchung', f:[ { k:'typ', l:'Art', t:'select', o:[['A','Ausgabe'],['E','Einnahme']] }, { k:'betrag', l:'Betrag in €', t:'number', req:1 }, { k:'text', l:'Wofür (bei einer Spende: von wem)', req:1 },
-    { k:'kat', l:'Kategorie', t:'select', o:[...KAT_A, ...KAT_E.filter(k => !KAT_A.includes(k))] }, { k:'datum', l:'Datum (wann bezahlt)', t:'date' },
+  buchungen:{ t:'Buchung', f:[ { k:'typ', l:'Art', t:'select', o:[['A','Ausgabe'],['E','Einnahme']] }, { k:'betrag', l:'Betrag in € (bei einer Spende: der volle Spendenbetrag)', t:'number', req:1 }, { k:'text', l:'Wofür (bei einer Spende: von wem)', req:1 },
+    { k:'kat', l:'Kategorie', t:'select', o:[...KAT_A, ...KAT_E.filter(k => !KAT_A.includes(k))] }, { k:'datum', l:'Datum (wann bezahlt)', t:'date' }, { k:'abgabe', l:'Abgabe an den Verein in % (nur bei Spenden)', t:'number', def:() => spDef() },
     { k:'anzahl', l:'Anzahl Stück (optional, bei Kostüme und Requisiten, zum Beispiel 8 Westen)', t:'number' } ] },
   beitraege:{ t:'Beitrag', f:[ { k:'mid', l:'Mitglied', t:'select', o:memOpts }, { k:'zeitraum', l:'Zeitraum', req:1 }, { k:'betrag', l:'Jahresbeitrag in €', t:'number', req:1 },
     { k:'modus', l:'Zahlweise', t:'select', o:[['einmalig','Einmalzahlung'],['dauerauftrag','Dauerauftrag (monatlich)']] },
     { k:'rate', l:'Monatsrate in € (nur Dauerauftrag, leer = Jahresbeitrag/12)', t:'number' },
     { k:'von', l:'Fällig ab / Start des Dauerauftrags', t:'date' } ] },
-  sponsoren:{ t:'Spende', f:[ { k:'name', l:'Wer spendet', req:1 }, { k:'betrag', l:'Betrag bzw. Wert in €', t:'number', req:1 }, { k:'datum', l:'Wann', t:'date' },
+  sponsoren:{ t:'Spende', f:[ { k:'name', l:'Wer spendet', req:1 }, { k:'betrag', l:'Betrag bzw. Wert in € (voller Spendenbetrag)', t:'number', req:1 }, { k:'abgabe', l:'Abgabe an den Verein in % (0 = keine, gilt nur für Geldspenden)', t:'number', def:() => spDef() }, { k:'datum', l:'Wann', t:'date' },
     { k:'art', l:'Art', t:'select', o:['Geldspende','Sachspende'] }, { k:'status', l:'Stand', t:'select', o:['Eingegangen','Zugesagt'] }, { k:'kontakt', l:'Ansprechpartner / Kontakt' }, { k:'notiz', l:'Notiz (z. B. Gegenleistung, Spendenquittung)', t:'area' } ] },
   kostueme:{ t:'Kostümteil', f:[ { k:'teil', l:'Teil', req:1 }, { k:'anzahl', l:'Anzahl', t:'number' }, { k:'preis', l:'Preis pro Stück in €', t:'number' },
     { k:'status', l:'Status', t:'select', o:['Idee','Bestellt','Geliefert','Angepasst'] }, { k:'bezahlt', l:'Bezahlt am (trägt die Ausgabe automatisch in Finanzen ein, leer = noch nicht bezahlt)', t:'date' }, { k:'notiz', l:'Notiz', t:'area' } ] },
@@ -1318,10 +1328,50 @@ function openEdit(col, id, preset) {
   if (!mayOpen(col, id)) return;
   const cfg = C[col], item = id ? D[col].find(x => x.id === id) : null, eff = col === 'kontakte' && item ? kontakte(true).find(c => c.rid === id) : null;
   FORM = { col, id, key:(preset || {}).key || (item && item.key) || '' };
-  openDlg(`<h3>${item ? cfg.t + ' bearbeiten' : cfg.t + ' anlegen'}</h3>${col === 'kontakte' && FORM.key ? '<div class="sub" style="color:var(--muted)">Dieser Kontakt stammt aus der Auftrittsplanung. Deine Änderungen überschreiben die Angaben dort, bleiben aber erhalten, auch wenn die Termine sich ändern.</div>' : ''}${fieldsOf(cfg).map(f => fieldHTML(f, eff ? (f.k === 'hide' ? (eff.hide ? '1' : '') : f.k === 'vereinName' ? eff.vname : eff[f.k]) : item ? item[f.k] : (preset || {})[f.k])).join('')}
+  openDlg(`<h3>${item ? cfg.t + ' bearbeiten' : cfg.t + ' anlegen'}</h3>${col === 'kontakte' && FORM.key ? '<div class="sub" style="color:var(--muted)">Dieser Kontakt stammt aus der Auftrittsplanung. Deine Änderungen überschreiben die Angaben dort, bleiben aber erhalten, auch wenn die Termine sich ändern.</div>' : ''}${fieldsOf(cfg).map(f => fieldHTML(f, eff ? (f.k === 'hide' ? (eff.hide ? '1' : '') : f.k === 'vereinName' ? eff.vname : eff[f.k]) : item ? item[f.k] : (preset || {})[f.k] != null ? preset[f.k] : f.def ? f.def() : undefined)).join('')}
     <div class="err" id="fErr" hidden></div>
     <div class="acts"><button class="btn dark" data-act="saveForm">Speichern</button><button class="btn" data-act="close">Abbrechen</button>
     ${item ? `<button class="btn" data-act="delForm" style="color:var(--bad)">${col === 'kontakte' && item.key ? 'Auf Automatik zurücksetzen' : 'Löschen'}</button>` : ''}</div>`);
+}
+/* ---------- Suche: im ganzen Portal und pro Rubrik ---------- */
+const RSEARCH = new Set(['vormerken', 'finanzen', 'sponsoren', 'kostueme', 'tanz', 'merch', 'requisiten', 'mitglieder', 'aufgaben', 'kontakte', 'dateien', 'social', 'feedback', 'training', 'pinnwand']);
+const RQ_SKIP = new Set(['id', 'demo', 'ts', 'stimmen', 'key', 'ln', 'bk', 'sync', 'raster', 'zahlungen', 'rid', 'hide', 'url', 'maps', 'geo', 'events']);
+function rqText(it) {
+  if (it == null) return '';
+  if (typeof it === 'number') { const de = it.toFixed(2).replace('.', ','); return `${it} ${de} ${de.replace(/,00$/, '')} `; }
+  if (typeof it === 'string') { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(it); return it.toLowerCase() + (m ? ` ${m[3]}.${m[2]}.${m[1]} ${m[3]}.${m[2]}. ${+m[3]}.${+m[2]}.` : '') + ' '; }
+  if (Array.isArray(it)) return it.map(rqText).join(' ');
+  if (typeof it === 'object') return Object.keys(it).filter(k => !RQ_SKIP.has(k)).map(k => rqText(it[k])).join(' ');
+  return '';
+}
+function rqTokens(q) { return String(q || '').toLowerCase().replace(/€|\beur\b/g, ' ').split(/\s+/).filter(Boolean); }
+function rqMatch(it, toks, txt) { const t = txt != null ? txt : rqText(it); return toks.every(x => t.includes(x)); }
+function rqFilter(list) { if (!UI.rq || !RSEARCH.has(UI.sec)) return list; const toks = rqTokens(UI.rq); return toks.length ? list.filter(x => rqMatch(x, toks)) : list; }
+const rqBox = () => RSEARCH.has(UI.sec) ? `<div class="rsearch"><input id="rq" type="search" placeholder="In dieser Rubrik suchen (Name, Text, Betrag, Datum)" value="${esc(UI.rq || '')}" autocomplete="off" aria-label="In dieser Rubrik suchen">${UI.rq ? '<button class="btn sm" data-act="rqClear">Zurücksetzen</button>' : ''}</div>` : '';
+const GS = [
+  ['auftritte', 'Auftritte', () => D.events, e => e.name, e => [e.datum ? fmtDate(e.datum) : '', e.standort].filter(Boolean).join(' · ')],
+  ['kontakte', 'Veranstalter', () => kontakte(true), c => c.name || c.mail, c => [c.mail, c.ort].filter(Boolean).join(' · ')],
+  ['vormerken', 'Vormerken', () => D.veranstalter || [], v => v.verein || v.name, v => v.veranstaltung || ''],
+  ['finanzen', 'Buchungen', () => can('buchungen') ? D.buchungen : [], b => b.text, b => `${b.kat || ''} · ${b.datum ? fmtDate(b.datum) : ''} · ${eur(b.betrag)}`],
+  ['sponsoren', 'Sponsoren', () => D.sponsoren, x => x.name, x => `${x.datum ? fmtDate(x.datum) : ''} · ${eur(x.betrag)}`],
+  ['kostueme', 'Kostüme', () => D.kostueme, k => k.teil, k => `${+k.anzahl || 0} × ${eur(k.preis)}`],
+  ['requisiten', 'Requisiten', () => D.requisiten, r => r.name, r => r.wo || ''],
+  ['merch', 'Teamausstattung', () => D.merch, x => x.artikel || x.name, x => x.kat || ''],
+  ['tanz', 'Tanz', () => D.tanz, x => x.titel, x => x.art || ''],
+  ['training', 'Training', () => D.trainings, t => (t.datum ? fmtDate(t.datum) : '') + (t.thema ? ' · ' + t.thema : ''), t => t.ort || ''],
+  ['aufgaben', 'Aufgaben', () => D.aufgaben, a => a.titel, a => a.bereich || ''],
+  ['pinnwand', 'Pinnwand', () => [...(D.posts || []), ...(D.umfragen || [])], p => p.titel || p.frage, p => p.datum ? fmtDate(p.datum) : ''],
+  ['mitglieder', 'Mitglieder', () => (D.members || []).map(m => ({ name:m.name, rolle:ROLES[m.rolle] || m.rolle })), m => m.name, m => m.rolle],
+  ['dateien', 'Dateien', () => D.dateien || [], d => d.name || d.titel, d => d.kat || ''],
+  ['social', 'Social Media', () => D.social || [], x => x.titel || x.text, x => x.status || ''],
+  ['feedback', 'Feedback', () => D.feedback || [], x => x.titel, x => x.status || '']
+];
+function globalSearchHTML(q) {
+  const toks = rqTokens(q); if (!toks.length) return '<div class="sub" style="color:var(--muted)">Tippe, um in Auftritten, Buchungen, Spenden, Kostümen, Requisiten, Aufgaben und mehr zu suchen.</div>';
+  let n = 0, h = '';
+  GS.forEach(g => { const hits = (g[2]() || []).filter(x => rqMatch(x, toks)); if (!hits.length) return; n += hits.length;
+    h += `<div style="margin-top:10px"><b>${g[1]}</b> <span class="pill">${hits.length}</span></div><div class="rows">${hits.slice(0, 5).map(x => `<div class="row"><div class="grow"><button class="btn sm" data-act="goSearch" data-sec="${g[0]}" style="text-align:left">${esc(String(g[3](x) || '(ohne Titel)').slice(0, 90))}</button><div class="sub">${esc(g[4](x) || '')}</div></div></div>`).join('')}${hits.length > 5 ? `<div class="sub"><button class="btn sm" data-act="goSearch" data-sec="${g[0]}">Alle ${hits.length} Treffer in ${g[1]} anzeigen</button></div>` : ''}</div>`; });
+  return n ? `<div class="sub" style="color:var(--muted)">${n} Treffer. Ein Klick öffnet die Rubrik mit dieser Suche.</div>${h}` : `<div class="empty">Nichts gefunden für „${esc(q)}“.</div>`;
 }
 /* ---------- Verknüpfung Finanzen <-> Kostüme / Requisiten ---------- */
 const LINK = {
@@ -1379,9 +1429,10 @@ function saveForm() {
   }
   if (FORM.col === 'buchungen' && rec.typ === 'E' && rec.kat === 'Spende' && can('sponsoren')) {   // Spenden leben in der Rubrik Sponsoren, damit nichts doppelt zählt
     if (FORM.id) D.buchungen = D.buchungen.filter(x => x.id !== FORM.id);
-    D.sponsoren.push({ id:uid('s'), name:rec.text, betrag:+rec.betrag || 0, datum:rec.datum || todayISO(), art:'Geldspende', status:'Eingegangen', kontakt:'', notiz:'' });
+    D.sponsoren.push({ id:uid('s'), name:rec.text, betrag:+rec.betrag || 0, abgabe:rec.abgabe === '' ? 0 : +rec.abgabe, datum:rec.datum || todayISO(), art:'Geldspende', status:'Eingegangen', kontakt:'', notiz:'' });
     save(); closeDlg(); render(); return;
   }
+  if (FORM.col === 'buchungen') delete rec.abgabe;
   if (FORM.col === 'kontakte') { rec.verein = ensureVerein(rec.vereinName); delete rec.vereinName; }
   if (FORM.col === 'kontakte' && FORM.key) { const b = kontakteBase()[FORM.key] || {}; ['name', 'mail', 'url'].forEach(k => { if (rec[k] === (b[k] || '')) rec[k] = ''; }); }
   let saved = null;
@@ -1420,10 +1471,10 @@ const NAV = [ ['', 'Überblick'], ['start','Start'], ['pinnwand','Pinnwand'], ['
 const hiddenSec = s => (s === 'postfach' && !can('postfach')) || (s === 'verwaltung' && !can('verwaltung'));
 const grpOf = s => { let g = ''; for (const n of NAV) { if (!n[0]) g = n[1]; else if (n[0] === s) return n[2] ? g + ' · ' + NAV.find(x => x[0] === n[2])[1] : g; } return ''; };
 const evTabs = () => { const n = funde().filter(f => !D.sucheDone[f.id]).length; return `<div class="tabs"><a href="#auftritte" class="${UI.sec === 'auftritte' ? 'on' : ''}">Termine</a><a href="#suche" class="${UI.sec === 'suche' ? 'on' : ''}">Suche nach neuen Auftritten${n ? ' (' + n + ')' : ''}</a><a href="#vormerken" class="${UI.sec === 'vormerken' ? 'on' : ''}">Vormerken ${nextSess()}</a><a href="#karte" class="${UI.sec === 'karte' ? 'on' : ''}">Karte & Fahrten</a></div>`; };
-const head = (t, p, btn) => `<div class="head"><span class="crumb">${grpOf(UI.sec)}</span><h2>${t}</h2>${btn || ''}${p ? `<p>${p}</p>` : ''}</div>`;
+const head = (t, p, btn) => `<div class="head"><span class="crumb">${grpOf(UI.sec)}</span><h2>${t}</h2>${btn || ''}${p ? `<p>${p}</p>` : ''}${rqBox()}</div>`;
 const addBtn = (col, label) => can(col) ? `<button class="btn pri" data-act="edit" data-col="${col}">${label}</button>` : '';
 const editBtn = (col, id) => can(col) ? `<button class="btn sm" data-act="edit" data-col="${col}" data-id="${id}">Bearbeiten</button>` : '';
-const rows = (items, fn, empty) => items.length ? `<div class="rows">${items.map(fn).join('')}</div>` : `<div class="empty">${empty}</div>`;
+const rows = (items, fn, empty) => { const f = rqFilter(items); return f.length ? `<div class="rows">${f.map(fn).join('')}</div>` : `<div class="empty">${UI.rq && items.length && RSEARCH.has(UI.sec) ? 'Nichts gefunden für „' + esc(UI.rq) + '“.' : empty}</div>`; };
 function taskRow(a) {
   const late = !a.done && a.bis && a.bis < todayISO();
   return `<div class="row"><label class="chk"><input type="checkbox" data-act="task" data-id="${a.id}" ${a.done ? 'checked' : ''} ${mayTickTask(a) ? '' : 'disabled'} aria-label="Erledigt"></label>
@@ -2164,10 +2215,10 @@ const SEC = {
   },
   finanzen() {
     const f = fin(), full = can('beitraege');
-    const bs = [...D.buchungen, ...spGeld().map(x => ({ sp:true, spid:x.id, typ:'E', kat:'Spende', betrag:x.betrag, text:'Spende: ' + x.name, datum:x.datum, demo:x.demo }))].sort((a, b) => (b.datum || '0').localeCompare(a.datum || '0'));
+    const bs = [...D.buchungen, ...spGeld().map(x => ({ sp:true, spid:x.id, typ:'E', kat:'Spende', betrag:spNet(x), text:'Spende: ' + x.name + (spAbg(x) ? ' (' + spSub(x) + ')' : ''), datum:x.datum, demo:x.demo }))].sort((a, b) => (b.datum || '0').localeCompare(a.datum || '0'));
     const bt = full ? D.beitraege : D.beitraege.filter(b => b.mid === D.me);
     return head('Finanzen', 'Gesamtbeträge und Budget sehen alle. Beiträge siehst du nur für dich selbst, die Liste aller Zahlungen und die einzelnen Buchungen sehen Admin und Kasse.', addBtn('buchungen', '+ Buchung')) +
-      `<div class="kpis"><div class="kpi"><small>Einnahmen</small><b>${eur(f.ein)}</b><span>davon Beiträge ${eur(f.beitr)} · Sponsoren ${eur(f.spons)}</span></div>
+      `<div class="kpis"><div class="kpi"><small>Einnahmen</small><b>${eur(f.ein)}</b><span>davon Beiträge ${eur(f.beitr)} · Spenden nach Abgabe ${eur(f.spons)}${f.abgabe ? ' · an den Verein abgegeben ' + eur(f.abgabe) : ''}</span></div>
         <div class="kpi"><small>Ausgaben</small><b>${eur(f.aus)}</b><span>${can('buchungen') ? D.buchungen.filter(b => b.typ === 'A').length + ' Buchungen' : 'laut Kasse'}</span></div>
         <div class="kpi"><small>Kassenstand</small><b>${eur(f.saldo)}</b><span>Einnahmen minus Ausgaben</span></div>
         <div class="kpi"><small>Beiträge offen</small><b>${eur(f.offen)}</b><span>noch nicht eingegangen</span></div></div>
@@ -2194,15 +2245,17 @@ const SEC = {
     const sum = a => a.reduce((t, x) => t + (+x.betrag || 0), 0), all = [...D.sponsoren].sort((a, b) => (b.datum || '0').localeCompare(a.datum || '0'));
     const geld = spGeld(), zug = all.filter(x => x.status !== 'Eingegangen'), sach = all.filter(x => x.art === 'Sachspende' && x.status === 'Eingegangen');
     const je = {}; all.forEach(x => { const k = x.name.trim(); (je[k] = je[k] || { n:k, t:0, c:0 }).t += x.status === 'Eingegangen' ? (+x.betrag || 0) : 0; je[k].c++; });
-    return head('Sponsoren', 'Wer spendet wie viel und wann. Eingegangene Geldspenden zählen automatisch als Einnahme in den Finanzen.', addBtn('sponsoren', '+ Spende')) +
-      `<div class="kpis"><div class="kpi"><small>Geld eingegangen</small><b>${eur(sum(geld))}</b><span>steht in den Finanzen als Einnahme</span></div>
+    return head('Sponsoren', 'Wer spendet wie viel und wann. Von jeder Spende geht ein einstellbarer Prozentsatz an den Verein, der Rest zählt automatisch als Einnahme in den Finanzen.', `<div class="chips">${addBtn('sponsoren', '+ Spende')}${can('sponsoren') ? `<button class="btn" data-act="spCfg">Standard-Abgabe: ${String(spDef()).replace('.', ',')} %</button>` : ''}</div>`) +
+      `<div class="kpis"><div class="kpi"><small>Geld eingegangen (brutto)</small><b>${eur(sum(geld))}</b><span>volle Spendenbeträge</span></div>
+        <div class="kpi"><small>In der Kasse (nach Abgabe)</small><b>${eur(geld.reduce((t, x) => t + spNet(x), 0))}</b><span>steht in den Finanzen als Einnahme</span></div>
+        <div class="kpi"><small>An den Verein abgegeben</small><b>${eur(geld.reduce((t, x) => t + spAbg(x), 0))}</b><span>insgesamt, ${geld.filter(x => spPct(x) > 0).length} Spenden</span></div>
         <div class="kpi"><small>Zugesagt, noch offen</small><b>${eur(sum(zug))}</b><span>${zug.length} Zusage${zug.length === 1 ? '' : 'n'}</span></div>
         <div class="kpi"><small>Sachspenden</small><b>${eur(sum(sach))}</b><span>Wert, zählt nicht zur Kasse</span></div>
         <div class="kpi"><small>Sponsoren</small><b>${Object.keys(je).length}</b><span>${all.length} Einträge</span></div></div>
       <div class="panel"><div class="ph"><h3>Spenden</h3><a href="#finanzen">zu den Finanzen</a></div>
-        ${rows(all, x => `<div class="row"><div class="grow"><b>${esc(x.name)}</b>${demo(x)}<div class="sub">${fmtDate(x.datum)}${x.kontakt ? ' · ' + linkify(x.kontakt) : ''}${x.notiz ? ' · ' + esc(x.notiz) : ''}</div></div>
+        ${rows(all, x => `<div class="row"><div class="grow"><b>${esc(x.name)}</b>${demo(x)}<div class="sub">${fmtDate(x.datum)}${x.kontakt ? ' · ' + linkify(x.kontakt) : ''}${x.notiz ? ' · ' + esc(x.notiz) : ''}${x.art !== 'Sachspende' && spPct(x) > 0 ? ' · ' + spSub(x) : ''}</div></div>
           <span class="pill ${x.art === 'Sachspende' ? '' : 'vio'}">${esc(x.art || 'Geldspende')}</span><span class="pill ${x.status === 'Eingegangen' ? 'good' : 'warn'}">${esc(x.status || 'Eingegangen')}</span>
-          <span class="amt ${x.status === 'Eingegangen' && x.art !== 'Sachspende' ? 'in' : ''}">${eur(x.betrag)}</span>
+          <span class="amt ${x.status === 'Eingegangen' && x.art !== 'Sachspende' ? 'in' : ''}">${eur(x.art === 'Sachspende' ? x.betrag : spNet(x))}</span>
           ${can('sponsoren') && x.status !== 'Eingegangen' ? `<button class="btn sm" data-act="spIn" data-id="${x.id}">Heute eingegangen</button>` : ''}${editBtn('sponsoren', x.id)}</div>`, 'Noch keine Spenden eingetragen.')}</div>
       <div class="panel"><div class="ph"><h3>Summe je Sponsor</h3></div>
         ${rows(Object.values(je).sort((a, b) => b.t - a.t), x => `<div class="row"><div class="grow"><b>${esc(x.n)}</b><div class="sub">${x.c} Eintr${x.c === 1 ? 'ag' : 'äge'}</div></div><span class="amt">${eur(x.t)}</span></div>`, 'Noch keine Sponsoren.')}</div>`;
@@ -2245,7 +2298,7 @@ const SEC = {
         <span class="pill ${cls[r.zustand] || ''}">${esc(r.zustand)}</span>${linkPill(r)}${+r.kosten ? `<span class="amt">${eur(r.kosten)}</span>` : ''}${editBtn('requisiten', r.id)}</div>`, 'Noch keine Requisiten angelegt.')}</div>`;
   },
   training() {
-    const ts = [...D.trainings].sort((a, b) => a.datum.localeCompare(b.datum)), edit = can('trainings');
+    const ts = rqFilter([...D.trainings].sort((a, b) => a.datum.localeCompare(b.datum))), edit = can('trainings');
     return head('Training & Anwesenheit', 'Trainingstermine gelten für die ganze Gruppe und stehen auch im Kalender. Anlegen, ändern und löschen dürfen Admin und Trainerinnen; die Trainerinnen haken ab, wer da war.', edit ? `<div class="chips"><button class="btn pri" data-act="trSerieOpen">+ Wöchentliche Serie</button>${addBtn('trainings', '+ Einzeltermin')}</div>` : '') +
       (D.trSerien || []).map(sr => { const n = D.trainings.filter(t => t.serie === sr.id).length;
         return `<div class="panel"><div class="ph"><h3>Serie: jeden ${WDN[+sr.wochentag]} ${sr.zeit ? esc(trZeit(sr)) : ''}</h3>${edit ? `<span class="chips"><button class="btn sm" data-act="trSerieOpen" data-id="${sr.id}">Serie ändern</button><button class="btn sm" data-act="trSerieDel" data-id="${sr.id}" style="color:var(--bad)">Serie beenden</button></span>` : ''}</div>
@@ -2321,7 +2374,7 @@ const SEC = {
   },
   pinnwand() {
     return head('Pinnwand & Abstimmungen', 'Neuigkeiten für alle und schnelle Abstimmungen in der Gruppe.', `<div class="chips">${addBtn('posts', '+ Beitrag')}${addBtn('umfragen', '+ Abstimmung')}</div>`) +
-      D.umfragen.map(u => { const n = Object.keys(u.stimmen).length, mine = u.stimmen[D.me];
+      rqFilter(D.umfragen).map(u => { const n = Object.keys(u.stimmen).length, mine = u.stimmen[D.me];
         return `<div class="panel"><div class="ph"><h3>${esc(u.frage)}${demo(u)}</h3>${(lead() || u.von === D.me) ? `<button class="btn sm" data-act="edit" data-col="umfragen" data-id="${u.id}">Bearbeiten</button>` : ''}</div>
           <div class="rows">${u.opts.map((o, i) => { const c = Object.values(u.stimmen).filter(v => v === i).length;
             return `<div class="row"><button class="btn sm ${mine === i ? 'on' : ''}" data-act="vote" data-id="${u.id}" data-v="${i}">${esc(o)}</button><span class="amt">${c}</span><div class="bar"><i style="width:${n ? c / n * 100 : 0}%"></i></div></div>`; }).join('')}</div>
@@ -2467,7 +2520,7 @@ function render() {
   chatEnsure(); chatBadge(); mailEnsure();
   gratulieren();
 }
-function route() { AI.msg = ''; UI.vmMsg = ''; UI.sec = (location.hash || '#start').slice(1); if (UI.sec !== 'verwaltung') { UI.thDraft = null; UI.thMsg = ''; } render(); window.scrollTo(0, 0); }
+function route() { AI.msg = ''; UI.vmMsg = ''; if (UI._keep) UI._keep = false; else UI.rq = ''; UI.sec = (location.hash || '#start').slice(1); if (UI.sec !== 'verwaltung') { UI.thDraft = null; UI.thMsg = ''; } render(); window.scrollTo(0, 0); }
 
 /* ---------- Claude ---------- */
 const AI = { busy:false, msg:'' };
@@ -2886,6 +2939,11 @@ const ACT = {
       <label class="f" for="rcStart">Erster Monat des Beitragsjahres<input id="rcStart" type="month" value="${c.start}"></label>
       <div class="acts"><button class="btn dark" data-act="rasterCfgSave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
   rasterCfgSave() { if (!can('beitraege')) return; const rate = parseFloat(String($('rcRate').value).replace(',', '.')), st = $('rcStart').value; if (!(rate > 0) || !/^\d{4}-\d{2}$/.test(st)) return; D.beitragCfg = { rate, start:st }; save(); closeDlg(); render(); },
+  spCfg() { if (!can('sponsoren')) return; openDlg(`<h3>Standard-Abgabe bei Spenden</h3><div class="sub">So viel Prozent jeder neuen Spende gehen an den Verein. Bei der einzelnen Spende lässt sich der Wert immer ändern.</div><label class="f" for="spPct">Abgabe in %<input id="spPct" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="${spDef()}"></label><div class="acts"><button class="btn dark" data-act="spCfgSave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  spCfgSave() { if (!can('sponsoren')) return; const v = parseFloat(String($('spPct').value).replace(',', '.')); if (isNaN(v) || v < 0 || v > 100) { $('spPct').focus(); return; } D.spCfg = Object.assign({}, D.spCfg || {}, { abgabe:v }); save(); closeDlg(); render(); },
+  searchOpen() { openDlg(`<h3>Suche im ganzen Portal</h3><label class="f" for="gq"><input id="gq" type="search" placeholder="Name, Text, Ort, Betrag oder Datum" autocomplete="off" aria-label="Suche im ganzen Portal"></label><div id="gRes" role="status" aria-live="polite"></div><div class="acts"><button class="btn" data-act="close">Schließen</button></div>`); const q = $('gq'); if (q && q.focus) q.focus(); },
+  goSearch(d) { const q = $('gq') ? $('gq').value.trim() : ''; closeDlg(); UI.rq = q; if (d.sec === 'auftritte') UI.q = q; UI._keep = true; if (location.hash === '#' + d.sec) { UI._keep = false; render(); window.scrollTo(0, 0); } else location.hash = '#' + d.sec; },
+  rqClear() { UI.rq = ''; if (UI.sec === 'auftritte') UI.q = ''; render(); },
   gebNew() { if (!can('buchungen')) return; const free = D.events.filter(e => e.datum && season(e.datum) === sess() && statusInfo(e.status).b !== 'declined' && !(parseFee(e.gebuehr) > 0)).sort((a, b) => a.datum.localeCompare(b.datum));
     if (!free.length) { openDlg('<h3>Keine freien Auftritte</h3><div>Alle Auftritte dieser Session haben schon eine Gebühr oder sind abgesagt.</div><div class="acts"><button class="btn" data-act="close">Schließen</button></div>'); return; }
     openDlg(`<h3>Anmeldegebühr eintragen</h3><label class="f" for="gbEv">Auftritt<select id="gbEv">${free.map(e => `<option value="${esc(e.id)}">${esc(e.name)} (${esc(fmtDate(e.datum))})</option>`).join('')}</select></label>
@@ -2984,7 +3042,11 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT' || b.type === 'checkbox') return;
   if (ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset, b);
 });
+let rqTimer = null;
 document.addEventListener('input', e => {
+  const iid = e.target && e.target.id;
+  if (iid === 'gq') { const r = $('gRes'); if (r) r.innerHTML = globalSearchHTML(e.target.value); return; }
+  if (iid === 'rq') { UI.rq = e.target.value; clearTimeout(rqTimer); rqTimer = setTimeout(() => { render(); const el = $('rq'); if (el && el.focus) { el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (x) {} } }, 180); return; }
   if (e.target && e.target.id === 'helpQ') { UI.hq = e.target.value; const l = $('helpList'); if (l) l.innerHTML = helpListHTML(); return; }
   const t = e.target, k = t && t.dataset && t.dataset.th; if (!k || me().rolle !== 'admin') return;
   const d = thDraft(), v = t.type === 'checkbox' ? t.checked : t.value; UI.thMsg = '';
