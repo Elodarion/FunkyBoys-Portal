@@ -885,8 +885,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.36', BUILD = 66;
+const VERSION = '2.37', BUILD = 67;
 const CHANGELOG = [
+  { v:'2.37', datum:'2026-11-16', punkte:['Teamausstattung & Merch ist jetzt wie Kostüme und Requisiten mit Finanzen verknüpft: Ausgabe in Finanzen eintragen erscheint in der Rubrik und umgekehrt (Feld „Bezahlt am“).','Neue Ausgaben-Kategorie „Teamausstattung“ mit eigenem Budget.'] },
   { v:'2.36', datum:'2026-11-16', punkte:['Spenden: Abgabe an den Verein in Prozent (Standard 10 %, änderbar). Die Kasse bekommt automatisch den Betrag nach Abzug.','Sponsoren und Finanzen zeigen, wie viel in der Kasse landet und wie viel insgesamt an den Verein abgegeben wurde.','Suche pro Rubrik (Namen, Texte, Beträge, Daten) und Suche im ganzen Portal über die Lupe oben.'] },
   { v:'2.35', datum:'2026-11-16', punkte:['Buchungen: Als Einnahme gibt es jetzt die Kategorie „Spende“. Eine Spende, die in den Finanzen eingetragen wird, steht automatisch bei den Sponsoren, und Spenden aus den Sponsoren stehen als „Spende“ in den Buchungen und lassen sich dort bearbeiten. Gezählt wird jede Spende nur einmal'] },
   { v:'2.34', datum:'2026-11-16', punkte:['Finanzen und Rubriken Kostüme und Requisiten sind jetzt in beide Richtungen verknüpft: Ausgabe mit Kategorie Kostüme oder Requisiten (mit Datum und Anzahl) legt das Teil in der Rubrik an, und ein dort als bezahlt eingetragenes Teil erscheint als Ausgabe in den Finanzen','Änderungen auf einer Seite werden auf der anderen nachgezogen; Kostüme und Requisiten zeigen „gebucht am“, Buchungen den Link zur Rubrik','Buchung: Datum heißt jetzt „Datum (wann bezahlt)“, neues Feld Anzahl; Requisiten haben Kosten'] },
@@ -1087,7 +1088,7 @@ async function startDb() {
 
 /* ---------- Finanzen ---------- */
 const MERCH_ST = ['In Planung','Bestellt','In Zustellung','Ausgehändigt','Retoure'];
-const KAT_A = ['Anmeldegebühren','Kostüme','Requisiten','Training','Fahrt & Verpflegung','Sonstiges'];
+const KAT_A = ['Anmeldegebühren','Kostüme','Requisiten','Teamausstattung','Training','Fahrt & Verpflegung','Sonstiges'];
 const KAT_E = ['Spende','Preisgeld','Gage','Zuschuss Verein','Sonstiges'];   // Spenden gehören zur Rubrik Sponsoren (eine Spende in den Buchungen legt dort den Eintrag an)
 const spGeld = () => D.sponsoren.filter(x => x.art !== 'Sachspende' && x.status === 'Eingegangen');
 const r2 = v => Math.round(v * 100) / 100;
@@ -1273,7 +1274,7 @@ const C = {
     { k:'status', l:'Status', t:'select', o:['Idee','In Arbeit','Steht'] }, { k:'notiz', l:'Notiz oder Link', t:'area' } ] },
   merch:{ t:'Ausstattungsteil', f:[ { k:'artikel', l:'Artikel (z. B. Shirt Funky Boys Logo)', req:1 }, { k:'kat', l:'Art', t:'select', o:['Shirt','Hose','Trainingsanzug','Jacke','Sonstiges'] },
     { k:'anzahl', l:'Anzahl', t:'number' }, { k:'wert', l:'Wert pro Stück in €', t:'number' },
-    { k:'status', l:'Status', t:'select', o:MERCH_ST }, { k:'notiz', l:'Notiz (z. B. Lieferant, Größen)', t:'area' } ] },
+    { k:'status', l:'Status', t:'select', o:MERCH_ST }, { k:'bezahlt', l:'Bezahlt am (trägt die Ausgabe automatisch in Finanzen ein, leer = noch nicht bezahlt)', t:'date' }, { k:'notiz', l:'Notiz (z. B. Lieferant, Größen)', t:'area' } ] },
   requisiten:{ t:'Requisit', f:[ { k:'name', l:'Bezeichnung', req:1 }, { k:'anzahl', l:'Anzahl', t:'number' }, { k:'wo', l:'Lagerort / wer hat es' },
     { k:'zustand', l:'Zustand', t:'select', o:['Idee','In Arbeit','Fertig','Reparatur nötig'] }, { k:'kosten', l:'Kosten insgesamt in €', t:'number' }, { k:'bezahlt', l:'Bezahlt am (trägt die Ausgabe automatisch in Finanzen ein, leer = noch nicht bezahlt)', t:'date' }, { k:'notiz', l:'Notiz (z. B. Transport)', t:'area' } ] },
   gruppe:{ t:'Gruppentermin', f:[ { k:'titel', l:'Was (z. B. Zusatztraining, Treffen, Teamevent)', req:1 }, { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Von (Uhrzeit)', t:'time' }, { k:'zeitBis', l:'Bis (Uhrzeit)', t:'time' }, { k:'ort', l:'Ort' }, { k:'notiz', l:'Notiz', t:'area' } ] },
@@ -1380,9 +1381,12 @@ const LINK = {
     up:(i, b) => { i.teil = b.text; i.anzahl = +b.anzahl || 1; i.preis = Math.round(b.betrag / (+b.anzahl || 1) * 100) / 100; } },
   requisiten:{ kat:'Requisiten', name:i => i.name, cost:i => +i.kosten || 0,
     mk:b => ({ name:b.text, anzahl:+b.anzahl || 1, wo:'', zustand:'Fertig', kosten:b.betrag, notiz:'' }),
-    up:(i, b) => { i.name = b.text; i.anzahl = +b.anzahl || 1; i.kosten = b.betrag; } }
+    up:(i, b) => { i.name = b.text; i.anzahl = +b.anzahl || 1; i.kosten = b.betrag; } },
+  merch:{ kat:'Teamausstattung', name:i => i.artikel, cost:i => (+i.anzahl || 1) * (+i.wert || 0),
+    mk:b => ({ artikel:b.text, kat:'Sonstiges', anzahl:+b.anzahl || 1, wert:Math.round(b.betrag / (+b.anzahl || 1) * 100) / 100, status:'Bestellt', notiz:'' }),
+    up:(i, b) => { i.artikel = b.text; i.anzahl = +b.anzahl || 1; i.wert = Math.round(b.betrag / (+b.anzahl || 1) * 100) / 100; } }
 };
-const LK_BY_KAT = { 'Kostüme':'kostueme', 'Requisiten':'requisiten' };
+const LK_BY_KAT = { 'Kostüme':'kostueme', 'Requisiten':'requisiten', 'Teamausstattung':'merch' };
 const bookOf = (col, id) => D.buchungen.find(x => x.ln && x.ln.c === col && x.ln.id === id);
 /** Rubrik -> Finanzen: Ist ein Teil bezahlt, steht die Ausgabe automatisch in den Buchungen. */
 function linkItemSave(col, it) {
@@ -1408,7 +1412,7 @@ function linkBookSave(b) {
 /** Holt Buchungen nach, die Kostüm- oder Requisiten-Pflegende angestoßen haben (nur Admin und Kasse sehen die Buchungen). */
 function linkReconcile() {
   if (!can('buchungen') || !D.buchungen) return false; let ch = false;
-  ['kostueme', 'requisiten'].forEach(col => (D[col] || []).forEach(it => { if (it.sync || (it.bezahlt && LINK[col].cost(it) > 0 && !bookOf(col, it.id) && !it.bk)) { linkItemSave(col, it); ch = true; } }));
+  ['kostueme', 'requisiten', 'merch'].forEach(col => (D[col] || []).forEach(it => { if (it.sync || (it.bezahlt && LINK[col].cost(it) > 0 && !bookOf(col, it.id) && !it.bk)) { linkItemSave(col, it); ch = true; } }));
   return ch;
 }
 function linkUnlinkItem(col, id) { const b = bookOf(col, id); if (b) delete b.ln; }
@@ -1451,7 +1455,7 @@ function saveForm() {
     if (FORM.col === 'bugs') { it.von = D.me; it.status = it.status || 'Offen'; it.rolle = ROLES[me().rolle]; it.browser = (navigator.userAgent || '').slice(0, 110); }
     D[FORM.col].push(it);
   }
-  if (saved && (FORM.col === 'kostueme' || FORM.col === 'requisiten')) linkItemSave(FORM.col, saved);
+  if (saved && LINK[FORM.col]) linkItemSave(FORM.col, saved);
   if (saved && FORM.col === 'buchungen') linkBookSave(saved);
   save(); closeDlg(); render();
 }
@@ -2239,7 +2243,7 @@ const SEC = {
       ${can('buchungen') ? gebHTML() : ''}
       ${!can('buchungen') ? '<div class="panel"><div class="ph"><h3>Buchungen</h3></div><div class="sub" style="color:var(--muted);font-size:13px">Die einzelnen Buchungen sehen Admin und Kasse. Die Summen und das Budget oben sind für alle offen.</div></div>' : `<div class="panel"><div class="ph"><h3>Buchungen</h3></div>
         ${rows(bs, b => `<div class="row"><div class="grow"><b>${esc(b.text)}</b>${demo(b)}<div class="sub">${fmtDate(b.datum)}</div></div><span class="pill">${esc(b.kat)}</span>
-          <span class="amt ${b.typ === 'E' ? 'in' : 'out'}">${b.typ === 'E' ? '+' : '−'} ${eur(b.betrag)}</span>${b.ln ? `<a href="#${b.ln.c}" style="font-size:13px">in ${b.ln.c === 'kostueme' ? 'Kostüme' : 'Requisiten'}</a>` : ''}${b.sp ? '<a href="#sponsoren" style="font-size:13px">in Sponsoren</a>' + editBtn('sponsoren', b.spid) : editBtn('buchungen', b.id)}</div>`, 'Noch keine Buchungen.')}</div>`}`;
+          <span class="amt ${b.typ === 'E' ? 'in' : 'out'}">${b.typ === 'E' ? '+' : '−'} ${eur(b.betrag)}</span>${b.ln ? `<a href="#${b.ln.c}" style="font-size:13px">in ${LINK[b.ln.c] ? LINK[b.ln.c].kat : ''}</a>` : ''}${b.sp ? '<a href="#sponsoren" style="font-size:13px">in Sponsoren</a>' + editBtn('sponsoren', b.spid) : editBtn('buchungen', b.id)}</div>`, 'Noch keine Buchungen.')}</div>`}`;
   },
   sponsoren() {
     const sum = a => a.reduce((t, x) => t + (+x.betrag || 0), 0), all = [...D.sponsoren].sort((a, b) => (b.datum || '0').localeCompare(a.datum || '0'));
@@ -2287,7 +2291,7 @@ const SEC = {
       `<div class="kpis">${kp}</div>
       <div class="panel"><div class="ph"><h3>Anschaffungen</h3><span class="amt">Gesamtwert ohne Retouren ${eur(total)}</span></div>
         ${rows(D.merch, x => `<div class="row"><div class="grow"><b>${esc(x.artikel)}</b><div class="sub">${esc(x.kat || '')}${x.kat ? ' · ' : ''}${+x.anzahl || 0} × ${eur(x.wert)}${x.notiz ? ' · ' + esc(x.notiz) : ''}</div></div>
-          <span class="pill ${cls[x.status] || ''}">${esc(x.status)}</span><span class="amt">${eur(val(x))}</span>${editBtn('merch', x.id)}</div>`, 'Noch keine Anschaffungen geplant.')}</div>
+          <span class="pill ${cls[x.status] || ''}">${esc(x.status)}</span>${linkPill(x)}<span class="amt">${eur(val(x))}</span>${editBtn('merch', x.id)}</div>`, 'Noch keine Anschaffungen geplant.')}</div>
       <div class="panel"><div class="ph"><h3>Größen der Tänzer</h3><a href="#mitglieder">bei Mitgliedern pflegen</a></div>
         ${rows(D.members.filter(m => TANZT(m.rolle)), m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}</div><span class="sub">${m.groessen ? esc(m.groessen) : 'noch nicht eingetragen'}</span></div>`, '')}</div>`;
   },
@@ -2703,7 +2707,7 @@ async function btImportHandle(file) {
 }
 const ACT = {
   edit:d => openEdit(d.col, d.id), close:closeDlg, saveForm,
-  delForm() { const { col, id } = FORM; if (!mayOpen(col, id)) return; askConfirm(col === 'kontakte' && (D.kontakte.find(x => x.id === id) || {}).key ? 'Deine Änderungen an diesem Kontakt werden entfernt. Er wird wieder automatisch aus den Auftritten gefüllt.' : 'Der Eintrag wird gelöscht.', () => { if (col === 'buchungen') linkUnlinkBook(D.buchungen.find(x => x.id === id)); if (col === 'kostueme' || col === 'requisiten') linkUnlinkItem(col, id); D[col] = D[col].filter(x => x.id !== id); if (col === 'members' && D.me === id) D.me = D.members[0].id; }); },
+  delForm() { const { col, id } = FORM; if (!mayOpen(col, id)) return; askConfirm(col === 'kontakte' && (D.kontakte.find(x => x.id === id) || {}).key ? 'Deine Änderungen an diesem Kontakt werden entfernt. Er wird wieder automatisch aus den Auftritten gefüllt.' : 'Der Eintrag wird gelöscht.', () => { if (col === 'buchungen') linkUnlinkBook(D.buchungen.find(x => x.id === id)); if (LINK[col]) linkUnlinkItem(col, id); D[col] = D[col].filter(x => x.id !== id); if (col === 'members' && D.me === id) D.me = D.members[0].id; }); },
   zusage(d) { const z = D.zusagen[d.id] || (D.zusagen[d.id] = {}); z[D.me] = z[D.me] === d.v ? '' : d.v; save(); $('evList') ? $('evList').innerHTML = evListHTML() : render(); },
   evFilter(d) { UI.filter = d.v; render(); }, evPast(d, el) { UI.past = el.checked; render(); },
   task(d, el) { const a = D.aufgaben.find(x => x.id === d.id); if (a && mayTickTask(a)) a.done = el.checked; save(); render(); },
