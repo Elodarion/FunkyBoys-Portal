@@ -312,6 +312,27 @@
   .badge { box-shadow:0 8px 24px -6px var(--hi); }
   .tabbar { background:rgba(26,31,44,.82); }
   .tabbar a.on, .tabbar button.on { background:linear-gradient(135deg,var(--accent-bg),rgba(255,255,255,.06)); }
+
+  /* ---- Theme-fähige Flächen (alles hängt an Variablen, die der Design-Editor setzt) ---- */
+  :root { --glass:rgba(28,34,48,.62); --glass2:rgba(20,24,33,.94); --sheen-a:rgba(255,255,255,.09); --sheen-b:rgba(255,255,255,.03); --edge:rgba(255,255,255,.1); --topbar:rgba(12,14,19,.6); --glow3:rgba(52,211,198,.10); --rs:1; }
+  body { background-image:radial-gradient(52rem 32rem at 90% -8%, var(--glow), transparent 62%), radial-gradient(44rem 30rem at -8% 22%, var(--glow3), transparent 62%), radial-gradient(40rem 26rem at 70% 108%, var(--glow2), transparent 66%); }
+  .panel, .kpi, .ev, #nav, .box, .tabs a:not(.on), .calgrid, .rasterwrap { background:linear-gradient(160deg, var(--sheen-a), var(--sheen-b)), var(--glass); border-color:var(--edge); box-shadow:0 12px 40px -22px rgba(0,0,0,.55), inset 0 1px 0 var(--sheen-a); }
+  .top { background:var(--topbar); border-bottom-color:var(--edge); }
+  .tabbar { background:var(--glass2); border-color:var(--edge); }
+  .more > div { background:var(--glass2); border-color:var(--edge); }
+  .more a, .more button.mb, .pill, .ev .d { background:var(--sheen-a); border-color:var(--edge); }
+  .more .grab { background:var(--line); }
+  html[data-glass="off"] .panel, html[data-glass="off"] .kpi, html[data-glass="off"] .ev, html[data-glass="off"] #nav, html[data-glass="off"] .box, html[data-glass="off"] .tabs a:not(.on), html[data-glass="off"] .calgrid, html[data-glass="off"] .rasterwrap { background:var(--card); -webkit-backdrop-filter:none; backdrop-filter:none; box-shadow:0 1px 0 var(--sheen-a), 0 10px 26px -18px rgba(0,0,0,.5); }
+  html[data-glass="off"] .top, html[data-glass="off"] .tabbar { -webkit-backdrop-filter:none; backdrop-filter:none; background:var(--card); }
+  /* Rundung */
+  .panel, #nav, .box { border-radius:calc(20px * var(--rs)); } .kpi, .ev { border-radius:calc(18px * var(--rs)); } .hero { border-radius:calc(24px * var(--rs)); }
+  .btn { border-radius:calc(12px * var(--rs)); } .btn.sm { border-radius:calc(10px * var(--rs)); } .tabs a { border-radius:calc(999px * min(1, var(--rs))); }
+  input[type=text], input[type=number], input[type=date], input[type=time], input[type=search], input[type=email], input[type=password], select, textarea { border-radius:calc(12px * var(--rs)); }
+  .tabbar { border-radius:calc(24px * var(--rs)); } .tabbar a, .tabbar button { border-radius:calc(18px * var(--rs)); }
+  /* Editor */
+  .thgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
+  .thgrid input[type=color] { padding:3px; min-height:46px; cursor:pointer; background:var(--field); border:1px solid var(--line); width:100%; border-radius:12px; }
+  .sw { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:4px; vertical-align:-1px; border:1px solid var(--edge); } .sw:last-of-type { margin-right:8px; }
   @media (prefers-reduced-motion:no-preference) { .overlay { animation:fade .15s ease-out; } @keyframes fade { from { opacity:0; } to { opacity:1; } } .ev:hover, .kpi:hover { transform:translateY(-1px); } .kpi { transition:transform .15s; } }
 .gate { position:fixed; inset:0; background:#2e1d12; z-index:100; display:flex; align-items:center; justify-content:center; padding:16px; overflow:auto; }
   .gate[hidden], .syncerr[hidden] { display:none; }
@@ -587,11 +608,83 @@ async function checkVersion() {
 }
 const MOTTOS = { western:{ n:'Western (Leder, Sand, Sheriffstern)', greet:'Howdy' }, rotweiss:{ n:'Rot-Weiß (Vereinsfarben)', greet:'Hallo' }, schlicht:{ n:'Schlicht (Blau-Grau)', greet:'Hallo' }, planer:{ n:'Lila-Gold (wie der Auftrittsplaner)', greet:'Hallo' } };
 const STAR = '<svg viewBox="0 0 24 24"><path d="M12 1.5l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 8.8l7.1-.7z"/></svg>';
+/* ---------- Design-Editor (Verwaltung) ---------- */
+const FONTS = [['Inter','Inter:wght@400;500;600;700'], ['Outfit','Outfit:wght@500;600;700'], ['Poppins','Poppins:wght@400;500;600;700'], ['Montserrat','Montserrat:wght@400;500;600;700'], ['Nunito','Nunito:wght@400;600;700'],
+  ['Space Grotesk','Space+Grotesk:wght@400;500;600;700'], ['DM Sans','DM+Sans:wght@400;500;600;700'], ['Rubik','Rubik:wght@400;500;600;700'], ['Oswald','Oswald:wght@400;500;600;700'], ['Bebas Neue','Bebas+Neue'],
+  ['Playfair Display','Playfair+Display:wght@500;600;700'], ['Roboto Slab','Roboto+Slab:wght@400;500;600;700'], ['Systemschrift','']];
+const COLS = [['paper','Hintergrund'], ['card','Karten'], ['ink','Schrift'], ['muted','Schrift gedämpft'], ['line','Linien und Ränder'], ['accent','Akzent (Links, Hervorhebung)'], ['hi','Verlauf Start (Buttons, Banner)'], ['hi2','Verlauf Ende'], ['hiInk','Schrift auf Buttons und Banner'], ['c2','Zusatzfarbe 1 (Türkis)'], ['c3','Zusatzfarbe 2 (Gold)'], ['c4','Zusatzfarbe 3 (Violett)']];
+const THEMES = {
+  neon:{ n:'Neon-Violett', c:{ paper:'#13051f', card:'#1f0a36', ink:'#f4eeff', muted:'#bba8da', line:'#3c1d66', accent:'#2de2d0', hi:'#ff4fa3', hi2:'#7a3cff', hiInk:'#ffffff', c2:'#2de2d0', c3:'#ffd23f', c4:'#ff7a59' }, fh:'Space Grotesk', fb:'Inter', rs:1.25, glass:true },
+  nacht:{ n:'Nachtblau', c:{ paper:'#1a1f4d', card:'#252c66', ink:'#eff1ff', muted:'#a8b0e6', line:'#3b4592', accent:'#9aa6ff', hi:'#7b88f5', hi2:'#4d57cf', hiInk:'#ffffff', c2:'#6fd4ff', c3:'#ffc86b', c4:'#ff8fb1' }, fh:'DM Sans', fb:'DM Sans', rs:1.5, glass:true },
+  navy:{ n:'Navy-Dashboard', c:{ paper:'#0e1a33', card:'#16254a', ink:'#f1f5ff', muted:'#9fb0d3', line:'#27395f', accent:'#34d399', hi:'#22c58b', hi2:'#0f8f7a', hiInk:'#04170f', c2:'#60a5fa', c3:'#fbbf24', c4:'#f472b6' }, fh:'Montserrat', fb:'Inter', rs:.6, glass:false },
+  hell:{ n:'Hell und freundlich', c:{ paper:'#eef1f8', card:'#ffffff', ink:'#161b2e', muted:'#566079', line:'#d9dfec', accent:'#d9480f', hi:'#f59f3a', hi2:'#e8590c', hiInk:'#ffffff', c2:'#0d9488', c3:'#b7791f', c4:'#7c3aed' }, fh:'Poppins', fb:'Inter', rs:1, glass:false }
+};
+const hx = h => { h = String(h || '').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return isNaN(n) ? [128, 128, 128] : [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const toHex = a => '#' + a.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('');
+const mixc = (a, b, t) => { const x = hx(a), y = hx(b); return toHex(x.map((v, i) => v + (y[i] - v) * t)); };
+const rgbaOf = (h, a) => { const r = hx(h); return `rgba(${r[0]},${r[1]},${r[2]},${a})`; };
+const lumOf = h => { const r = hx(h); return (0.299 * r[0] + 0.587 * r[1] + 0.114 * r[2]) / 255; };
+const TH_PROPS = ['--paper','--card','--soft','--field','--line','--ink','--muted','--faint','--accent','--accent-bg','--hi','--hi2','--hi-ink','--prime','--glow','--glow2','--glow3','--c2','--c3','--c4','--glass','--glass2','--sheen-a','--sheen-b','--edge','--topbar','--bar','--bar-ink','--ui','--display','--mark','--rs'];
+function loadFont(name) {
+  const f = FONTS.find(x => x[0] === name); if (!f || !f[1] || typeof document.createElement !== 'function') return;
+  const id = 'font-' + f[0].replace(/\W/g, ''); if (document.getElementById && document.getElementById(id)) return;
+  const l = document.createElement('link'); l.id = id; l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=' + f[1] + '&display=swap'; document.head.appendChild(l);
+}
+const fontStack = (n, sans) => (n && n !== 'Systemschrift' ? "'" + n + "', " : '') + (sans === 'serif' ? 'Georgia, serif' : "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif");
+function applyTheme(t) {
+  const root = document.documentElement; if (!root || !root.style || !root.style.setProperty) return;
+  if (!t || !t.c) { TH_PROPS.forEach(k => root.style.removeProperty(k)); root.removeAttribute('data-glass'); return; }
+  const c = t.c, dark = lumOf(c.paper) < 0.5, set = (k, v) => root.style.setProperty(k, v);
+  set('--paper', c.paper); set('--card', c.card); set('--soft', mixc(c.card, c.ink, .07)); set('--field', dark ? mixc(c.paper, c.card, .3) : mixc(c.card, c.paper, .5)); set('--line', c.line);
+  set('--ink', c.ink); set('--muted', c.muted); set('--faint', mixc(c.muted, c.paper, .35));
+  set('--accent', c.accent); set('--accent-bg', rgbaOf(c.accent, .16)); set('--hi', c.hi); set('--hi2', c.hi2); set('--hi-ink', c.hiInk); set('--prime', c.hi);
+  set('--glow', rgbaOf(c.hi, dark ? .2 : .14)); set('--glow2', rgbaOf(c.hi2, dark ? .14 : .09)); set('--glow3', rgbaOf(c.c2, dark ? .11 : .08));
+  set('--c2', c.c2); set('--c3', c.c3); set('--c4', c.c4);
+  set('--glass', rgbaOf(c.card, dark ? .62 : .78)); set('--glass2', rgbaOf(c.card, .95)); set('--sheen-a', rgbaOf(c.ink, dark ? .09 : .04)); set('--sheen-b', rgbaOf(c.ink, dark ? .03 : .01)); set('--edge', rgbaOf(c.ink, dark ? .1 : .09));
+  set('--topbar', rgbaOf(c.paper, .66)); set('--bar', rgbaOf(c.paper, .8)); set('--bar-ink', c.ink);
+  const fh = t.fh || 'Outfit', fb = t.fb || 'Inter'; loadFont(fh); loadFont(fb);
+  set('--display', fontStack(fh)); set('--mark', fontStack(fh)); set('--ui', fontStack(fb));
+  set('--rs', String(t.rs || 1)); root.setAttribute('data-glass', t.glass === false ? 'off' : 'on'); root.style.colorScheme = dark ? 'dark' : 'light';
+}
+const themeNow = () => UI.thDraft || (D.motto && D.motto.theme) || null;
+function artKey() { const t = themeNow(), a = t && t.art, k = MOTTOS[D.motto.farbwelt] ? D.motto.farbwelt : 'western'; return a === 'none' ? 'none' : (a && ART[a]) ? a : k; }
+function readTheme() {
+  const DEF = { paper:'#12151e', card:'#181d29', ink:'#f4f6fb', muted:'#a6b0c5', line:'#2d3550', accent:'#f4a95a', hi:'#f0a04b', hi2:'#e2603a', hiInk:'#1a1006', c2:'#34d3c6', c3:'#f7c557', c4:'#b18cff' };
+  const cs = typeof getComputedStyle === 'function' && document.documentElement ? getComputedStyle(document.documentElement) : null, c = {};
+  const map = { paper:'--paper', card:'--card', ink:'--ink', muted:'--muted', line:'--line', accent:'--accent', hi:'--hi', hi2:'--hi2', hiInk:'--hi-ink', c2:'--c2', c3:'--c3', c4:'--c4' };
+  for (const k in map) { const v = cs ? cs.getPropertyValue(map[k]).trim() : ''; c[k] = /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : /^#[0-9a-f]{3}$/i.test(v) ? toHex(hx(v)) : DEF[k]; }
+  const fn = v => { const m = /^\s*'?"?([^'",]+)/.exec(cs ? cs.getPropertyValue(v) : ''); const n = m && m[1].trim(); return FONTS.some(f => f[0] === n) ? n : 'Inter'; };
+  return { c, fh: cs ? fn('--display') : 'Outfit', fb: cs ? fn('--ui') : 'Inter', rs:1, glass:true, art:'auto' };
+}
+function thDraft() {
+  if (!UI.thDraft) { const base = readTheme(), cur = D.motto.theme; UI.thDraft = cur ? Object.assign(base, JSON.parse(JSON.stringify(cur)), { c:Object.assign(base.c, cur.c) }) : base; }
+  return UI.thDraft;
+}
+function themePanel() {
+  if (me().rolle !== 'admin') return '';
+  const t = thDraft(), dirty = JSON.stringify(t) !== JSON.stringify(Object.assign(readThemeSaved(), {}));
+  const sw = p => `<i class="sw" style="background:linear-gradient(135deg,${p.c.hi},${p.c.hi2})"></i><i class="sw" style="background:${p.c.paper}"></i><i class="sw" style="background:${p.c.accent}"></i>`;
+  const opt = (list, cur) => list.map(x => `<option value="${esc(x[0])}" ${cur === x[0] ? 'selected' : ''}>${esc(x[1] || x[0])}</option>`).join('');
+  return `<div class="panel"><div class="ph"><h3>Design</h3><span class="pill ${D.motto.theme ? 'vio' : ''}">${D.motto.theme ? 'eigenes Design aktiv' : 'Standard der Farbwelt'}</span></div>
+    <div style="max-width:65ch;color:var(--muted);font-size:14px">Farben, Schrift und Form des ganzen Portals. Änderungen siehst du sofort. Erst mit „Für alle speichern“ gelten sie für alle Mitglieder.</div>
+    <div class="chips"><span class="sub">Vorlagen:</span>${Object.entries(THEMES).map(x => `<button class="btn sm" data-act="thPreset" data-k="${x[0]}">${sw(x[1])}${esc(x[1].n)}</button>`).join('')}</div>
+    <div class="thgrid">${COLS.map(x => `<label class="f">${x[1]}<input type="color" data-th="c.${x[0]}" value="${esc(t.c[x[0]])}"></label>`).join('')}</div>
+    <div class="two">
+      <label class="f">Schrift Überschriften<select data-th="fh">${opt(FONTS.map(f => [f[0]]), t.fh)}</select></label>
+      <label class="f">Schrift Text<select data-th="fb">${opt(FONTS.map(f => [f[0]]), t.fb)}</select></label>
+      <label class="f">Banner-Bild<select data-th="art">${opt([['auto','Passend zur Farbwelt'], ['western','Wüste'], ['rotweiss','Konfetti'], ['schlicht','Wellen'], ['planer','Bühne'], ['none','Kein Bild']], t.art || 'auto')}</select></label></div>
+    <div class="chips"><span class="sub">Ecken:</span>${[[.3, 'Eckig'], [1, 'Mittel'], [1.5, 'Rund']].map((x, i, a) => `<button class="btn sm ${a.slice().sort((m, n) => Math.abs((t.rs || 1) - m[0]) - Math.abs((t.rs || 1) - n[0]))[0] === x ? 'on' : ''}" data-act="thRs" data-v="${x[0]}">${x[1]}</button>`).join('')}
+      <label class="chk"><input type="checkbox" data-th="glass" ${t.glass === false ? '' : 'checked'}> Glas-Effekt (halbtransparente Karten)</label></div>
+    <div class="acts-row chips"><button class="btn pri" data-act="thSave">Für alle speichern</button><button class="btn" data-act="thRevert">Änderungen verwerfen</button><button class="btn" data-act="thReset">Auf Standard zurücksetzen</button></div>
+    ${UI.thMsg ? `<div class="sub" role="status" style="color:var(--good);font-weight:600">${esc(UI.thMsg)}</div>` : ''}</div>`;
+}
+const readThemeSaved = () => { const base = readTheme(); return D.motto.theme ? Object.assign(base, JSON.parse(JSON.stringify(D.motto.theme)), { c:Object.assign(base.c, D.motto.theme.c) }) : thDraft(); };
 function applyMotto() {
   const m = D.motto, k = MOTTOS[m.farbwelt] ? m.farbwelt : 'western';
   if (document.documentElement) document.documentElement.setAttribute('data-motto', k);
   $('badge').innerHTML = k === 'western' ? STAR : 'FB';
   $('mottoLine').textContent = 'Session ' + sess() + ' · ' + m.titel;
+  applyTheme(themeNow());
 }
 const ART = {
   western: `<svg viewBox="0 0 520 260" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
@@ -613,10 +706,11 @@ const ART = {
     <ellipse class="l" cx="340" cy="262" rx="110" ry="12" opacity=".14"/><ellipse class="l" cx="460" cy="262" rx="80" ry="10" opacity=".12"/>
     STARS</svg>` };
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
-const bannerArt = k => (ART[k] || ART.western).replace('STARS', {
+const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.15', BUILD = 45;
+const VERSION = '2.16', BUILD = 46;
 const CHANGELOG = [
+  { v:'2.16', datum:'2026-11-16', punkte:['Design-Editor unter Verwaltung: Farben, Schriftarten, Rundung, Glas-Effekt und Banner-Bild für alle einstellen, dazu vier Vorlagen (Neon-Violett, Nachtblau, Navy-Dashboard, Hell)'] },
   { v:'2.15', datum:'2026-11-16', punkte:['Mehr Farbe: hellere Flächen, farbige Symbole im Menü je Gruppe, Kennzahlen in eigenen Farben und farbige Kopfleisten an den Karten'] },
   { v:'2.14', datum:'2026-11-16', punkte:['Das Banner auf der Startseite hat zu jedem Motto ein eigenes Bild: Wüste mit Kaktus, Konfetti, Wellen oder Scheinwerfer'] },
   { v:'2.13', datum:'2026-11-16', punkte:['Neues Aussehen: Glas-Optik, Symbole im Menü und ein Countdown bis zum nächsten Auftritt auf der Startseite','Am Handy gibt es eine Leiste unten mit Start, Auftritte, Kalender, Finanzen und Mehr'] },
@@ -1101,7 +1195,7 @@ const FB_CLOSED = ['Umgesetzt', 'Abgelehnt', 'Behoben'];
 const SEC = {
   start() {
     const up = upcoming(), f = fin(), open = D.aufgaben.filter(a => !a.done), mb = myBeitrag(), nx = up[0], votesOpen = D.umfragen.filter(u => u.stimmen[D.me] === undefined).length;
-    return `<div class="hero"><div class="art">${bannerArt(MOTTOS[D.motto.farbwelt] ? D.motto.farbwelt : 'western')}</div><small>Session ${esc(sess())}</small><b>${esc(D.motto.titel)}</b><span>${(MOTTOS[D.motto.farbwelt] || MOTTOS.western).greet}, ${esc(me().name.split(' ')[0])}. ${hasBday() ? 'Alles Gute zum Geburtstag!' : 'Das Wichtigste auf einen Blick.'}</span>${nx ? (() => { const dd = Math.round((new Date(nx.datum + 'T12:00') - new Date(todayISO() + 'T12:00')) / 864e5); return `<div class="cd"><b>${dd <= 0 ? 'Heute' : dd}</b><span>${dd <= 0 ? '' : dd === 1 ? 'Tag bis ' : 'Tage bis '}${esc(nx.name)}</span></div>`; })() : ''}</div>
+    return `<div class="hero"><div class="art">${bannerArt(artKey())}</div><small>Session ${esc(sess())}</small><b>${esc(D.motto.titel)}</b><span>${(MOTTOS[D.motto.farbwelt] || MOTTOS.western).greet}, ${esc(me().name.split(' ')[0])}. ${hasBday() ? 'Alles Gute zum Geburtstag!' : 'Das Wichtigste auf einen Blick.'}</span>${nx ? (() => { const dd = Math.round((new Date(nx.datum + 'T12:00') - new Date(todayISO() + 'T12:00')) / 864e5); return `<div class="cd"><b>${dd <= 0 ? 'Heute' : dd}</b><span>${dd <= 0 ? '' : dd === 1 ? 'Tag bis ' : 'Tage bis '}${esc(nx.name)}</span></div>`; })() : ''}</div>
       ${newsPanel()}
       <div class="panel"><div class="ph"><h3>Pinnwand</h3><a href="#pinnwand">zur Pinnwand</a></div>
         ${rows([...D.posts].reverse().slice(0, 2), p => `<div class="row"><div class="grow"><b>${esc(p.titel)}</b>${demo(p)}<div class="sub" style="white-space:pre-wrap">${esc(p.text)}</div></div><span class="sub">${esc(mname(p.von))} · ${fmtDate(p.datum).slice(4)}</span></div>`, 'Noch keine Beiträge.')}
@@ -1406,6 +1500,7 @@ const SEC = {
           <label class="f" for="moSession">Session<input id="moSession" type="text" value="${esc(D.motto.session)}" placeholder="automatisch: ${esc(season(todayISO()))}"></label>
           <label class="f" for="moFarbe">Farbwelt<select id="moFarbe">${Object.entries(MOTTOS).map(x => `<option value="${x[0]}" ${D.motto.farbwelt === x[0] ? 'selected' : ''}>${x[1].n}</option>`).join('')}</select></label></div>
         <div><button class="btn dark" data-act="saveMotto">Motto übernehmen</button></div></div>
+      ${themePanel()}
       <div class="panel"><div class="ph"><h3>Accounts und Rollen</h3>${addBtn('members', '+ Mitglied')}</div>
         ${rows(D.members, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}${extraOf(m.id).length ? `<div class="sub">Zusatzrechte: ${extraOf(m.id).map(k => esc((RIGHTS.find(x => x[1] === k) || [k])[0])).join(', ')}</div>` : ''}</div>${adm ? `<button class="btn sm" data-act="extraOpen" data-id="${m.id}">Zusatzrechte</button>` : ''}<select data-act="role" data-id="${m.id}" ${adm ? '' : 'disabled'} aria-label="Rolle von ${esc(m.name)}" style="width:auto;min-width:140px">${Object.entries(ROLES).map(r => `<option value="${r[0]}" ${m.rolle === r[0] ? 'selected' : ''}>${r[1]}</option>`).join('')}</select></div>`, '')}</div>
       <div class="panel"><div class="ph"><h3>Wer darf was</h3>${adm ? '<button class="btn sm" data-act="rechteReset">Auf Standard zurücksetzen</button>' : ''}</div>
@@ -1461,7 +1556,7 @@ function render() {
   markSeen();
   gratulieren();
 }
-function route() { AI.msg = ''; UI.vmMsg = ''; UI.sec = (location.hash || '#start').slice(1); render(); window.scrollTo(0, 0); }
+function route() { AI.msg = ''; UI.vmMsg = ''; UI.sec = (location.hash || '#start').slice(1); if (UI.sec !== 'verwaltung') { UI.thDraft = null; UI.thMsg = ''; } render(); window.scrollTo(0, 0); }
 
 /* ---------- Claude ---------- */
 const AI = { busy:false, msg:'' };
@@ -1688,7 +1783,12 @@ const ACT = {
       <div class="acts"><button class="btn dark" data-act="extraSave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
   extraSave() { const id = FORM && FORM.extra; if (!id) return; const picked = [...$('dlgBox').querySelectorAll('.xr')].filter(c => c.checked && !c.disabled).map(c => c.value);
     if (!D.extra) D.extra = {}; if (picked.length) D.extra[id] = picked; else delete D.extra[id]; save(); closeDlg(); render(); },
-  saveMotto() { D.motto = { titel:$('moTitel').value.trim() || D.motto.titel, session:$('moSession').value.trim(), farbwelt:$('moFarbe').value }; save(); render(); },
+  saveMotto() { D.motto = Object.assign({}, D.motto, { titel:$('moTitel').value.trim() || D.motto.titel, session:$('moSession').value.trim(), farbwelt:$('moFarbe').value }); save(); render(); },
+  thPreset(d) { const p = THEMES[d.k]; if (!p || me().rolle !== 'admin') return; UI.thDraft = JSON.parse(JSON.stringify({ c:p.c, fh:p.fh, fb:p.fb, rs:p.rs, glass:p.glass, art:(UI.thDraft || {}).art || 'auto' })); UI.thMsg = ''; render(); },
+  thRs(d) { if (me().rolle !== 'admin') return; thDraft().rs = +d.v; applyTheme(UI.thDraft); UI.thMsg = ''; render(); },
+  thSave() { if (me().rolle !== 'admin') return; D.motto = Object.assign({}, D.motto, { theme:JSON.parse(JSON.stringify(thDraft())) }); save(); UI.thDraft = null; UI.thMsg = 'Gespeichert. Das Design gilt jetzt für alle.'; render(); },
+  thRevert() { UI.thDraft = null; UI.thMsg = 'Änderungen verworfen.'; render(); },
+  thReset() { if (me().rolle !== 'admin') return; const m = Object.assign({}, D.motto); delete m.theme; D.motto = m; save(); UI.thDraft = null; UI.thMsg = 'Zurückgesetzt auf den Standard der Farbwelt.'; render(); },
   fundAdd(d) { const f = SUCHE.funde.find(x => x.id === d.id); if (!f || !can('events')) return;
     D.events.push({ id:uid('s'), name:f.name, art:f.art === 'Turnier' ? 'Tunier' : 'Showtanz', datum:f.datum, zeit:/^\d{2}:\d{2}$/.test(f.zeit || '') ? f.zeit : '', ende:'', standort:f.ort || '', maps:'', inhaber:f.veranstalter || '', status:'Offen', gebuehr:f.gebuehr || '',
       notizen:'Aus der Auftritts-Suche.' + (f.hinweis ? ' ' + f.hinweis : '') + (f.quelle ? ' Quelle: ' + f.quelle : '') });
@@ -1879,6 +1979,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'dlg') return closeDlg();
   const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT' || b.type === 'checkbox') return;
   if (ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset, b);
+});
+document.addEventListener('input', e => {
+  const t = e.target, k = t && t.dataset && t.dataset.th; if (!k || me().rolle !== 'admin') return;
+  const d = thDraft(), v = t.type === 'checkbox' ? t.checked : t.value; UI.thMsg = '';
+  if (k.indexOf('c.') === 0) d.c[k.slice(2)] = v; else d[k] = v; applyTheme(d);
+  if (k === 'art') { const el = document.querySelector && document.querySelector('.hero .art'); if (el) el.innerHTML = bannerArt(artKey()); }
 });
 document.addEventListener('change', e => {
   const t = e.target;
