@@ -432,7 +432,7 @@ function seed0() {
       { id:'d2', titel:'Hauptteil Saloon', art:'Choreo-Teil', status:'In Arbeit', notiz:'', demo:true },
       { id:'d3', titel:'Musikschnitt Session 2026/27', art:'Musik', status:'In Arbeit', notiz:'', demo:true } ],
     zeiten:{ aufmarsch:'', tanz:'', abmarsch:'' },
-    merch:[], kontakte:[],
+    merch:[], kontakte:[], vereine:[],
     requisiten:[
       { id:'r1', name:'Saloon-Schwingtür', anzahl:1, wo:'', zustand:'In Arbeit', notiz:'', demo:true },
       { id:'r2', name:'Lasso', anzahl:8, wo:'', zustand:'Fertig', notiz:'', demo:true } ],
@@ -708,8 +708,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.17', BUILD = 47;
+const VERSION = '2.18', BUILD = 48;
 const CHANGELOG = [
+  { v:'2.18', datum:'2026-11-16', punkte:['Veranstalter nach Verein oder Gruppe sortiert, neue Verwaltung für Vereine','Doppelte Kontakte erkennen und zusammenführen: behalten wird der Eintrag mit den meisten Angaben, Zusammenführung lässt sich wieder trennen','Kontakte per Sammelfenster Vereinen zuordnen','Im Auftritt Ansprechpartner und Verein auswählbar; Termin zeigt Verein, Telefon und Mail automatisch'] },
   { v:'2.17', datum:'2026-11-16', punkte:['Veranstalter-Kontakte lassen sich bearbeiten: Telefon, Ort und Notizen ergänzen, Angaben ändern, Kontakte ausblenden oder selbst anlegen. Die automatische Liste aus den Auftritten bleibt'] },
   { v:'2.16', datum:'2026-11-16', punkte:['Design-Editor unter Verwaltung: Farben, Schriftarten, Rundung, Glas-Effekt und Banner-Bild für alle einstellen, dazu vier Vorlagen (Neon-Violett, Nachtblau, Navy-Dashboard, Hell)'] },
   { v:'2.15', datum:'2026-11-16', punkte:['Mehr Farbe: hellere Flächen, farbige Symbole im Menü je Gruppe, Kennzahlen in eigenen Farben und farbige Kopfleisten an den Karten'] },
@@ -850,7 +851,7 @@ function evCard(e) {
         ${can('events') ? `<button class="btn sm" style="margin-left:auto" data-act="edit" data-col="events" data-id="${e.id}">Bearbeiten</button>` : ''}</div>
       <div class="m">${e.standort ? `<span><b>Ort</b><a href="${esc(mapsUrl(e.maps || e.standort))}" target="_blank" rel="noopener">${esc(e.standort)}</a></span>` : ''}
         ${e.zeit && e.ende ? `<span><b>Zeit</b>${esc(e.zeit)} bis ${esc(e.ende)} Uhr</span>` : ''}
-        ${e.inhaber ? `<span><b>Kontakt</b>${linkify(e.inhaber)}</span>` : ''}${e.gebuehr ? `<span><b>Gebühr</b>${esc(e.gebuehr)}</span>` : ''}</div>
+        ${(() => { const c = kontaktFor(e), vn = (vereinOf(e.vid) || {}).name || (c && c.vname) || ''; return (vn ? `<span><b>Verein</b>${esc(vn)}</span>` : '') + (e.inhaber ? `<span><b>Kontakt</b>${c ? esc(c.name || c.mail) + (c.telefon ? ' · ' + esc(c.telefon) : '') + (c.mail ? ' · ' + linkify(c.mail) : '') : linkify(e.inhaber)}</span>` : ''); })()}${e.gebuehr ? `<span><b>Gebühr</b>${esc(e.gebuehr)}</span>` : ''}</div>
       ${e.notizen ? `<div class="n">${esc(e.notizen)}</div>` : ''}
       ${!past && st.b !== 'declined' ? `<div class="chips"><span class="sub" style="font-size:13px;color:var(--muted)">Dabei ${z.ja} · Absage ${z.nein} · offen ${z.offen}</span>
         <button class="btn sm yes ${mine === 'ja' ? 'on' : ''}" data-act="zusage" data-id="${e.id}" data-v="ja">Ich bin dabei</button>
@@ -956,25 +957,80 @@ function fin() {
 }
 
 /* ---------- Kontakte aus den Terminen ---------- */
+const kMailRe = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/, kUrlRe = /https?:\/\/[^\s)]+/;
+function kParse(inh) {
+  inh = inh || ''; const mail = (inh.match(kMailRe) || [''])[0], url = (inh.match(kUrlRe) || [''])[0];
+  let name = inh.replace(/\(.*?\)/g, '').trim(); if (name === mail) name = '';
+  return { key:(name || mail).toLowerCase(), name, mail, url };
+}
 function kontakteBase() {
   const map = {};
   D.events.forEach(e => {
-    if (!e.inhaber) return;
-    const mail = (e.inhaber.match(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/) || [''])[0], url = (e.inhaber.match(/https?:\/\/[^\s)]+/) || [''])[0];
-    let name = e.inhaber.replace(/\(.*?\)/g, '').trim(); if (name === mail) name = '';
-    const k = (name || mail).toLowerCase(); if (!k) return;
-    const c = map[k] || (map[k] = { key:k, name, mail:'', url:'', telefon:'', ort:'', notiz:'', events:[] });
-    if (mail) c.mail = mail; if (url) c.url = url; if (!c.events.includes(e.name)) c.events.push(e.name);
+    if (!e.inhaber) return; const p = kParse(e.inhaber); if (!p.key) return;
+    const c = map[p.key] || (map[p.key] = { key:p.key, name:p.name, mail:'', url:'', telefon:'', ort:'', notiz:'', events:[] });
+    if (p.mail) c.mail = p.mail; if (p.url) c.url = p.url; if (!c.events.includes(e.name)) c.events.push(e.name);
   });
   return map;
 }
+const vereinOf = id => (D.vereine || []).find(v => v.id === id);
+function ensureVerein(name) {
+  name = String(name || '').trim(); if (!name) return '';
+  const v = (D.vereine || []).find(x => x.name.toLowerCase() === name.toLowerCase()); if (v) return v.id;
+  const n = { id:uid('v'), name }; (D.vereine = D.vereine || []).push(n); return n.id;
+}
 function kontakte(all) {
-  const map = kontakteBase(), ov = D.kontakte || [], list = Object.values(map).map(c => {
-    const o = ov.find(x => x.key === c.key); if (!o) return c;
-    return Object.assign(c, { rid:o.id, hide:!!o.hide, name:o.name || c.name, mail:o.mail || c.mail, url:o.url || c.url, telefon:o.telefon || '', ort:o.ort || '', notiz:o.notiz || '' });
+  const map = kontakteBase(), ov = D.kontakte || [];
+  let list = Object.values(map).map(c => {
+    const o = ov.find(x => x.key === c.key); c.aliases = [];
+    if (!o) return c;
+    return Object.assign(c, { rid:o.id, hide:!!o.hide, into:o.into || '', verein:o.verein || '', name:o.name || c.name, mail:o.mail || c.mail, url:o.url || c.url, telefon:o.telefon || '', ort:o.ort || '', notiz:o.notiz || '' });
   });
-  ov.filter(x => !x.key).forEach(o => list.push({ key:'', rid:o.id, manual:true, hide:!!o.hide, name:o.name || '', mail:o.mail || '', url:o.url || '', telefon:o.telefon || '', ort:o.ort || '', notiz:o.notiz || '', events:[] }));
+  ov.filter(x => !x.key).forEach(o => list.push({ key:'', rid:o.id, manual:true, hide:!!o.hide, into:o.into || '', verein:o.verein || '', aliases:[], name:o.name || '', mail:o.mail || '', url:o.url || '', telefon:o.telefon || '', ort:o.ort || '', notiz:o.notiz || '', events:[] }));
+  list.forEach(c => { if (!c.verein && c.key) { const e = D.events.find(e => e.vid && e.inhaber && kParse(e.inhaber).key === c.key); if (e) c.verein = e.vid; } });
+  list.filter(c => c.into).forEach(c => {
+    const t = list.find(x => !x.into && x !== c && (x.key === c.into || x.rid === c.into));
+    if (!t) { c.into = ''; return; }
+    (t.merged = t.merged || []).push({ name:c.name || c.mail, rid:c.rid || '' }); if (c.key) t.aliases.push(c.key);
+    c.events.forEach(n => { if (!t.events.includes(n)) t.events.push(n); });
+    ['mail', 'telefon', 'url', 'ort', 'notiz'].forEach(k => { if (!t[k] && c[k]) t[k] = c[k]; });
+    if (!t.verein && c.verein) t.verein = c.verein; c.gone = true;
+  });
+  list = list.filter(c => !c.gone);
+  list.forEach(c => { const v = vereinOf(c.verein); c.verein = v ? v.id : ''; c.vname = v ? v.name : ''; });
   return list.filter(c => all || !c.hide).sort((a, b) => (a.name || a.mail).localeCompare(b.name || b.mail));
+}
+const kRef = c => c.key || c.rid;
+function kontaktFor(e) {
+  if (!e || !e.inhaber) return null; const k = kParse(e.inhaber).key;
+  return kontakte(true).find(c => c.key === k || (c.aliases || []).includes(k)) || null;
+}
+function kRecord(c, create) {
+  let o = (D.kontakte = D.kontakte || []).find(x => c.key ? x.key === c.key : x.id === c.rid);
+  if (!o && create) { o = { id:uid('k') }; if (c.key) o.key = c.key; D.kontakte.push(o); }
+  return o;
+}
+/* Duplikate */
+const kNorm = t => String(t || '').toLowerCase().replace(/[^a-zäöüß0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+const kPersons = c => (c.name || '').split(/\s*(?:\/|&|\+|,|\bund\b)\s*/i).map(kNorm).filter(Boolean);
+const kScore = c => ['name', 'mail', 'telefon', 'url', 'ort', 'notiz'].filter(k => c[k]).length + (c.verein ? 1 : 0) + (c.events || []).length * 0.1 + (c.rid ? 0.5 : 0) + (c.name || '').length * 0.001;
+function dupGroups() {
+  const list = kontakte(), par = list.map((_, i) => i), find = i => par[i] === i ? i : (par[i] = find(par[i]));
+  const uni = (i, j) => { par[find(i)] = find(j); };
+  for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
+    const a = list[i], b = list[j], pa = kPersons(a), pb = kPersons(b);
+    const sameMail = a.mail && b.mail && a.mail.toLowerCase() === b.mail.toLowerCase(), sameUrl = a.url && b.url && a.url.replace(/\/$/, '').toLowerCase() === b.url.replace(/\/$/, '').toLowerCase();
+    const shareName = pa.some(x => pb.includes(x));
+    const shareEv = a.events.some(x => b.events.includes(x));
+    const firstOnly = shareEv && ((pa.length === 1 && !pa[0].includes(' ') && pb.some(x => x.split(' ')[0] === pa[0])) || (pb.length === 1 && !pb[0].includes(' ') && pa.some(x => x.split(' ')[0] === pb[0])));
+    if (sameMail || sameUrl || shareName || firstOnly) uni(i, j);
+  }
+  const g = {}; list.forEach((c, i) => { (g[find(i)] = g[find(i)] || []).push(c); });
+  return Object.values(g).filter(x => x.length > 1).map(x => x.sort((a, b) => kScore(b) - kScore(a)));
+}
+function mergeKontakte(mainRef, otherRefs) {
+  const all = kontakte(true), main = all.find(c => kRef(c) === mainRef); if (!main) return 0; let n = 0;
+  otherRefs.forEach(r => { const c = all.find(x => kRef(x) === r); if (!c || c === main) return; const o = kRecord(c, true); o.into = kRef(main); n++; });
+  return n;
 }
 
 /* ---------- Vormerken: Veranstalter-Datenbank für die nächste Session ---------- */
@@ -998,7 +1054,7 @@ const memOpts = () => D.members.map(m => [m.id, m.name]);
 const C = {
   events:{ t:'Termin', f:[ { k:'name', l:'Name des Termins', req:1 }, { k:'datum', l:'Datum', t:'date', req:1 }, { k:'zeit', l:'Uhrzeit', t:'time' }, { k:'ende', l:'Ende', t:'time' },
     { k:'art', l:'Art', t:'select', o:['','Tunier','Showtanz'] }, { k:'status', l:'Status', t:'select', o:['Angefragt','Vorangemeldet','Angemeldet','Bestätigt','Nein'] },
-    { k:'standort', l:'Standort' }, { k:'maps', l:'Adresse für Karte (optional)' }, { k:'inhaber', l:'Kontakt / Ansprechpartner' }, { k:'gebuehr', l:'Anmeldegebühr' }, { k:'notizen', l:'Notizen', t:'area' } ] },
+    { k:'standort', l:'Standort' }, { k:'maps', l:'Adresse für Karte (optional)' }, { k:'kpick', l:'Ansprechpartner aus der Veranstalter-Liste wählen', t:'select', nosave:1, o:() => [['', '– selbst eintippen –'], ...kontakte().map(c => [kRef(c), (c.name || c.mail) + (c.vname ? ' · ' + c.vname : '')])] }, { k:'inhaber', l:'Kontakt / Ansprechpartner' }, { k:'vid', l:'Verein / Gruppe', t:'select', o:() => [['', '–'], ...(D.vereine || []).map(v => [v.id, v.name])] }, { k:'gebuehr', l:'Anmeldegebühr' }, { k:'notizen', l:'Notizen', t:'area' } ] },
   buchungen:{ t:'Buchung', f:[ { k:'typ', l:'Art', t:'select', o:[['A','Ausgabe'],['E','Einnahme']] }, { k:'betrag', l:'Betrag in €', t:'number', req:1 }, { k:'text', l:'Wofür', req:1 },
     { k:'kat', l:'Kategorie', t:'select', o:[...KAT_A, ...KAT_E.filter(k => !KAT_A.includes(k))] }, { k:'datum', l:'Datum', t:'date' } ] },
   beitraege:{ t:'Beitrag', f:[ { k:'mid', l:'Mitglied', t:'select', o:memOpts }, { k:'zeitraum', l:'Zeitraum', req:1 }, { k:'betrag', l:'Jahresbeitrag in €', t:'number', req:1 },
@@ -1028,7 +1084,8 @@ const C = {
   veranstalter:{ t:'Veranstalter', f:[ { k:'verein', l:'Verein oder Tanzgruppe', req:1 }, { k:'veranstaltung', l:'Veranstaltung' }, { k:'monat', l:'Üblicher Monat', t:'select', o:VM_MON },
     { k:'ort', l:'Ort / Halle' }, { k:'art', l:'Art', t:'select', o:['Turnier','Showtanz','Gastauftritt'] }, { k:'person', l:'Ansprechperson (nur Name)' }, { k:'email', l:'E-Mail' }, { k:'telefon', l:'Telefon' },
     { k:'web', l:'Webseite oder Instagram' }, { k:'gebuehr', l:'Startgeld' }, { k:'stand', l:'Stand für die nächste Session', t:'select', o:VM_STAND }, { k:'notiz', l:'Notizen (Erfahrung, Termin dieser Session, Anmeldeweg)', t:'area' } ] },
-  kontakte:{ t:'Veranstalter-Kontakt', f:[ { k:'name', l:'Name (Verein oder Ansprechperson)', req:1 }, { k:'mail', l:'E-Mail' }, { k:'telefon', l:'Telefon' }, { k:'url', l:'Webseite oder Instagram' },
+  vereine:{ t:'Verein / Gruppe', f:[ { k:'name', l:'Name des Vereins oder der Gruppe', req:1 }, { k:'ort', l:'Ort' }, { k:'web', l:'Webseite oder Instagram' }, { k:'notiz', l:'Notiz', t:'area' } ] },
+  kontakte:{ t:'Veranstalter-Kontakt', f:[ { k:'name', l:'Name der Ansprechperson', req:1 }, { k:'vereinName', l:'Verein / Gruppe', t:'text', list:() => (D.vereine || []).map(v => v.name) }, { k:'mail', l:'E-Mail' }, { k:'telefon', l:'Telefon' }, { k:'url', l:'Webseite oder Instagram' },
     { k:'ort', l:'Ort / Halle' }, { k:'notiz', l:'Notiz (z. B. Erfahrung, bester Weg zur Anmeldung)', t:'area' }, { k:'hide', l:'In der Liste', t:'select', o:[['','anzeigen'],['1','ausblenden']] } ] },
   umfragen:{ t:'Abstimmung', f:[ { k:'frage', l:'Frage', req:1 }, { k:'opts', l:'Antworten, mit Komma getrennt', t:'list', req:1 } ] },
   feedback:{ t:'Vorschlag', f:[ { k:'titel', l:'Was sollen wir ändern oder ergänzen', req:1 }, { k:'text', l:'Genauer beschrieben', t:'area' },
@@ -1058,15 +1115,15 @@ function fieldHTML(f, v) {
     return `<label class="f" for="${id}">${f.l}<select id="${id}">${o.map(x => `<option value="${esc(x[0])}" ${x[0] === val ? 'selected' : ''}>${esc(x[1])}</option>`).join('')}</select></label>`;
   }
   if (f.t === 'area') return `<label class="f" for="${id}">${f.l}<textarea id="${id}" rows="3">${esc(val)}</textarea></label>`;
-  const type = { number:'number', date:'date', time:'time' }[f.t] || 'text';
-  return `<label class="f" for="${id}">${f.l}${f.req ? ' *' : ''}<input id="${id}" type="${type}" ${type === 'number' ? 'step="0.01" min="0" inputmode="decimal"' : ''} value="${esc(Array.isArray(val) ? val.join(', ') : val)}"></label>`;
+  const type = { number:'number', date:'date', time:'time' }[f.t] || 'text', dl = f.list ? f.list() : null;
+  return `<label class="f" for="${id}">${f.l}${f.req ? ' *' : ''}<input id="${id}" type="${type}" ${dl ? `list="dl_${f.k}" autocomplete="off"` : ''} ${type === 'number' ? 'step="0.01" min="0" inputmode="decimal"' : ''} value="${esc(Array.isArray(val) ? val.join(', ') : val)}">${dl ? `<datalist id="dl_${f.k}">${dl.map(x => `<option value="${esc(x)}">`).join('')}</datalist>` : ''}</label>`;
 }
-function mayOpen(col, id) { if (['buchungen', 'beitraege', 'sponsoren', 'kontakte'].includes(col)) return can(col); if (col === 'trainings') return can('trainings'); if (col === 'kalender') { if (!can('kalender')) return false; const e = id && D.kalender.find(x => x.id === id); return !e || mayEditCal(e); } return true; }
+function mayOpen(col, id) { if (['buchungen', 'beitraege', 'sponsoren', 'kontakte'].includes(col)) return can(col); if (col === 'vereine') return can('kontakte'); if (col === 'trainings') return can('trainings'); if (col === 'kalender') { if (!can('kalender')) return false; const e = id && D.kalender.find(x => x.id === id); return !e || mayEditCal(e); } return true; }
 function openEdit(col, id, preset) {
   if (!mayOpen(col, id)) return;
   const cfg = C[col], item = id ? D[col].find(x => x.id === id) : null, eff = col === 'kontakte' && item ? kontakte(true).find(c => c.rid === id) : null;
   FORM = { col, id, key:(preset || {}).key || (item && item.key) || '' };
-  openDlg(`<h3>${item ? cfg.t + ' bearbeiten' : cfg.t + ' anlegen'}</h3>${col === 'kontakte' && FORM.key ? '<div class="sub" style="color:var(--muted)">Dieser Kontakt stammt aus der Auftrittsplanung. Deine Änderungen überschreiben die Angaben dort, bleiben aber erhalten, auch wenn die Termine sich ändern.</div>' : ''}${fieldsOf(cfg).map(f => fieldHTML(f, eff ? (f.k === 'hide' ? (eff.hide ? '1' : '') : eff[f.k]) : item ? item[f.k] : (preset || {})[f.k])).join('')}
+  openDlg(`<h3>${item ? cfg.t + ' bearbeiten' : cfg.t + ' anlegen'}</h3>${col === 'kontakte' && FORM.key ? '<div class="sub" style="color:var(--muted)">Dieser Kontakt stammt aus der Auftrittsplanung. Deine Änderungen überschreiben die Angaben dort, bleiben aber erhalten, auch wenn die Termine sich ändern.</div>' : ''}${fieldsOf(cfg).map(f => fieldHTML(f, eff ? (f.k === 'hide' ? (eff.hide ? '1' : '') : f.k === 'vereinName' ? eff.vname : eff[f.k]) : item ? item[f.k] : (preset || {})[f.k])).join('')}
     <div class="err" id="fErr" hidden></div>
     <div class="acts"><button class="btn dark" data-act="saveForm">Speichern</button><button class="btn" data-act="close">Abbrechen</button>
     ${item ? `<button class="btn" data-act="delForm" style="color:var(--bad)">${col === 'kontakte' && item.key ? 'Auf Automatik zurücksetzen' : 'Löschen'}</button>` : ''}</div>`);
@@ -1075,6 +1132,7 @@ function saveForm() {
   if (!mayOpen(FORM.col, FORM.id)) { closeDlg(); return; }
   const cfg = C[FORM.col], rec = {};
   for (const f of fieldsOf(cfg)) {
+    if (f.nosave) continue;
     let v = $('f_' + f.k).value.trim();
     if (f.t === 'number') v = v === '' ? '' : parseFloat(v.replace(',', '.'));
     if (f.t === 'list') v = v.split(',').map(s => s.trim()).filter(Boolean);
@@ -1083,6 +1141,7 @@ function saveForm() {
     }
     rec[f.k] = v;
   }
+  if (FORM.col === 'kontakte') { rec.verein = ensureVerein(rec.vereinName); delete rec.vereinName; }
   if (FORM.col === 'kontakte' && FORM.key) { const b = kontakteBase()[FORM.key] || {}; ['name', 'mail', 'url'].forEach(k => { if (rec[k] === (b[k] || '')) rec[k] = ''; }); }
   if (FORM.id) { const it = D[FORM.col].find(x => x.id === FORM.id); Object.assign(it, rec); delete it.demo; }
   else {
@@ -1474,14 +1533,19 @@ const SEC = {
       ${done.length ? `<div class="panel"><div class="ph"><h3>Gepostet (${done.length})</h3></div>${rows(done, row, '')}</div>` : ''}`;
   },
   kontakte() {
-    const k = kontakte(true), shown = k.filter(c => !c.hide), hid = k.filter(c => c.hide), ok = can('kontakte');
+    const k = kontakte(true), shown = k.filter(c => !c.hide), hid = k.filter(c => c.hide), ok = can('kontakte'), nd = dupGroups().length, nz = shown.filter(c => !c.verein).length;
     const row = c => `<div class="row"><div class="grow"><b>${esc(c.name || c.mail)}</b>${c.manual ? ' <span class="pill vio">selbst angelegt</span>' : c.rid ? ' <span class="pill">bearbeitet</span>' : ''}${c.hide ? ' <span class="pill warn">ausgeblendet</span>' : ''}
         <div class="sub">${c.mail ? linkify(c.mail) : 'keine E-Mail hinterlegt'}${c.telefon ? ' · ' + esc(c.telefon) : ''}${c.url ? ' · ' + linkify(c.url) : ''}${c.ort ? ' · ' + esc(c.ort) : ''}${c.events.length ? '<br>' + c.events.map(esc).join(', ') : ''}</div>
+        ${(c.merged || []).length ? `<div class="sub" style="margin-top:4px">Zusammengeführt: ${c.merged.map(m => esc(m.name) + (ok && m.rid ? ` <a href="#kontakte" data-act="kontaktSplit" data-id="${m.rid}">trennen</a>` : '')).join(', ')}</div>` : ''}
         ${c.notiz ? `<div class="n" style="font-size:13px;color:var(--muted);background:var(--soft);border-radius:10px;padding:8px 12px;margin-top:6px;white-space:pre-wrap">${esc(c.notiz)}</div>` : ''}</div>
         ${c.mail && can('postfach') ? `<button class="btn sm" data-act="mailTo" data-v="${esc(c.mail)}">Mail schreiben</button>` : ''}
         ${ok ? (c.rid ? `<button class="btn sm" data-act="edit" data-col="kontakte" data-id="${c.rid}">Bearbeiten</button>` : `<button class="btn sm" data-act="kontaktNew" data-key="${esc(c.key)}">Bearbeiten</button>`) : ''}</div>`;
-    return head('Veranstalter-Kontakte', 'Entsteht automatisch aus den Ansprechpartnern in der Auftrittsplanung. Du kannst jeden Kontakt ergänzen, ändern oder ausblenden und eigene anlegen. Die Datenbank für die nächste Session steht unter <a href="#vormerken">Auftritte · Vormerken</a>.', addBtn('kontakte', '+ Kontakt')) +
-      `<div class="panel">${rows(shown, row, 'Noch keine Ansprechpartner bei den Terminen eingetragen.')}</div>` +
+    const vs = [...(D.vereine || [])].sort((a, b) => a.name.localeCompare(b.name));
+    const sec = (v, list) => `<div class="panel"><div class="ph"><h3>${esc(v ? v.name : 'Ohne Verein / Gruppe')}</h3><span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${v && (v.ort || v.web) ? `<span class="sub">${[v.ort ? esc(v.ort) : '', v.web ? linkify(v.web) : ''].filter(Boolean).join(' · ')}</span>` : ''}${v && ok ? `<button class="btn sm" data-act="edit" data-col="vereine" data-id="${v.id}">Verein bearbeiten</button>` : ''}</span></div>
+      ${v && v.notiz ? `<div class="sub" style="white-space:pre-wrap">${esc(v.notiz)}</div>` : ''}${rows(list, row, 'Noch keine Ansprechpartner zugeordnet.')}</div>`;
+    return head('Veranstalter-Kontakte', 'Ansprechpartner sortiert nach Verein oder Gruppe. Sie entstehen automatisch aus den Auftritten. Du kannst sie ergänzen, ändern, ausblenden, einem Verein zuordnen und Doppelte zusammenführen. Die Datenbank für die nächste Session steht unter <a href="#vormerken">Auftritte · Vormerken</a>.', ok ? `<span style="display:flex;gap:8px;flex-wrap:wrap">${addBtn('kontakte', '+ Kontakt')}<button class="btn" data-act="edit" data-col="vereine">+ Verein / Gruppe</button></span>` : '') +
+      (ok && (nd || nz) ? `<div class="chips">${nd ? `<button class="btn sm on" data-act="dupOpen">Doppelte prüfen (${nd})</button>` : ''}${nz ? `<button class="btn sm" data-act="vzOpen">Vereinen zuordnen (${nz})</button>` : ''}</div>` : '') +
+      vs.map(v => sec(v, shown.filter(c => c.verein === v.id))).join('') + (shown.some(c => !c.verein) || !vs.length ? sec(null, shown.filter(c => !c.verein)) : '') +
       (hid.length ? `<div class="panel"><div class="ph"><h3>Ausgeblendet (${hid.length})</h3><button class="btn sm" data-act="kontakteTog">${UI.kHid ? 'Verbergen' : 'Anzeigen'}</button></div>${UI.kHid ? rows(hid, row, '') : ''}</div>` : '');
   },
   dateien() {
@@ -1802,7 +1866,25 @@ const ACT = {
   extraSave() { const id = FORM && FORM.extra; if (!id) return; const picked = [...$('dlgBox').querySelectorAll('.xr')].filter(c => c.checked && !c.disabled).map(c => c.value);
     if (!D.extra) D.extra = {}; if (picked.length) D.extra[id] = picked; else delete D.extra[id]; save(); closeDlg(); render(); },
   saveMotto() { D.motto = Object.assign({}, D.motto, { titel:$('moTitel').value.trim() || D.motto.titel, session:$('moSession').value.trim(), farbwelt:$('moFarbe').value }); save(); render(); },
-  kontaktNew(d) { if (!can('kontakte')) return; const c = kontakte(true).find(x => x.key === d.key && !x.manual); if (!c) return; openEdit('kontakte', null, { key:c.key, name:c.name, mail:c.mail, telefon:c.telefon, url:c.url, ort:c.ort, notiz:c.notiz }); },
+  kontaktNew(d) { if (!can('kontakte')) return; const c = kontakte(true).find(x => x.key === d.key && !x.manual); if (!c) return; openEdit('kontakte', null, { key:c.key, name:c.name, vereinName:c.vname, mail:c.mail, telefon:c.telefon, url:c.url, ort:c.ort, notiz:c.notiz }); },
+  kontaktSplit(d, el) { if (!can('kontakte')) return; const o = (D.kontakte || []).find(x => x.id === d.id); if (!o) return; delete o.into; if (o.key && !(o.name || o.mail || o.telefon || o.url || o.ort || o.notiz || o.hide || o.verein)) D.kontakte = D.kontakte.filter(x => x !== o); save(); render(); },
+  dupOpen() {
+    if (!can('kontakte')) return; const gs = dupGroups(); UI.dupG = gs.map(g => g.map(kRef));
+    openDlg(`<h3>Doppelte Kontakte</h3><div class="sub" style="color:var(--muted)">Diese Kontakte sehen nach Doppelten aus. Vorgeschlagen ist jeweils der Eintrag mit den meisten Angaben. Die anderen werden damit zusammengeführt, ihre Angaben und Termine wandern dorthin. Auch künftige Termine mit dem alten Namen landen beim behaltenen Kontakt. Du kannst das später wieder trennen.</div>
+      ${gs.map((g, i) => `<div class="panel" style="padding:12px;gap:8px"><label class="chk"><input type="checkbox" id="dc_${i}" checked> Zusammenführen</label>
+        <label class="f" for="dm_${i}">Behalten<select id="dm_${i}">${g.map(c => `<option value="${esc(kRef(c))}">${esc(c.name || c.mail)}${c.mail ? ' · ' + esc(c.mail) : ''}${c.telefon ? ' · ' + esc(c.telefon) : ''} (${c.events.length} Termin${c.events.length === 1 ? '' : 'e'})</option>`).join('')}</select></label>
+        <div class="sub">Betrifft: ${g.map(c => esc(c.name || c.mail)).join(' · ')}</div></div>`).join('')}
+      <div class="acts"><button class="btn dark" data-act="dupGo">Ausgewählte zusammenführen</button><button class="btn" data-act="close">Abbrechen</button></div>`);
+  },
+  dupGo() { if (!can('kontakte')) return; let n = 0; (UI.dupG || []).forEach((refs, i) => { const cb = $('dc_' + i), sel = $('dm_' + i); if (!cb || !cb.checked || !sel) return; n += mergeKontakte(sel.value, refs.filter(r => r !== sel.value)); }); UI.dupG = null; save(); closeDlg(); render(); },
+  vzOpen() {
+    if (!can('kontakte')) return; const list = kontakte().filter(c => !c.verein); UI.vzL = list.map(kRef);
+    openDlg(`<h3>Vereinen zuordnen</h3><div class="sub" style="color:var(--muted)">Trage zu jedem Ansprechpartner den Verein oder die Gruppe ein. Du kannst einen vorhandenen aus der Liste wählen oder einen neuen Namen tippen, er wird dann angelegt. Leere Felder bleiben unverändert.</div>
+      <datalist id="dl_vz">${(D.vereine || []).map(v => `<option value="${esc(v.name)}">`).join('')}</datalist>
+      ${list.map((c, i) => `<label class="f" for="vz_${i}">${esc(c.name || c.mail)}<span class="sub" style="font-weight:400">${c.events.map(esc).join(', ')}</span><input id="vz_${i}" type="text" list="dl_vz" autocomplete="off" placeholder="Verein oder Gruppe"></label>`).join('')}
+      <div class="acts"><button class="btn dark" data-act="vzGo">Übernehmen</button><button class="btn" data-act="close">Abbrechen</button></div>`);
+  },
+  vzGo() { if (!can('kontakte')) return; const all = kontakte(true); (UI.vzL || []).forEach((r, i) => { const el = $('vz_' + i), c = all.find(x => kRef(x) === r); if (!el || !c || !el.value.trim()) return; kRecord(c, true).verein = ensureVerein(el.value); }); UI.vzL = null; save(); closeDlg(); render(); },
   kontakteTog() { UI.kHid = !UI.kHid; render(); },
   thPreset(d) { const p = THEMES[d.k]; if (!p || me().rolle !== 'admin') return; UI.thDraft = JSON.parse(JSON.stringify({ c:p.c, fh:p.fh, fb:p.fb, rs:p.rs, glass:p.glass, art:(UI.thDraft || {}).art || 'auto' })); UI.thMsg = ''; render(); },
   thRs(d) { if (me().rolle !== 'admin') return; thDraft().rs = +d.v; applyTheme(UI.thDraft); UI.thMsg = ''; render(); },
@@ -2008,6 +2090,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t && t.id === 'f_kpick') { const c = kontakte(true).find(x => kRef(x) === t.value); if (c && $('f_inhaber')) { $('f_inhaber').value = (c.name || c.mail) + (c.mail && c.name ? ' (' + c.mail + ')' : ''); if (c.verein && $('f_vid')) $('f_vid').value = c.verein; } return; }
   if (t.id === 'seedFile') { const f = t.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const s = JSON.parse(r.result); if (!Array.isArray(s.members) || !s.members.length) throw new Error('keine Mitglieder'); CS.seed = s; $('seedMe').innerHTML = s.members.map(m => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join(''); $('seedGo').disabled = false; $('seedMsg').textContent = s.members.length + ' Mitglieder, ' + (s.events || []).length + ' Auftritte gefunden.'; } catch (e) { $('seedMsg').textContent = 'Die Datei passt nicht (' + e.message + ').'; } }; r.readAsText(f); return; }
   if (t.id === 'fileIn') { const list = [...t.files], ord = $('fOrd').value; t.value = ''; if (!apiOn() || !can('dateien')) return;
     (async () => { let ok = 0; for (const f of list) { if (f.size > FILE_MAX) { UI.fileMsg = '„' + f.name + '“ ist größer als 20 MB und wurde übersprungen.'; render(); continue; }
