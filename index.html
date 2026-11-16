@@ -898,8 +898,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.39', BUILD = 69;
+const VERSION = '2.40', BUILD = 70;
 const CHANGELOG = [
+  { v:'2.40', datum:'2026-11-16', punkte:['Einträge aus Kostüme, Requisiten und Teamausstattung erscheinen in Finanzen unter „Offene Posten (unter Vorbehalt)“, mit oder ohne Betrag.','Die Kasse entscheidet pro Posten: verbuchen (Betrag und Datum), streichen oder offen lassen. Erst beim Verbuchen zählt es im Kassenstand.','In den Rubriken steht je Eintrag „offen in der Kasse“, „gebucht“ oder „von Kasse gestrichen“.'] },
   { v:'2.39', datum:'2026-11-16', punkte:['Geburtstage mit vollem Datum (inklusive Jahr) für alle sichtbar, dazu die Liste „Alle Geburtstage“ auf der Startseite.','Untere Leiste auffälliger: heller Rand, größere Icons, kräftige Markierung der aktuellen Rubrik.','Mehr-Menü: die Icons der Rubriken sind wieder sichtbar.'] },
   { v:'2.38', datum:'2026-11-16', punkte:['Die Spenden-Abgabe startet bei 0 %. Den Standard stellt die Kasse selbst unter Sponsoren > Standard-Abgabe ein.'] },
   { v:'2.37', datum:'2026-11-16', punkte:['Teamausstattung & Merch ist jetzt wie Kostüme und Requisiten mit Finanzen verknüpft: Ausgabe in Finanzen eintragen erscheint in der Rubrik und umgekehrt (Feld „Bezahlt am“).','Neue Ausgaben-Kategorie „Teamausstattung“ mit eigenem Budget.'] },
@@ -1437,7 +1438,21 @@ function linkReconcile() {
 }
 function linkUnlinkItem(col, id) { const b = bookOf(col, id); if (b) delete b.ln; }
 function linkUnlinkBook(b) { if (b && b.ln && D[b.ln.c]) { const it = D[b.ln.c].find(x => x.id === b.ln.id); if (it) { delete it.bk; delete it.bezahlt; } } }
-const linkPill = it => it.bk && it.bezahlt ? `<span class="pill good" title="In den Finanzen als Ausgabe gebucht">gebucht ${esc(fmtDate(it.bezahlt))}</span>` : '';
+const vbOpen = it => !it.demo && !it.bezahlt && !it.bk && it.vb !== 'x';
+const linkPill = it => it.bk && it.bezahlt ? `<span class="pill good" title="In den Finanzen als Ausgabe gebucht">gebucht ${esc(fmtDate(it.bezahlt))}</span>` : it.vb === 'x' ? '<span class="pill" title="Die Kasse hat diesen Posten gestrichen">von Kasse gestrichen</span>' : vbOpen(it) ? '<span class="pill warn" title="Die Kasse entscheidet, ob und wann das verbucht wird">offen in der Kasse</span>' : '';
+const VB_COLS = ['kostueme', 'requisiten', 'merch'];
+const vbItems = (open) => VB_COLS.flatMap(c => (D[c] || []).filter(it => open ? vbOpen(it) : (it.vb === 'x' && !it.bezahlt)).map(it => ({ c, it, L:LINK[c] })));
+function vbPanel() {
+  if (!can('buchungen')) return '';
+  const o = vbItems(true), x = vbItems(false), sum = o.reduce((a, y) => a + y.L.cost(y.it), 0);
+  const row = (y, closed) => `<div class="row"><div class="grow"><b>${esc(y.L.name(y.it) || '(ohne Name)')}</b><div class="sub">${y.L.kat} · ${(+y.it.anzahl || 1)} Stück${y.it.status ? ' · ' + esc(y.it.status) : ''}</div></div>
+      <span class="amt">${y.L.cost(y.it) > 0 ? eur(y.L.cost(y.it)) : 'ohne Betrag'}</span>
+      ${closed ? `<button class="btn sm" data-act="vbReopen" data-col="${y.c}" data-id="${y.it.id}">Wieder öffnen</button>` : `<button class="btn sm dark" data-act="vbBook" data-col="${y.c}" data-id="${y.it.id}">Verbuchen</button><button class="btn sm" data-act="vbDrop" data-col="${y.c}" data-id="${y.it.id}">Streichen</button>`}</div>`;
+  return `<div class="panel"><div class="ph"><h3>Offene Posten (unter Vorbehalt)</h3><span class="amt">${o.length} Einträge${sum ? ' · ' + eur(sum) : ''}</span></div>
+    <div class="sub" style="color:var(--muted);margin-bottom:6px">Einträge aus Kostüme, Requisiten und Teamausstattung. Sie zählen erst im Kassenstand, wenn du sie verbuchst.</div>
+    ${o.length ? `<div class="rows">${o.map(y => row(y, false)).join('')}</div>` : '<div class="empty">Nichts offen.</div>'}
+    ${x.length ? `<details style="margin-top:10px"><summary>Gestrichen (${x.length})</summary><div class="rows">${x.map(y => row(y, true)).join('')}</div></details>` : ''}</div>`;
+}
 function saveForm() {
   if (!mayOpen(FORM.col, FORM.id)) { closeDlg(); return; }
   const cfg = C[FORM.col], rec = {};
@@ -2246,6 +2261,7 @@ const SEC = {
         <div class="kpi"><small>Ausgaben</small><b>${eur(f.aus)}</b><span>${can('buchungen') ? D.buchungen.filter(b => b.typ === 'A').length + ' Buchungen' : 'laut Kasse'}</span></div>
         <div class="kpi"><small>Kassenstand</small><b>${eur(f.saldo)}</b><span>Einnahmen minus Ausgaben</span></div>
         <div class="kpi"><small>Beiträge offen</small><b>${eur(f.offen)}</b><span>noch nicht eingegangen</span></div></div>
+      ${vbPanel()}
       <div class="cols">
         <div class="panel"><div class="ph"><h3>Ausgaben und Budget je Bereich</h3>${can('buchungen') ? '<button class="btn sm" data-act="budget">Budget ändern</button>' : ''}</div>
           <div class="rows">${KAT_A.map(k => { const ist = f.kat[k] || 0, bud = +D.budget[k] || 0, w = Math.min(100, Math.max(ist, bud) ? ist / Math.max(ist, bud) * 100 : 0);
@@ -2965,6 +2981,14 @@ const ACT = {
   rasterCfgSave() { if (!can('beitraege')) return; const rate = parseFloat(String($('rcRate').value).replace(',', '.')), st = $('rcStart').value; if (!(rate > 0) || !/^\d{4}-\d{2}$/.test(st)) return; D.beitragCfg = { rate, start:st }; save(); closeDlg(); render(); },
   spCfg() { if (!can('sponsoren')) return; openDlg(`<h3>Standard-Abgabe bei Spenden</h3><div class="sub">So viel Prozent jeder neuen Spende gehen an den Verein. Bei der einzelnen Spende lässt sich der Wert immer ändern.</div><label class="f" for="spPct">Abgabe in %<input id="spPct" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="${spDef()}"></label><div class="acts"><button class="btn dark" data-act="spCfgSave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
   spCfgSave() { if (!can('sponsoren')) return; const v = parseFloat(String($('spPct').value).replace(',', '.')); if (isNaN(v) || v < 0 || v > 100) { $('spPct').focus(); return; } D.spCfg = Object.assign({}, D.spCfg || {}, { abgabe:v }); save(); closeDlg(); render(); },
+  vbBook(d) { if (!can('buchungen')) return; const it = (D[d.col] || []).find(x => x.id === d.id); if (!it || !LINK[d.col]) return; const c = LINK[d.col].cost(it);
+    openDlg(`<h3>Verbuchen: ${esc(LINK[d.col].name(it) || '')}</h3><div class="sub">Das wird als Ausgabe in „${LINK[d.col].kat}“ gebucht.</div><label class="f" for="vbBet">Gesamtbetrag in €<input id="vbBet" type="number" min="0" step="0.01" inputmode="decimal" value="${c > 0 ? c : ''}"></label><label class="f" for="vbDat">Bezahlt am<input id="vbDat" type="date" value="${todayISO()}"></label><div id="vbErr" class="err" hidden></div><div class="acts"><button class="btn dark" data-act="vbBookSave" data-col="${d.col}" data-id="${d.id}">Verbuchen</button><button class="btn" data-act="close">Abbrechen</button></div>`); },
+  vbBookSave(d) { if (!can('buchungen')) return; const it = (D[d.col] || []).find(x => x.id === d.id); if (!it || !LINK[d.col]) return;
+    const bet = parseFloat(String($('vbBet').value).replace(',', '.')), dat = $('vbDat').value;
+    if (isNaN(bet) || bet <= 0 || !dat) { $('vbErr').textContent = 'Bitte Betrag und Datum eintragen.'; $('vbErr').hidden = false; return; }
+    LINK[d.col].up(it, { text:LINK[d.col].name(it), anzahl:+it.anzahl || 1, betrag:bet }); it.bezahlt = dat; delete it.vb; linkItemSave(d.col, it); save(); closeDlg(); render(); },
+  vbDrop(d) { if (!can('buchungen')) return; const it = (D[d.col] || []).find(x => x.id === d.id); if (!it) return; it.vb = 'x'; save(); render(); },
+  vbReopen(d) { if (!can('buchungen')) return; const it = (D[d.col] || []).find(x => x.id === d.id); if (!it) return; delete it.vb; save(); render(); },
   bdayAll() { openDlg(`<h3>Alle Geburtstage</h3><div class="rows">${bdayAllHTML()}</div><div class="acts"><button class="btn" data-act="close">Schließen</button></div>`); },
   searchOpen() { openDlg(`<h3>Suche im ganzen Portal</h3><label class="f" for="gq"><input id="gq" type="search" placeholder="Name, Text, Ort, Betrag oder Datum" autocomplete="off" aria-label="Suche im ganzen Portal"></label><div id="gRes" role="status" aria-live="polite"></div><div class="acts"><button class="btn" data-act="close">Schließen</button></div>`); const q = $('gq'); if (q && q.focus) q.focus(); },
   goSearch(d) { const q = $('gq') ? $('gq').value.trim() : ''; closeDlg(); UI.rq = q; if (d.sec === 'auftritte') UI.q = q; UI._keep = true; if (location.hash === '#' + d.sec) { UI._keep = false; render(); window.scrollTo(0, 0); } else location.hash = '#' + d.sec; },
