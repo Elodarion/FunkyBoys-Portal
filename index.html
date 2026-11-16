@@ -870,8 +870,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.23', BUILD = 53;
+const VERSION = '2.24', BUILD = 54;
 const CHANGELOG = [
+  { v:'2.24', datum:'2026-11-16', punkte:['Verwaltung zeigt bei jedem Mitglied, ob es sich schon angemeldet hat, wann es zuletzt aktiv war, und wer noch keine E-Mail hinterlegt hat; wer noch fehlt, bekommt per Knopf eine Mail'] },
   { v:'2.23', datum:'2026-11-16', punkte:['Hilfe-Assistent kennt Rollen und Rechte: Fragt jemand nach etwas, das seine Rolle nicht darf, sagt er das, nennt die zuständigen Rollen und Personen und bietet an, sie anzuschreiben','„Was darf ich?“ und „Wer darf …?“ werden beantwortet; neue Rechte-Übersicht in „Hilfe & Anleitung“ mit allen Rollen, Rechten und Zusatzrechten'] },
   { v:'2.22', datum:'2026-11-16', punkte:['Neue Rubrik „Hilfe & Anleitung“: Schritt-für-Schritt-Anleitungen mit Bildern, nach Rolle sortiert (alle, Trainerinnen, Kasse, Admin) und durchsuchbar','Hilfe-Assistent in der Chat-Blase: beantwortet Fragen zum Portal aus der Anleitung und führt zur passenden Seite'] },
   { v:'2.21', datum:'2026-11-16', punkte:['Chat als Blase unten rechts, wie im Betriebsratsportal: Gruppenchat und Einzelchats mit jedem Mitglied, ungelesene Nachrichten als Zähler','Sprach- und Videoanrufe direkt aus dem Chat, auch als Gruppenanruf mit allen, die gerade online sind','Online-Anzeige mit „zuletzt gesehen“'] },
@@ -1471,7 +1472,7 @@ function newsPanel() {
     ${rows(n.slice(0, 5), x => `<div class="row"><div class="grow"><b>${esc(x.titel)}</b><div class="sub">${x.art} · von ${esc(mname(x.von))} · ${fmtTs(x.ts)}</div></div>${x.chat ? '<button class="btn sm" data-act="chatToggle">öffnen</button>' : `<a href="#${x.sec}">ansehen</a>`}</div>`, '')}</div>`;
 }
 /* ---------- Chat (Blase unten rechts), Einzelchats, Online-Status ---------- */
-const CH = { m:{}, pend:{}, pres:{}, subs:new Set(), unsubs:[], hb:null, sub:false, err:'', open:false, conv:'', seen:{} };
+const CH = { last:{}, reg:{}, m:{}, pend:{}, pres:{}, subs:new Set(), unsubs:[], hb:null, sub:false, err:'', open:false, conv:'', seen:{} };
 const chLS = { get:k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set:(k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
 try { CH.seen = JSON.parse(chLS.get('fb_chat_seen2') || '{}') || {}; } catch (e) { CH.seen = {}; }
 const PRES_MS = 6 * 60 * 1000;
@@ -1497,11 +1498,11 @@ function chatEnsure() {
   if (!CH.sub) { CH.sub = true; if (typeof callListen === 'function') callListen(); }
   chatListen('g');
   D.members.forEach(m => { if (m.id === D.me) return; chatListen(m.id);
-    if (!CH.subs.has('p' + m.id)) { CH.subs.add('p' + m.id); CH.unsubs.push(CLOUD.listen('data/pres_' + m.id, s => { let t = 0; try { t = s && s.exists ? JSON.parse(s.data.j).t : 0; } catch (e) {} CH.pres[m.id] = t; chatPaint(''); }, () => {})); } });
+    if (!CH.subs.has('p' + m.id)) { CH.subs.add('p' + m.id); CH.unsubs.push(CLOUD.listen('data/pres_' + m.id, s => { let t = 0, l = 0; try { if (s && s.exists) { const o = JSON.parse(s.data.j); t = o.t || 0; l = o.l || o.t || 0; } } catch (e) {} CH.pres[m.id] = t; CH.last[m.id] = l; CH.reg[m.id] = !!(s && s.exists); chatPaint(''); if (UI.sec === 'verwaltung' && typeof rerender === 'function') rerender(); }, () => {})); } });
   if (!CH.hb) { CH.hb = setInterval(() => chatBeat(), 3 * 60 * 1000); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') chatBeat(); }); window.addEventListener('pagehide', () => chatBeat(true)); chatBeat(); }
 }
-function chatBeat(off) { if (!chatOn()) return; if (!off && document.visibilityState === 'hidden') return; try { CLOUD.set('data/pres_' + D.me, { j:JSON.stringify({ t:off ? 0 : Date.now() }) }).catch(() => {}); } catch (e) {} }
-function chatStop() { CH.unsubs.forEach(u => { try { u(); } catch (e) {} }); CH.unsubs = []; CH.subs = new Set(); CH.sub = false; CH.m = {}; CH.pend = {}; CH.pres = {}; CH.open = false; CH.conv = ''; if (CH.hb) clearInterval(CH.hb); CH.hb = null; if (typeof callStop === 'function') callStop(); const p = $('chatPanel'); if (p) p.hidden = true; const f = $('chatFab'); if (f) f.hidden = true; }
+function chatBeat(off) { if (!chatOn()) return; if (!off && document.visibilityState === 'hidden') return; try { CLOUD.set('data/pres_' + D.me, { j:JSON.stringify({ t:off ? 0 : Date.now(), l:Date.now() }) }).catch(() => {}); } catch (e) {} }
+function chatStop() { CH.unsubs.forEach(u => { try { u(); } catch (e) {} }); CH.unsubs = []; CH.subs = new Set(); CH.sub = false; CH.m = {}; CH.pend = {}; CH.pres = {}; CH.last = {}; CH.reg = {}; CH.open = false; CH.conv = ''; if (CH.hb) clearInterval(CH.hb); CH.hb = null; if (typeof callStop === 'function') callStop(); const p = $('chatPanel'); if (p) p.hidden = true; const f = $('chatFab'); if (f) f.hidden = true; }
 function chatRead(c) { const u = convUnread(c); if (u.length) { CH.seen[c] = Math.max(...u.map(m => m.t)); chatSave(); } }
 const memShort = id => esc(mname(id).split(' ')[0]);
 const chatWhoHTML = () => {
@@ -1671,6 +1672,26 @@ function botExtra(m) {
   if (m.more && m.more.length) h += `<div class="sub" style="margin-top:6px">Dazu passt auch:</div><div class="chips">${botBtns(m.more.map(id => ({ g:GUIDE.find(g => g.id === id) })).filter(x => x.g))}</div>`;
   if (m.fb) h += `<div class="chips"><button class="btn sm" data-act="botFb">Als Idee oder Fehler melden</button><button class="btn sm" data-act="botTopic" data-id="">Anleitung öffnen</button></div>`;
   return h;
+}
+/* ---------- Registrierungs-Status (Verwaltung) ---------- */
+function regState(m) {
+  if (!m.email) return 'keine';
+  if (m.id === D.me) return 'ja';
+  if (!(m.id in CH.reg)) return 'pruefe';
+  return CH.reg[m.id] ? 'ja' : 'nein';
+}
+function regPill(m) {
+  if (!chatOn() || !can('verwaltung')) return '';
+  const st = regState(m), l = CH.last[m.id], on = isOnline(m.id);
+  if (st === 'keine') return ' <span class="pill warn">Keine E-Mail hinterlegt</span>';
+  if (st === 'pruefe') return ' <span class="pill">prüfe …</span>';
+  if (st === 'nein') return ` <span class="pill bad">Noch nicht angemeldet</span> <button class="btn sm" data-act="mailTo" data-v="${esc(m.email)}">Mail schreiben</button>`;
+  return ` <span class="pill good">Angemeldet</span> <span class="sub">${on ? 'gerade online' : l ? 'zuletzt aktiv ' + agoTxt(l) : ''}</span>`;
+}
+function regSummary() {
+  if (!chatOn() || !can('verwaltung')) return '';
+  const c = { ja:0, nein:0, keine:0, pruefe:0 }; D.members.forEach(m => c[regState(m)]++);
+  return `<div class="sub" style="margin:4px 0 8px;max-width:70ch"><b>${c.ja} von ${D.members.length}</b> haben sich angemeldet${c.nein ? ', <b>' + c.nein + ' noch nicht</b>' : ''}${c.keine ? ', bei ' + c.keine + ' fehlt die E-Mail-Adresse' : ''}. „Angemeldet“ heißt: Die Person hat das Portal mindestens einmal mit Login geöffnet. Wer sich schon vor diesem Update eingeloggt hat, erscheint hier, sobald er das Portal das nächste Mal öffnet.</div>`;
 }
 const FB_PILL = { Neu:'vio', Offen:'vio', Geplant:'warn', 'In Arbeit':'warn', Umgesetzt:'good', Behoben:'good', Abgelehnt:'bad' };
 const FB_CLOSED = ['Umgesetzt', 'Abgelehnt', 'Behoben'];
@@ -2000,7 +2021,8 @@ const SEC = {
         <div><button class="btn dark" data-act="saveMotto">Motto übernehmen</button></div></div>
       ${themePanel()}
       <div class="panel"><div class="ph"><h3>Accounts und Rollen</h3>${addBtn('members', '+ Mitglied')}</div>
-        ${rows(D.members, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}${extraOf(m.id).length ? `<div class="sub">Zusatzrechte: ${extraOf(m.id).map(k => esc((RIGHTS.find(x => x[1] === k) || [k])[0])).join(', ')}</div>` : ''}</div>${adm ? `<button class="btn sm" data-act="extraOpen" data-id="${m.id}">Zusatzrechte</button>` : ''}<select data-act="role" data-id="${m.id}" ${adm ? '' : 'disabled'} aria-label="Rolle von ${esc(m.name)}" style="width:auto;min-width:140px">${Object.entries(ROLES).map(r => `<option value="${r[0]}" ${m.rolle === r[0] ? 'selected' : ''}>${r[1]}</option>`).join('')}</select></div>`, '')}</div>
+        ${regSummary()}
+        ${rows(D.members, m => `<div class="row"><div class="grow"><b>${esc(m.name)}</b>${demo(m)}${regPill(m)}${extraOf(m.id).length ? `<div class="sub">Zusatzrechte: ${extraOf(m.id).map(k => esc((RIGHTS.find(x => x[1] === k) || [k])[0])).join(', ')}</div>` : ''}</div>${adm ? `<button class="btn sm" data-act="extraOpen" data-id="${m.id}">Zusatzrechte</button>` : ''}<select data-act="role" data-id="${m.id}" ${adm ? '' : 'disabled'} aria-label="Rolle von ${esc(m.name)}" style="width:auto;min-width:140px">${Object.entries(ROLES).map(r => `<option value="${r[0]}" ${m.rolle === r[0] ? 'selected' : ''}>${r[1]}</option>`).join('')}</select></div>`, '')}</div>
       <div class="panel"><div class="ph"><h3>Wer darf was</h3>${adm ? '<button class="btn sm" data-act="rechteReset">Auf Standard zurücksetzen</button>' : ''}</div>
         <div style="max-width:65ch;color:var(--muted);font-size:14px">${adm ? 'Haken setzen oder entfernen, die Änderung gilt sofort für alle mit dieser Rolle. Für einzelne Personen gibt es oben „Zusatzrechte“.' : 'Ändern kann die Rechte nur der Admin.'}</div><div class="scroll"><table><thead><tr><th>Recht</th>${ALL.map(r => `<th class="c">${ROLES[r]}</th>`).join('')}</tr></thead>
         <tbody>${RIGHTS.map(x => `<tr><td>${x[0]}</td>${ALL.map(r => `<td class="c"><input type="checkbox" data-act="recht" data-k="${x[1]}" data-r="${r}" ${roleCan(x[1], r) ? 'checked' : ''} ${!adm || FIX(x[1], r) ? 'disabled' : ''} aria-label="${x[0]}: ${ROLES[r]}" style="width:20px;height:20px;accent-color:var(--accent)"></td>`).join('')}</tr>`).join('')}</tbody></table></div>
