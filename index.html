@@ -95,7 +95,8 @@
   .amt { font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; }
   .amt.in { color:var(--good); } .amt.out { color:var(--bad); }
   .pill { font-size:11px; font-weight:600; letter-spacing:.3px; padding:3px 10px; border-radius:999px; background:var(--soft); border:1px solid var(--line); color:var(--muted); white-space:nowrap; }
-.rsearch { display:flex; gap:8px; align-items:center; margin-top:12px; }
+details.zl { margin-top:4px; } details.zl summary { cursor:pointer; color:var(--muted); font-size:13px; }
+  .rsearch { display:flex; gap:8px; align-items:center; margin-top:12px; }
   .rsearch input { flex:1; max-width:520px; padding:11px 14px; border-radius:12px; border:1px solid var(--line); background:var(--soft); color:inherit; font:inherit; min-height:44px; }
   #gq { width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line); background:var(--soft); color:inherit; font:inherit; min-height:46px; }
   .rasterwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:14px; }
@@ -898,8 +899,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.42', BUILD = 72;
+const VERSION = '2.43', BUILD = 73;
 const CHANGELOG = [
+  { v:'2.43', datum:'2026-11-17', punkte:['Beiträge im Voraus: Bei „+ Zahlung“ lässt sich wählen, für welchen Zeitraum die Zahlung gilt (auch die nächste Session, wird automatisch angelegt). Das Zahldatum bleibt das echte Datum.','Zahldatum kann beim Erfassen rückwirkend gesetzt und danach geändert werden. Einzelne Zahlungen lassen sich ändern und löschen (Zahlungen aufklappen).','Vorauszahlungen zeigen „Im Voraus bezahlt“ und stehen in den Einnahmen mit dem Hinweis „im Voraus für später“.'] },
   { v:'2.42', datum:'2026-11-16', punkte:['Gutschriften und Retouren: Eine Einnahme in Finanzen mit der Kategorie Kostüme, Requisiten oder Teamausstattung gilt als Gutschrift. Man wählt das betroffene Teil aus, in der Rubrik steht dann „Gutschrift − Betrag · netto …“.','Gutschriften mindern die Ausgaben des Bereichs im Budget und in den Ausgaben insgesamt.'] },
   { v:'2.41', datum:'2026-11-16', punkte:['Jede und jeder pflegt die eigenen Größen selbst: Schuhgröße, Shirt, Hose, Jacke/Weste, Hut und Sonstiges (Button „Meine Größen“ bei Mitglieder, Kostüme und Teamausstattung). Der Admin kann weiter alle bearbeiten.'] },
   { v:'2.40', datum:'2026-11-16', punkte:['Einträge aus Kostüme, Requisiten und Teamausstattung erscheinen in Finanzen unter „Offene Posten (unter Vorbehalt)“, mit oder ohne Betrag.','Die Kasse entscheidet pro Posten: verbuchen (Betrag und Datum), streichen oder offen lassen. Erst beim Verbuchen zählt es im Kassenstand.','In den Rubriken steht je Eintrag „offen in der Kasse“, „gebucht“ oder „von Kasse gestrichen“.'] },
@@ -1124,9 +1126,13 @@ const spPct = x => x.abgabe === '' || x.abgabe == null || isNaN(+x.abgabe) ? 0 :
 const spAbg = x => r2((+x.betrag || 0) * spPct(x) / 100), spNet = x => r2((+x.betrag || 0) - spAbg(x));
 const spSub = x => spPct(x) > 0 ? `brutto ${eur(x.betrag)}, Abgabe ${String(spPct(x)).replace('.', ',')} % = ${eur(spAbg(x))}` : '';
 function beitragZahlt(b) { return (b.zahlungen || []).reduce((s, z) => s + (+z.betrag || 0), 0); }
+const nextZeit = z => String(z || '').replace(/(\d{4})\/(\d{2})/, (m, y, y2) => (+y + 1) + '/' + String((+y2 + 1) % 100).padStart(2, '0'));
+const nextVon = v => /^\d{4}-/.test(v || '') ? (+v.slice(0, 4) + 1) + v.slice(4) : '';
+/** Vorauszahlung: Der Zeitraum hat noch nicht begonnen, es ist aber schon (anteilig) gezahlt. */
+const beitragVoraus = b => !!b.von && todayISO() < b.von && beitragZahlt(b) > 0;
 function beitragInfo(b) {
   const sum = beitragZahlt(b), betrag = +b.betrag || 0, rest = Math.max(0, betrag - sum);
-  if (betrag > 0 && sum >= betrag) return { sum, rest:0, status:'bezahlt', label:'Komplett bezahlt', cls:'good' };
+  if (betrag > 0 && sum >= betrag) return { sum, rest:0, status:'bezahlt', label:beitragVoraus(b) ? 'Im Voraus bezahlt' : 'Komplett bezahlt', cls:'good' };
   if (b.modus === 'dauerauftrag') {
     let monate = 0;
     if (b.von) { const st = dObj(b.von), t = new Date(); monate = (t.getFullYear() - st.getFullYear()) * 12 + (t.getMonth() - st.getMonth()) + 1; monate = Math.max(0, Math.min(12, monate)); }
@@ -1187,7 +1193,7 @@ function fin() {
   const spons = r2(spGeld().reduce((t, x) => t + spNet(x), 0)), abgabe = r2(spGeld().reduce((t, x) => t + spAbg(x), 0));
   const gut = D.buchungen.filter(isGut), ein = sum(D.buchungen.filter(b => b.typ === 'E' && !isGut(b))) + beitr + spons, aus = sum(D.buchungen.filter(b => b.typ === 'A')) - sum(gut);
   const kat = {}; D.buchungen.filter(b => b.typ === 'A').forEach(b => { kat[b.kat] = (kat[b.kat] || 0) + (+b.betrag || 0); }); gut.forEach(b => { kat[b.kat] = (kat[b.kat] || 0) - (+b.betrag || 0); });
-  return { ein, aus, saldo:ein - aus, beitr, offen, kat, spons, abgabe, gut:sum(gut) };
+  return { ein, aus, saldo:ein - aus, beitr, offen, kat, spons, abgabe, gut:sum(gut), voraus:r2(D.beitraege.filter(beitragVoraus).reduce((t, b) => t + beitragZahlt(b), 0)) };
 }
 
 /* ---------- Kontakte aus den Terminen ---------- */
@@ -2276,7 +2282,7 @@ const SEC = {
     const bs = [...D.buchungen, ...spGeld().map(x => ({ sp:true, spid:x.id, typ:'E', kat:'Spende', betrag:spNet(x), text:'Spende: ' + x.name + (spAbg(x) ? ' (' + spSub(x) + ')' : ''), datum:x.datum, demo:x.demo }))].sort((a, b) => (b.datum || '0').localeCompare(a.datum || '0'));
     const bt = full ? D.beitraege : D.beitraege.filter(b => b.mid === D.me);
     return head('Finanzen', 'Gesamtbeträge und Budget sehen alle. Beiträge siehst du nur für dich selbst, die Liste aller Zahlungen und die einzelnen Buchungen sehen Admin und Kasse.', addBtn('buchungen', '+ Buchung')) +
-      `<div class="kpis"><div class="kpi"><small>Einnahmen</small><b>${eur(f.ein)}</b><span>davon Beiträge ${eur(f.beitr)} · Spenden nach Abgabe ${eur(f.spons)}${f.abgabe ? ' · an den Verein abgegeben ' + eur(f.abgabe) : ''}</span></div>
+      `<div class="kpis"><div class="kpi"><small>Einnahmen</small><b>${eur(f.ein)}</b><span>davon Beiträge ${eur(f.beitr)}${f.voraus ? ' (' + eur(f.voraus) + ' im Voraus für später)' : ''} · Spenden nach Abgabe ${eur(f.spons)}${f.abgabe ? ' · an den Verein abgegeben ' + eur(f.abgabe) : ''}</span></div>
         <div class="kpi"><small>Ausgaben</small><b>${eur(f.aus)}</b><span>${can('buchungen') ? D.buchungen.filter(b => b.typ === 'A').length + ' Buchungen' + (f.gut ? ' · abzüglich Gutschriften ' + eur(f.gut) : '') : 'laut Kasse'}</span></div>
         <div class="kpi"><small>Kassenstand</small><b>${eur(f.saldo)}</b><span>Einnahmen minus Ausgaben</span></div>
         <div class="kpi"><small>Beiträge offen</small><b>${eur(f.offen)}</b><span>noch nicht eingegangen</span></div></div>
@@ -2290,9 +2296,10 @@ const SEC = {
           ${full ? (() => { const infos = D.beitraege.map(beitragInfo), cnt = st => infos.filter(i => i.status === st).length, rest = infos.reduce((s, i) => s + i.rest, 0);
             return `<div class="chips"><span class="pill good">${cnt('bezahlt')} komplett bezahlt</span><span class="pill good">${cnt('aktuell')} im Plan</span><span class="pill warn">${cnt('offen')} offen</span><span class="pill bad">${cnt('rueckstand')} im Rückstand</span><span class="pill">Rest insgesamt ${eur(rest)}</span></div>`; })() : '<div class="sub" style="color:var(--muted);font-size:13px">Du siehst nur deinen eigenen Beitrag. Die Übersicht aller Mitglieder sehen Admin und Kasse.</div>'}
           ${rows(bt, b => { const info = beitragInfo(b);
-            return `<div class="row"><div class="grow"><b>${esc(mname(b.mid))}</b>${demo(b)}<div class="sub">${esc(b.zeitraum)} · ${b.modus === 'dauerauftrag' ? 'Dauerauftrag' : 'Einmalzahlung'} · ${eur(info.sum)} von ${eur(b.betrag)} bezahlt${info.rest > 0 ? ' · Rest ' + eur(info.rest) : ''}</div></div>
+            return `<div class="row"><div class="grow"><b>${esc(mname(b.mid))}</b>${demo(b)}<div class="sub">${esc(b.zeitraum)} · ${b.modus === 'dauerauftrag' ? 'Dauerauftrag' : 'Einmalzahlung'} · ${eur(info.sum)} von ${eur(b.betrag)} bezahlt${info.rest > 0 ? ' · Rest ' + eur(info.rest) : ''}</div>
+              ${full && (b.zahlungen || []).length ? `<details class="zl"><summary>Zahlungen (${b.zahlungen.length})</summary>${b.zahlungen.map((z, i) => `<div class="sub">${esc(fmtDate(z.datum))} · ${eur(z.betrag)}${z.notiz ? ' · ' + esc(String(z.notiz).slice(0, 40)) : ''}${z.monat ? '' : ` <button class="btn sm" data-act="btZEdit" data-id="${b.id}" data-i="${i}">Ändern</button>`}</div>`).join('')}</details>` : ''}</div>
               <span class="pill ${info.cls}">${info.label}</span>
-              ${full && info.rest > 0 ? `<button class="btn sm" data-act="btPayOpen" data-id="${b.id}">+ Zahlung</button>` : ''}${full ? editBtn('beitraege', b.id) : ''}</div>`; }, 'Für dich ist kein Beitrag hinterlegt.')}</div>
+              ${full ? `<button class="btn sm" data-act="btPayOpen" data-id="${b.id}">+ Zahlung</button>` : ''}${full ? editBtn('beitraege', b.id) : ''}</div>`; }, 'Für dich ist kein Beitrag hinterlegt.')}</div>
       </div>
       ${full ? rasterHTML() : ''}
       ${can('buchungen') ? gebHTML() : ''}
@@ -3045,16 +3052,36 @@ const ACT = {
     const b = D.beitraege.find(x => x.id === d.id); if (!b || !can('beitraege')) return;
     const info = beitragInfo(b); FORM = { bt:b.id };
     openDlg(`<h3>Zahlung erfassen – ${esc(mname(b.mid))}</h3><div class="sub">${esc(b.zeitraum)} · bisher ${eur(info.sum)} von ${eur(b.betrag)} · Rest ${eur(info.rest)}</div>
-      <label class="f" for="payDatum">Datum<input id="payDatum" type="date" value="${todayISO()}"></label>
-      <label class="f" for="payBetrag">Betrag in €<input id="payBetrag" type="number" step="0.01" min="0" inputmode="decimal" value="${b.modus === 'dauerauftrag' ? (b.rate || '') : info.rest}"></label>
+      <label class="f" for="payDatum">Zahldatum (wann das Geld auf dem Konto war, rückwirkend änderbar)<input id="payDatum" type="date" value="${todayISO()}"></label>
+      <label class="f" for="payBetrag">Betrag in €<input id="payBetrag" type="number" step="0.01" min="0" inputmode="decimal" value="${b.modus === 'dauerauftrag' ? (b.rate || '') : (info.rest || b.betrag || '')}"></label>
+      <label class="f" for="payGilt">Gilt für (Zeitraum)<select id="payGilt"><option value="own">${esc(b.zeitraum)}</option>${D.beitraege.filter(x => x.mid === b.mid && x.id !== b.id).map(x => `<option value="id:${x.id}">${esc(x.zeitraum)}</option>`).join('')}${D.beitraege.some(x => x.mid === b.mid && x.zeitraum === nextZeit(b.zeitraum)) || nextZeit(b.zeitraum) === b.zeitraum ? '' : `<option value="next">${esc(nextZeit(b.zeitraum))} (im Voraus, wird neu angelegt)</option>`}</select></label>
       <div class="acts"><button class="btn dark" data-act="btPaySave">Speichern</button><button class="btn" data-act="close">Abbrechen</button></div>`);
   },
   btPaySave() {
     if (!can('beitraege')) return;
     const b = D.beitraege.find(x => x.id === FORM.bt); if (!b) return;
     const betrag = parseFloat($('payBetrag').value.replace(',', '.')); if (!betrag || betrag <= 0) return;
-    (b.zahlungen = b.zahlungen || []).push({ datum:$('payDatum').value || todayISO(), betrag, quelle:'manuell' }); delete b.demo;
+    const gilt = $('payGilt') ? $('payGilt').value : 'own'; let ziel = b;
+    if (gilt === 'next') { const z = nextZeit(b.zeitraum); ziel = D.beitraege.find(x => x.mid === b.mid && x.zeitraum === z) || (D.beitraege[D.beitraege.push({ id:uid('bt'), mid:b.mid, zeitraum:z, betrag:b.betrag, modus:b.modus, von:nextVon(b.von), rate:b.rate || 0, zahlungen:[] }) - 1]); }
+    else if (gilt.indexOf('id:') === 0) ziel = D.beitraege.find(x => x.id === gilt.slice(3)) || b;
+    (ziel.zahlungen = ziel.zahlungen || []).push({ datum:$('payDatum').value || todayISO(), betrag, quelle:'manuell' }); delete b.demo; delete ziel.demo;
     save(); closeDlg(); render();
+  },
+  btZEdit(d) {
+    const b = D.beitraege.find(x => x.id === d.id), z = b && (b.zahlungen || [])[+d.i]; if (!z || !can('beitraege')) return; FORM = { bt:b.id, zi:+d.i };
+    openDlg(`<h3>Zahlung ändern – ${esc(mname(b.mid))}</h3><div class="sub">${esc(b.zeitraum)}</div>
+      <label class="f" for="zDatum">Zahldatum<input id="zDatum" type="date" value="${esc(z.datum || '')}"></label>
+      <label class="f" for="zBetrag">Betrag in €<input id="zBetrag" type="number" step="0.01" min="0" inputmode="decimal" value="${+z.betrag || ''}"></label>
+      <div class="acts"><button class="btn dark" data-act="btZSave">Speichern</button><button class="btn" data-act="btZDel">Zahlung löschen</button><button class="btn" data-act="close">Abbrechen</button></div>`);
+  },
+  btZSave() {
+    if (!can('beitraege')) return; const b = D.beitraege.find(x => x.id === FORM.bt), z = b && (b.zahlungen || [])[FORM.zi]; if (!z) return;
+    const bet = parseFloat(String($('zBetrag').value).replace(',', '.')); if (!bet || bet <= 0 || !$('zDatum').value) return;
+    z.datum = $('zDatum').value; z.betrag = bet; save(); closeDlg(); render();
+  },
+  btZDel() {
+    if (!can('beitraege')) return; const b = D.beitraege.find(x => x.id === FORM.bt); if (!b || !(b.zahlungen || [])[FORM.zi]) return; const i = FORM.zi;
+    askConfirm('Diese Zahlung wirklich löschen?', () => { b.zahlungen.splice(i, 1); });
   },
   btImportOpen() {
     if (!can('beitraege')) return; FORM = { imp:[] };
