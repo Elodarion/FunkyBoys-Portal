@@ -1,65 +1,104 @@
 {
- "status": {
-  "letzterLauf": "2026-11-19",
-  "startort": "Jülich-Güsten",
-  "maxMinuten": 60,
-  "notiz": "8 Suchen zu allen Zielregionen ergaben keine neuen belegten Termine in Reichweite. Nicht aufgenommen: Showtanzspektakel Aachen (28.11.2026, nur feste Mitgliedsvereine, keine Jury), Grenzlandtanzturnier Düren (nur Ausschreibung 2025), Männerballettfestivals Biersdorf und Lahnstein (zu weit bzw. 2026 vergangen)."
- },
- "funde": [
-  {
-   "id": "2027-01-15-boese-buben-sitzung-eschweiler",
-   "art": "Gastauftritt",
-   "datum": "2027-01-15",
-   "fahrzeit": 25,
-   "gefunden": "2026-11-15",
-   "hinweis": "Kein Turnier, sondern die eigene Sitzung eines Männerballetts. Ob Gastgruppen auftreten, müsstet ihr anfragen.",
-   "name": "Sitzung der Bösen Buben (Männerballett Eschweiler)",
-   "ort": "Hotel Flatten, Eschweiler",
-   "quelle": "https://www.maennerballett-boebu.de/termine/",
-   "veranstalter": "Böse Buben, Kolpingsfamilie Eschweiler",
-   "zeit": "20:00"
+  "status": {
+    "letzterLauf": "2026-11-19",
+    "startort": "Jülich-Güsten",
+    "maxMinuten": 60,
+    "notiz": "8 Suchen zu allen Zielregionen ergaben keine neuen belegten Termine in Reichweite. Nicht aufgenommen: Showtanzspektakel Aachen (28.11.2026, nur feste Mitgliedsvereine, keine Jury), Grenzlandtanzturnier Düren (nur Ausschreibung 2025), Männerballettfestivals Biersdorf und Lahnstein (zu weit bzw. 2026 vergangen)."
   },
-  {
-   "id": "2027-01-22-heistern-duck-las-showtanzturnier",
-   "art": "Turnier",
-   "datum": "2027-01-22",
-   "fahrzeit": 30,
-   "gebuehr": "25 €",
-   "gefunden": "2026-11-15",
-   "hinweis": "Eigene Kategorie Männerballett. Startgeld 25 €, zahlbar bis 01.12.2026, ein Teil kommt am Abend als Wertmarken zurück.",
-   "name": "5. Heisterner Duck Las Showtanzturnier",
-   "ort": "Festzelt Heistern, Langerwehe",
-   "quelle": "https://www.kagehei.de/wp-content/uploads/Einladung-Showtanzturnier-2027.pdf",
-   "veranstalter": "Ka-Ge-Hei e.V.",
-   "zeit": "19:00"
-  },
-  {
-   "id": "2027-01-22-maennerballettturnier-inden-altdorf",
-   "art": "Turnier",
-   "datum": "2027-01-22",
-   "fahrzeit": 15,
-   "gebuehr": "",
-   "gefunden": "2026-11-15",
-   "hinweis": "Reines Männerballettturnier, Anmeldeweg und Startgeld stehen nicht auf der Seite, also beim Verein anfragen. Liegt am selben Abend wie die Devils Dance Night und das Heisterner Showtanzturnier.",
-   "name": "20. Männerballettturnier Inden/Altdorf",
-   "ort": "Festzelt auf dem Driesch, Inden/Altdorf",
-   "quelle": "https://www.lustige-jonge.de/veranstaltungen-aktuelles/",
-   "veranstalter": "KG Lustige Jonge Inden/Altdorf",
-   "zeit": "19:30"
-  },
-  {
-   "id": "2027-02-27-bvdm-nordwestdeutsche-meisterschaft-oberbruch",
-   "art": "Turnier",
-   "datum": "2027-02-27",
-   "fahrzeit": 35,
-   "gebuehr": "",
-   "gefunden": "2026-11-15",
-   "hinweis": "Landesmeisterschaft für NRW, Niedersachsen und Schleswig-Holstein, Anmeldung läuft seit 15.05.2026; die Verbandsseite nennt den 30. November als Anmeldeschluss für Landesmeisterschaften. Ob eine Mitgliedschaft im BvDM nötig ist, steht dort nicht, bitte vorher klären.",
-   "name": "Nord-West-Deutsche Meisterschaft der Männerballette (BvDM)",
-   "ort": "Heinsberg-Oberbruch",
-   "quelle": "https://www.b-v-d-m.de/landesmeisterschaft/nord-west-deutschland",
-   "veranstalter": "Bundesverband Deutscher Männerballette e.V.",
-   "zeit": ""
-  }
- ]
+  "funde": [
+    {
+      "id": "2027-01-15-boese-buben-sitzung-eschweiler",
+      "art": "Gastauftritt",
+      "datum": "2027-01-15",
+      "fahrzeit": 25,
+      "gefunden": "2026-11-15",
+      "hinweis": "Kein Turnier, sondern die eigene Sitzung eines Männerballetts. Ob Gastgruppen auftreten, müsstet ihr anfragen.",
+      "name": "Sitzung der Bösen Buben (Männerballett Eschweiler)",
+      "ort": "Hotel Flatten, Eschweiler",
+      "quelle": "https://www.maennerballett-boebu.de/termine/",
+      "veranstalter": "Böse Buben, Kolpingsfamilie Eschweiler",
+      "zeit": "20:00"
+    },
+    {
+      "id": "2027-01-22-heistern-duck-las-showtanzturnier",
+      "art": "Turnier",
+      "datum": "2027-01-22",
+      "fahrzeit": 30,
+      "gebuehr": "25 €",
+      "gefunden": "2026-11-15",
+      "hinweis": "Eigene Kategorie Männerballett. Startgeld 25 €, zahlbar bis 01.12.2026, ein Teil kommt am Abend als Wertmarken zurück.",
+      "name": "5. Heisterner Duck Las Showtanzturnier",
+      "ort": "Festzelt Heistern, Langerwehe",
+      "quelle": "https://www.kagehei.de/wp-content/uploads/Einladung-Showtanzturnier-2027.pdf",
+      "veranstalter": "Ka-Ge-Hei e.V.",
+      "zeit": "19:00"
+    },
+    {
+      "id": "2027-01-22-maennerballettturnier-inden-altdorf",
+      "art": "Turnier",
+      "datum": "2027-01-22",
+      "fahrzeit": 15,
+      "gebuehr": "",
+      "gefunden": "2026-11-15",
+      "hinweis": "Reines Männerballettturnier, Anmeldeweg und Startgeld stehen nicht auf der Seite, also beim Verein anfragen. Liegt am selben Abend wie die Devils Dance Night und das Heisterner Showtanzturnier.",
+      "name": "20. Männerballettturnier Inden/Altdorf",
+      "ort": "Festzelt auf dem Driesch, Inden/Altdorf",
+      "quelle": "https://www.lustige-jonge.de/veranstaltungen-aktuelles/",
+      "veranstalter": "KG Lustige Jonge Inden/Altdorf",
+      "zeit": "19:30"
+    },
+    {
+      "art": "Gastauftritt",
+      "fahrzeit": 25,
+      "gefunden": "2026-11-19",
+      "quelle": "https://www.instagram.com/kgahlehoot1950/",
+      "ort": "Eschweiler über Feld",
+      "veranstalter": "KG „Ahle Hoot“ 1950 e.V. Eschweiler über Feld",
+      "zeit": "",
+      "id": "2027-01-23-kostuemsitzung-ahle-hoot",
+      "datum": "2027-01-23",
+      "name": "Kostümsitzung der KG Ahle Hoot",
+      "hinweis": "Eigene Sitzung der Jubiläumssession 2026/27. Termin laut Instagram-Programm des Vereins. Ob Gastgruppen auftreten, müsstet ihr anfragen. Halle und Beginn sind nicht genannt."
+    },
+    {
+      "art": "Gastauftritt",
+      "fahrzeit": 25,
+      "gefunden": "2026-11-19",
+      "quelle": "https://www.instagram.com/kgahlehoot1950/",
+      "ort": "Eschweiler über Feld",
+      "veranstalter": "KG „Ahle Hoot“ 1950 e.V. Eschweiler über Feld",
+      "zeit": "",
+      "id": "2027-02-06-jecke-dance-night-ahle-hoot",
+      "datum": "2027-02-06",
+      "name": "Jecke Dance Night der KG Ahle Hoot",
+      "hinweis": "Tanzveranstaltung laut Instagram-Programm der Jubiläumssession. Ob dort Showtanz-Gäste vorgesehen sind, müsstet ihr anfragen."
+    },
+    {
+      "art": "Gastauftritt",
+      "fahrzeit": 25,
+      "gefunden": "2026-11-19",
+      "quelle": "https://www.instagram.com/kgahlehoot1950/",
+      "ort": "Eschweiler über Feld",
+      "veranstalter": "KG „Ahle Hoot“ 1950 e.V. Eschweiler über Feld",
+      "zeit": "",
+      "id": "2027-02-08-after-zoch-party-ahle-hoot",
+      "datum": "2027-02-08",
+      "name": "Rosenmontagszug mit After-Zoch-Party der KG Ahle Hoot",
+      "hinweis": "Rosenmontag laut Instagram-Programm. Ob ein Bühnenprogramm für Gastgruppen geplant ist, müsstet ihr anfragen."
+    },
+    {
+      "id": "2027-02-27-bvdm-nordwestdeutsche-meisterschaft-oberbruch",
+      "art": "Turnier",
+      "datum": "2027-02-27",
+      "fahrzeit": 35,
+      "gebuehr": "",
+      "gefunden": "2026-11-15",
+      "hinweis": "Landesmeisterschaft für NRW, Niedersachsen und Schleswig-Holstein, Anmeldung läuft seit 15.05.2026; die Verbandsseite nennt den 30. November als Anmeldeschluss für Landesmeisterschaften. Ob eine Mitgliedschaft im BvDM nötig ist, steht dort nicht, bitte vorher klären.",
+      "name": "Nord-West-Deutsche Meisterschaft der Männerballette (BvDM)",
+      "ort": "Heinsberg-Oberbruch",
+      "quelle": "https://www.b-v-d-m.de/landesmeisterschaft/nord-west-deutschland",
+      "veranstalter": "Bundesverband Deutscher Männerballette e.V.",
+      "zeit": ""
+    }
+  ]
 }
