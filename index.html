@@ -899,8 +899,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.44', BUILD = 74;
+const VERSION = '2.45', BUILD = 75;
 const CHANGELOG = [
+  { v:'2.45', datum:'2026-11-20', punkte:['Social Media ist unterteilt in Alle, Reels, Posts und Stories.','Je Unterrubrik gibt es „Mit Claude schreiben“: beschreiben (tippen oder per Spracheingabe), Claude schreibt den Text, speichern als Vorschlag. Selbst schreiben geht weiterhin.','Claude ist direkt im Portal erreichbar, sobald der Schlüssel im Google-Skript hinterlegt ist (nur Trainerinnen und Admin).'] },
   { v:'2.44', datum:'2026-11-19', punkte:['Offene Beiträge zählen nur noch für Zeiträume, die schon begonnen haben. Vorab angelegte Beiträge der nächsten Session erscheinen als „Ab <Datum>“ und fließen nicht in „Beiträge offen“ ein.'] },
   { v:'2.43', datum:'2026-11-17', punkte:['Beiträge im Voraus: Bei „+ Zahlung“ lässt sich wählen, für welchen Zeitraum die Zahlung gilt (auch die nächste Session, wird automatisch angelegt). Das Zahldatum bleibt das echte Datum.','Zahldatum kann beim Erfassen rückwirkend gesetzt und danach geändert werden. Einzelne Zahlungen lassen sich ändern und löschen (Zahlungen aufklappen).','Vorauszahlungen zeigen „Im Voraus bezahlt“ und stehen in den Einnahmen mit dem Hinweis „im Voraus für später“.'] },
   { v:'2.42', datum:'2026-11-16', punkte:['Gutschriften und Retouren: Eine Einnahme in Finanzen mit der Kategorie Kostüme, Requisiten oder Teamausstattung gilt als Gutschrift. Man wählt das betroffene Teil aus, in der Rubrik steht dann „Gutschrift − Betrag · netto …“.','Gutschriften mindern die Ausgaben des Bereichs im Budget und in den Ausgaben insgesamt.'] },
@@ -2456,8 +2457,8 @@ const SEC = {
         <div style="white-space:pre-wrap;max-width:65ch">${esc(p.text)}</div><div class="sub" style="color:var(--muted);font-size:13px">${esc(mname(p.von))} · ${fmtDate(p.datum)}</div></div>`).join('');
   },
   social() {
-    const t = todayISO(), ok = can('socialOk'), cls = { Vorschlag:'warn', Freigegeben:'good', Gepostet:'' };
-    const all = [...D.social].sort((a, b) => a.datum.localeCompare(b.datum));
+    const t = todayISO(), ok = can('socialOk'), cls = { Vorschlag:'warn', Freigegeben:'good', Gepostet:'' }, tab = UI.soTab || 'alle';
+    const all = D.social.filter(p => tab === 'alle' || soKind(p) === tab).sort((a, b) => a.datum.localeCompare(b.datum));
     const vor = all.filter(p => p.status === 'Vorschlag'), frei = all.filter(p => p.status === 'Freigegeben'), done = all.filter(p => p.status === 'Gepostet').reverse();
     const nx = frei.find(p => p.datum >= t) || frei[0];
     const row = p => { const mayEdit = ok || p.status === 'Vorschlag';
@@ -2468,14 +2469,15 @@ const SEC = {
       ${ok && p.status === 'Freigegeben' ? `<button class="btn sm" data-act="socSet" data-id="${p.id}" data-v="Vorschlag">Freigabe zurücknehmen</button>` : ''}
       ${p.status === 'Freigegeben' ? `<button class="btn sm" data-act="socSet" data-id="${p.id}" data-v="Gepostet">Als gepostet markieren</button>` : ''}
       ${mayEdit ? `<button class="btn sm" data-act="socText" data-id="${p.id}">${p.text ? 'Text neu mit Claude' : 'Text mit Claude'}</button><button class="btn sm" data-act="edit" data-col="social" data-id="${p.id}">Bearbeiten</button>` : ''}</div>`; };
-    return head('Social Media', 'Euer Redaktionsplan. Jeder kann Posts vorschlagen, freigeben können nur die Trainerinnen.', addBtn('social', '+ Post vorschlagen')) +
+    return head('Social Media', 'Euer Redaktionsplan. Jeder kann Posts vorschlagen, freigeben können nur die Trainerinnen.', addBtn('social', '+ Post vorschlagen')) + soTabs() +
+      (tab !== 'alle' && can('postfach') ? soWriter(tab) : '') +
       `<div class="kpis"><div class="kpi"><small>Nächster freigegebener Post</small><b>${nx ? fmtDate(nx.datum).slice(4, 10) : 'keiner'}</b><span>${nx ? esc(nx.thema) : ''}</span></div>
         <div class="kpi"><small>Wartet auf Freigabe</small><b>${vor.length}</b><span>${ok ? 'du kannst freigeben' : 'Freigabe durch die Trainerinnen'}</span></div>
         <div class="kpi"><small>Gepostet</small><b>${done.length}</b><span>in dieser Liste</span></div></div>
-      <div class="panel"><div class="ph"><h3>Claude hilft mit</h3></div>
+      ${tab === 'alle' ? `<div class="panel"><div class="ph"><h3>Claude hilft mit</h3></div>
         <div style="max-width:65ch;color:var(--muted);font-size:14px">Claude kennt eure anstehenden Auftritte und euer Motto. Lass dir einen Plan für die nächsten vier Wochen vorschlagen oder zu einem einzelnen Post den Text schreiben. Alles von Claude landet als Vorschlag und braucht wie jeder andere Post die Freigabe.</div>
         <div class="chips"><button class="btn dark" data-act="socPlan">Plan für 4 Wochen vorschlagen</button><button class="btn" data-act="socIdeas">10 Post-Ideen sammeln</button></div>
-        <div id="aiMsg" role="status" style="font-size:14px;font-weight:700;color:var(--accent);white-space:pre-wrap">${esc(AI.msg)}</div></div>
+        <div id="aiMsg" role="status" style="font-size:14px;font-weight:700;color:var(--accent);white-space:pre-wrap">${esc(AI.msg)}</div></div>` : ''}
       <div class="panel"><div class="ph"><h3>Wartet auf Freigabe (${vor.length})</h3></div>${rows(vor, row, 'Keine offenen Vorschläge.')}</div>
       <div class="panel"><div class="ph"><h3>Freigegeben (${frei.length})</h3></div>${rows(frei, row, 'Noch nichts freigegeben.')}</div>
       ${done.length ? `<div class="panel"><div class="ph"><h3>Gepostet (${done.length})</h3></div>${rows(done, row, '')}</div>` : ''}`;
@@ -2597,6 +2599,27 @@ function route() { AI.msg = ''; UI.vmMsg = ''; if (UI._keep) UI._keep = false; e
 
 /* ---------- Claude ---------- */
 const AI = { busy:false, msg:'' };
+const SO_TABS = [['alle', 'Alle'], ['reels', 'Reels'], ['posts', 'Posts'], ['stories', 'Stories']];
+const soKind = p => p.format === 'Reel' ? 'reels' : p.format === 'Story' ? 'stories' : 'posts';
+const SO_FMT = { reels:'Reel', posts:'Beitrag', stories:'Story' };
+const soTabs = () => `<div class="tabs" role="tablist">${SO_TABS.map(t => `<a href="#social" role="tab" aria-selected="${(UI.soTab || 'alle') === t[0]}" class="${(UI.soTab || 'alle') === t[0] ? 'on' : ''}" data-act="soTab" data-v="${t[0]}">${t[1]} (${t[0] === 'alle' ? D.social.length : D.social.filter(p => soKind(p) === t[0]).length})</a>`).join('')}</div>`;
+function soPrompt(kind, brief, datum) {
+  const task = kind === 'reels' ? 'Schreibe für ein Reel (Instagram und TikTok): 1) eine kurze Videoidee mit Hook in den ersten 2 Sekunden, 3 bis 5 Szenen und einem Musik-Vorschlag, 2) darunter die Caption mit 6 bis 10 Hashtags.'
+    : kind === 'stories' ? 'Schreibe 3 bis 5 Story-Folien. Pro Folie ein kurzer Text (höchstens 12 Wörter) und, wo es passt, eine Sticker-Idee (Umfrage, Countdown, Emoji-Slider).'
+    : 'Schreibe den Text für einen Instagram-Beitrag: 2 bis 5 Sätze, darunter 6 bis 10 Hashtags.';
+  return aiCtx() + '\n\n' + task + ' Antworte nur mit dem fertigen Ergebnis, ohne Einleitung.\nGeplantes Datum: ' + datum + '\nWorum es gehen soll (so haben es die Trainerinnen beschrieben):\n' + brief;
+}
+function soWriter(kind) {
+  const nm = { reels:'Reel', posts:'Post', stories:'Story' }[kind];
+  return `<div class="panel"><div class="ph"><h3>${nm} mit Claude schreiben</h3></div>
+    <div class="sub" style="color:var(--muted);max-width:65ch">Beschreibe in ein paar Worten, worum es gehen soll. Du kannst tippen oder ins Mikrofon sprechen. Claude schreibt daraus den Text. Das Ergebnis kannst du ändern und als Vorschlag speichern. Er braucht wie jeder Post die Freigabe.</div>
+    <label class="f" for="soIn">Worum geht es?<textarea id="soIn" rows="4" placeholder="Zum Beispiel: Rückblick auf den Auftritt am Samstag, wir haben richtig Gas gegeben und das Publikum war toll">${esc(UI.soIn || '')}</textarea></label>
+    <label class="f" for="soDat">Geplantes Datum<input id="soDat" type="date" value="${esc(UI.soDat || todayISO())}"></label>
+    <div class="chips"><button class="btn dark" data-act="soWrite" data-v="${kind}">Text schreiben lassen</button><button class="btn" id="soMicBtn" data-act="soMic" aria-label="Spracheingabe ein oder aus">Mikrofon</button><button class="btn" data-act="soOwn" data-v="${kind}">Selbst schreiben</button></div>
+    <div id="soHint" role="status" style="font-size:13px;color:var(--muted)"></div>
+    <div id="aiMsg" role="status" style="font-size:14px;font-weight:700;color:var(--accent);white-space:pre-wrap">${esc(AI.msg)}</div>
+    ${UI.soOut && UI.soOutKind === kind ? `<label class="f" for="soOut">Vorschlag von Claude (du kannst ihn ändern)<textarea id="soOut" rows="8">${esc(UI.soOut)}</textarea></label><div class="chips"><button class="btn pri" data-act="soSave" data-v="${kind}">Als Vorschlag speichern</button><button class="btn" data-act="soCopy">Kopieren</button><button class="btn" data-act="soWrite" data-v="${kind}">Neu schreiben</button></div>` : ''}</div>`;
+}
 let SAMPLE;
 async function getSample() {
   if (SAMPLE !== undefined) return SAMPLE;
@@ -2617,6 +2640,12 @@ function showPrompt(prompt) {
 async function askClaude(prompt, onDone) {
   if (AI.busy) return;
   const s = await getSample();
+  if (!s && apiOn() && can('postfach')) {
+    AI.busy = true; setAi('Claude denkt nach …');
+    try { const j = await apiCall('ai', { prompt }); AI.msg = onDone(j.text || '') || ''; save(); if (UI.sec === 'social') render(); }
+    catch (e) { const m = String((e && e.message) || ''); if (m.indexOf('KEY_FEHLT') >= 0) { setAi(''); showPrompt(prompt); } else setAi(m || 'Das hat nicht geklappt. Bitte noch einmal versuchen.'); }
+    AI.busy = false; return;
+  }
   if (!s) return showPrompt(prompt);
   AI.busy = true; setAi('Claude denkt nach …');
   try { const r = await s(prompt); AI.msg = onDone(r.text || '') || ''; save(); if (UI.sec === 'social') render(); }
@@ -2884,6 +2913,29 @@ const ACT = {
   socSet(d) { const p = D.social.find(x => x.id === d.id); if (!p) return;
     if (d.v === 'Gepostet') { if (p.status !== 'Freigegeben') return; } else if (!can('socialOk')) return;
     p.status = d.v; delete p.demo; AI.msg = ''; save(); render(); },
+  soTab(d) { UI.soTab = d.v; render(); },
+  soOwn(d) { openEdit('social', null, { format:SO_FMT[d.v] || 'Beitrag', datum:($('soDat') && $('soDat').value) || todayISO(), text:($('soOut') && $('soOut').value) || '' }); },
+  soWrite(d) {
+    const ta = $('soIn'), brief = ta ? ta.value.trim() : ''; if (!brief) { setAi('Bitte erst kurz beschreiben, worum es gehen soll.'); if (ta) ta.focus(); return; }
+    UI.soIn = brief; UI.soDat = $('soDat') ? $('soDat').value : todayISO();
+    askClaude(soPrompt(d.v, brief, UI.soDat), text => { if (!text.trim()) return 'Claude hat nichts geliefert. Bitte noch einmal versuchen.'; UI.soOut = text.trim(); UI.soOutKind = d.v; return 'Fertig. Schau dir den Vorschlag unten an.'; });
+  },
+  soSave(d) {
+    const out = $('soOut') ? $('soOut').value.trim() : ''; if (!out) return; const brief = (UI.soIn || '').split('\n')[0].slice(0, 90) || 'Beitrag';
+    D.social.push({ id:uid('so'), datum:(UI.soDat || todayISO()), plattform:'Instagram', format:SO_FMT[d.v] || 'Beitrag', thema:brief, status:'Vorschlag', wer:D.me, text:out, ki:true });
+    UI.soOut = ''; UI.soIn = ''; AI.msg = 'Gespeichert. Der Vorschlag wartet jetzt auf Freigabe.'; save(); render();
+  },
+  async soCopy() { const ta = $('soOut'); if (!ta) return; let ok = false; try { await navigator.clipboard.writeText(ta.value); ok = true; } catch (e) {} if (!ok) { ta.focus(); ta.select(); } setAi(ok ? 'Kopiert.' : 'Text ist markiert. Bitte lange drücken und „Kopieren“ wählen.'); },
+  soMic() {
+    const Rec = window.SpeechRecognition || window.webkitSpeechRecognition, hint = $('soHint'), btn = $('soMicBtn');
+    if (!Rec) { if (hint) hint.textContent = 'Spracheingabe geht in diesem Browser nicht. Tippe stattdessen auf das Mikrofon deiner Handy-Tastatur.'; return; }
+    if (UI._rec) { try { UI._rec.stop(); } catch (e) {} return; }
+    const r = new Rec(); r.lang = 'de-DE'; r.continuous = true; r.interimResults = false;
+    r.onresult = ev => { let t = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) if (ev.results[i].isFinal) t += ev.results[i][0].transcript + ' '; const ta = $('soIn'); if (ta && t.trim()) { ta.value = (ta.value ? ta.value.replace(/\s*$/, ' ') : '') + t.trim(); UI.soIn = ta.value; } };
+    r.onend = () => { UI._rec = null; const b = $('soMicBtn'); if (b) b.textContent = 'Mikrofon'; const h = $('soHint'); if (h) h.textContent = ''; };
+    r.onerror = ev => { const h = $('soHint'); if (h) h.textContent = ev && ev.error === 'not-allowed' ? 'Das Mikrofon ist für diese Seite gesperrt. Erlaube es in den Browser-Einstellungen oder nutze das Mikrofon der Tastatur.' : 'Die Spracheingabe hat nicht geklappt. Bitte noch einmal versuchen.'; };
+    UI._rec = r; try { r.start(); if (btn) btn.textContent = 'Aufnahme beenden'; if (hint) hint.textContent = 'Ich höre zu. Sprich los, tippe danach auf „Aufnahme beenden“.'; } catch (e) { UI._rec = null; }
+  },
   socPlan() {
     askClaude(aiCtx() + '\n\nSchon im Plan:\n' + (D.social.map(p => `- ${p.datum}: ${p.thema}`).join('\n') || '- nichts') +
       '\n\nSchlage 6 weitere Posts für die nächsten vier Wochen vor, passend zu den Auftritten (Ankündigung vorher, Rückblick danach) und mit etwas Abwechslung. ' +
@@ -3151,6 +3203,8 @@ let rqTimer = null;
 document.addEventListener('input', e => {
   const iid = e.target && e.target.id;
   if (iid === 'gq') { const r = $('gRes'); if (r) r.innerHTML = globalSearchHTML(e.target.value); return; }
+  if (iid === 'soIn') { UI.soIn = e.target.value; return; }
+  if (iid === 'soDat') { UI.soDat = e.target.value; return; }
   if (iid === 'rq') { UI.rq = e.target.value; clearTimeout(rqTimer); rqTimer = setTimeout(() => { render(); const el = $('rq'); if (el && el.focus) { el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (x) {} } }, 180); return; }
   if (e.target && e.target.id === 'helpQ') { UI.hq = e.target.value; const l = $('helpList'); if (l) l.innerHTML = helpListHTML(); return; }
   const t = e.target, k = t && t.dataset && t.dataset.th; if (!k || me().rolle !== 'admin') return;

@@ -2,7 +2,7 @@
  * Funky Boys Portal – Google Apps Script (Dateiablage in Drive + Mailversand).
  * Läuft im Google-Konto der Funky Boys. Jede Anfrage trägt das Firebase-Login-Token
  * des Portal-Nutzers; das Skript prüft es und schaut nach, ob die Adresse im Portal freigeschaltet ist.
- * Neu: Posteingang lesen, im Verlauf antworten, als gelesen markieren, in Gmail-Ordner (Labels) ablegen, in den Papierkorb (Gmail der Gruppe).
+ * Neu: Schreiben mit Claude (Aktion ai, Schlüssel in den Skripteigenschaften). Posteingang lesen, im Verlauf antworten, als gelesen markieren, in Gmail-Ordner (Labels) ablegen, in den Papierkorb (Gmail der Gruppe).
  * Es sind keine Passwörter oder Schlüssel nötig (der Firebase-Webschlüssel ist öffentlich).
  */
 const FIREBASE_API_KEY = 'AIzaSyACAImQ3HoiXHNIK8QAmioE8VEoIWa4voA';
@@ -36,6 +36,7 @@ function doPost(e) {
       case 'read': return out_(read_(r, u));
       case 'file': return out_(file_(r, u));
       case 'trash': return out_(trash_(r, u));
+      case 'ai': return out_(ai_(r, u));
       default: throw new Error('Unbekannte Aktion.');
     }
   } catch (err) { return out_({ ok: false, error: String(err && err.message || err) }); }
@@ -108,6 +109,29 @@ function mail_(r, u) {
   if (!betreff || !text) throw new Error('Betreff und Text dürfen nicht leer sein.');
   MailApp.sendEmail({ to: an, subject: betreff, body: text, name: SENDER_NAME });
   return { ok: true };
+}
+
+/* ---------- Schreiben mit Claude (Social Media) ---------- */
+// Der Schlüssel liegt NICHT im Code: Projekteinstellungen > Skripteigenschaften > ANTHROPIC_KEY.
+const AI_MODEL = 'claude-sonnet-5-5';
+const AI_DAILY_LIMIT = 150;
+function ai_(r, u) {
+  if (!u.adm && u.rolle !== 'trainerin' && u.rolle !== 'admin') throw new Error('Das Schreiben mit Claude dürfen die Trainerinnen und der Admin.');
+  const props = PropertiesService.getScriptProperties(), key = props.getProperty('ANTHROPIC_KEY');
+  if (!key) throw new Error('KEY_FEHLT');
+  const prompt = String(r.prompt || '').trim().slice(0, 12000); if (!prompt) throw new Error('Der Auftrag darf nicht leer sein.');
+  const day = 'ai_' + Utilities.formatDate(new Date(), 'Europe/Berlin', 'yyyyMMdd'), n = +props.getProperty(day) || 0;
+  if (n >= AI_DAILY_LIMIT) throw new Error('Das Tageslimit für Claude ist erreicht. Morgen geht es weiter.');
+  props.setProperty(day, String(n + 1));
+  const res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+    headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+    payload: JSON.stringify({ model: props.getProperty('ANTHROPIC_MODEL') || AI_MODEL, max_tokens: 1500, messages: [{ role: 'user', content: prompt }] }) });
+  const code = res.getResponseCode(), body = JSON.parse(res.getContentText() || '{}');
+  if (code === 429) throw new Error('Claude ist gerade ausgelastet. Bitte in ein paar Minuten noch einmal versuchen.');
+  if (code === 401 || code === 403) throw new Error('Der Claude-Schlüssel wurde nicht akzeptiert. Bitte im Skript neu eintragen.');
+  if (code >= 300) throw new Error('Claude hat nicht geantwortet (Fehler ' + code + ').');
+  const text = (body.content || []).filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('\n').trim();
+  return { ok: true, text: text };
 }
 
 /* ---------- Posteingang (Gmail der Gruppe) ---------- */
