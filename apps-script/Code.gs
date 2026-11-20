@@ -2,7 +2,7 @@
  * Funky Boys Portal – Google Apps Script (Dateiablage in Drive + Mailversand).
  * Läuft im Google-Konto der Funky Boys. Jede Anfrage trägt das Firebase-Login-Token
  * des Portal-Nutzers; das Skript prüft es und schaut nach, ob die Adresse im Portal freigeschaltet ist.
- * Neu: Schreiben mit Claude (Aktion ai, Schlüssel in den Skripteigenschaften). Posteingang lesen, im Verlauf antworten, als gelesen markieren, in Gmail-Ordner (Labels) ablegen, in den Papierkorb (Gmail der Gruppe).
+ * Neu: Schreiben mit KI (Aktion ai: kostenlos mit Gemini oder mit Claude, Schlüssel in den Skripteigenschaften). Posteingang lesen, im Verlauf antworten, als gelesen markieren, in Gmail-Ordner (Labels) ablegen, in den Papierkorb (Gmail der Gruppe).
  * Es sind keine Passwörter oder Schlüssel nötig (der Firebase-Webschlüssel ist öffentlich).
  */
 const FIREBASE_API_KEY = 'AIzaSyACAImQ3HoiXHNIK8QAmioE8VEoIWa4voA';
@@ -111,27 +111,38 @@ function mail_(r, u) {
   return { ok: true };
 }
 
-/* ---------- Schreiben mit Claude (Social Media) ---------- */
-// Der Schlüssel liegt NICHT im Code: Projekteinstellungen > Skripteigenschaften > ANTHROPIC_KEY.
+/* ---------- Schreiben mit KI (Social Media) ---------- */
+// Kostenlos: Gemini (Schlüssel von aistudio.google.com) unter Projekteinstellungen > Skripteigenschaften > GEMINI_KEY.
+// Alternativ Claude über die Anthropic-API (kostet Geld): Skripteigenschaft ANTHROPIC_KEY. Ist beides gesetzt, gilt GEMINI_KEY.
 const AI_MODEL = 'claude-sonnet-5-5';
+const GEMINI_MODEL = 'gemini-2.5-flash';
 const AI_DAILY_LIMIT = 150;
 function ai_(r, u) {
-  if (!u.adm && u.rolle !== 'trainerin' && u.rolle !== 'admin') throw new Error('Das Schreiben mit Claude dürfen die Trainerinnen und der Admin.');
-  const props = PropertiesService.getScriptProperties(), key = props.getProperty('ANTHROPIC_KEY');
-  if (!key) throw new Error('KEY_FEHLT');
+  if (!u.adm && u.rolle !== 'trainerin' && u.rolle !== 'admin') throw new Error('Das Schreiben mit KI dürfen die Trainerinnen und der Admin.');
+  const props = PropertiesService.getScriptProperties(), gk = props.getProperty('GEMINI_KEY'), ak = props.getProperty('ANTHROPIC_KEY');
+  if (!gk && !ak) throw new Error('KEY_FEHLT');
   const prompt = String(r.prompt || '').trim().slice(0, 12000); if (!prompt) throw new Error('Der Auftrag darf nicht leer sein.');
   const day = 'ai_' + Utilities.formatDate(new Date(), 'Europe/Berlin', 'yyyyMMdd'), n = +props.getProperty(day) || 0;
-  if (n >= AI_DAILY_LIMIT) throw new Error('Das Tageslimit für Claude ist erreicht. Morgen geht es weiter.');
+  if (n >= AI_DAILY_LIMIT) throw new Error('Das Tageslimit für die KI ist erreicht. Morgen geht es weiter.');
   props.setProperty(day, String(n + 1));
+  if (gk) {
+    const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (props.getProperty('GEMINI_MODEL') || GEMINI_MODEL) + ':generateContent', { method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+      headers: { 'x-goog-api-key': gk }, payload: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 1500, temperature: 0.9 } }) });
+    const code = res.getResponseCode(); let body = {}; try { body = JSON.parse(res.getContentText() || '{}'); } catch (e) {}
+    if (code === 429) throw new Error('Die kostenlose KI ist gerade ausgelastet oder für heute ausgeschöpft. Bitte später noch einmal versuchen.');
+    if (code === 400 || code === 401 || code === 403) throw new Error('Der KI-Schlüssel wurde nicht akzeptiert. Bitte im Skript neu eintragen.');
+    if (code >= 300) throw new Error('Die KI hat nicht geantwortet (Fehler ' + code + ').');
+    const parts = (((body.candidates || [])[0] || {}).content || {}).parts || [];
+    return { ok: true, provider: 'gemini', text: parts.map(function (p) { return p.text || ''; }).join('').trim() };
+  }
   const res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-    headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+    headers: { 'x-api-key': ak, 'anthropic-version': '2023-06-01' },
     payload: JSON.stringify({ model: props.getProperty('ANTHROPIC_MODEL') || AI_MODEL, max_tokens: 1500, messages: [{ role: 'user', content: prompt }] }) });
   const code = res.getResponseCode(), body = JSON.parse(res.getContentText() || '{}');
   if (code === 429) throw new Error('Claude ist gerade ausgelastet. Bitte in ein paar Minuten noch einmal versuchen.');
   if (code === 401 || code === 403) throw new Error('Der Claude-Schlüssel wurde nicht akzeptiert. Bitte im Skript neu eintragen.');
   if (code >= 300) throw new Error('Claude hat nicht geantwortet (Fehler ' + code + ').');
-  const text = (body.content || []).filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('\n').trim();
-  return { ok: true, text: text };
+  return { ok: true, provider: 'claude', text: (body.content || []).filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('\n').trim() };
 }
 
 /* ---------- Posteingang (Gmail der Gruppe) ---------- */
