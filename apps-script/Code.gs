@@ -147,7 +147,7 @@ function ai_(r, u) {
     let code = 0, body = {}, last = '';
     for (let i = 0; i < models.length; i++) {
       const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + models[i] + ':generateContent', { method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-        headers: { 'x-goog-api-key': gk }, payload: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 1500, temperature: 0.9 } }) });
+        headers: { 'x-goog-api-key': gk }, payload: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 4096, temperature: 0.9 } }) });
       code = res.getResponseCode(); try { body = JSON.parse(res.getContentText() || '{}'); } catch (e) { body = {}; }
       last = (body.error && body.error.message) ? String(body.error.message).slice(0, 160) : '';
       if (code === 503 || code === 500) { Utilities.sleep(800); continue; }
