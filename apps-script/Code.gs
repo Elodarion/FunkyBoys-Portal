@@ -126,7 +126,7 @@ function ai_(r, u) {
   if (n >= AI_DAILY_LIMIT) throw new Error('Das Tageslimit für die KI ist erreicht. Morgen geht es weiter.');
   props.setProperty(day, String(n + 1));
   if (gk) {
-    // Modellnamen ändern sich bei Google öfter. Bei 404 wird der nächste Name probiert.
+    // Modellnamen ändern sich bei Google öfter, und einzelne Modelle sind zeitweise überlastet (503). Dann wird der nächste Name probiert.
     const models = [props.getProperty('GEMINI_MODEL')].concat(GEMINI_MODELS).filter(function (m, i, a) { return m && a.indexOf(m) === i; });
     let code = 0, body = {}, last = '';
     for (let i = 0; i < models.length; i++) {
@@ -134,10 +134,12 @@ function ai_(r, u) {
         headers: { 'x-goog-api-key': gk }, payload: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 1500, temperature: 0.9 } }) });
       code = res.getResponseCode(); try { body = JSON.parse(res.getContentText() || '{}'); } catch (e) { body = {}; }
       last = (body.error && body.error.message) ? String(body.error.message).slice(0, 160) : '';
+      if (code === 503 || code === 500) { Utilities.sleep(1500); continue; }
       if (code !== 404) break;
     }
     if (code === 429) throw new Error('Die kostenlose KI ist gerade ausgelastet oder für heute ausgeschöpft. Bitte später noch einmal versuchen.');
     if (code === 401 || code === 403 || (code === 400 && /API key/i.test(last))) throw new Error('Der KI-Schlüssel wurde nicht akzeptiert. Bitte im Skript neu eintragen.');
+    if (code === 503 || code === 500) throw new Error('Die kostenlose KI ist gerade überlastet. Bitte in ein bis zwei Minuten noch einmal auf „Text schreiben lassen“ tippen.');
     if (code >= 300) throw new Error('Die KI hat nicht geantwortet (Fehler ' + code + (last ? ': ' + last : '') + ').');
     const parts = (((body.candidates || [])[0] || {}).content || {}).parts || [];
     const text = parts.map(function (p) { return p.text || ''; }).join('').trim();
