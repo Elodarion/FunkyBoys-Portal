@@ -143,14 +143,14 @@ function ai_(r, u) {
   props.setProperty(day, String(n + 1));
   if (gk) {
     // Modellnamen ändern sich bei Google öfter, und einzelne Modelle sind zeitweise überlastet (503). Dann wird der nächste Name probiert.
-    const models = [props.getProperty('GEMINI_MODEL')].concat(geminiModels_(gk).slice(0, 4), GEMINI_MODELS).filter(function (m, i, a) { return m && a.indexOf(m) === i; }).slice(0, 8);
+    const models = [props.getProperty('GEMINI_MODEL')].concat(geminiModels_(gk).slice(0, 4), GEMINI_MODELS).filter(function (m, i, a) { return m && a.indexOf(m) === i; }).slice(0, 4);
     let code = 0, body = {}, last = '';
     for (let i = 0; i < models.length; i++) {
       const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + models[i] + ':generateContent', { method: 'post', contentType: 'application/json', muteHttpExceptions: true,
         headers: { 'x-goog-api-key': gk }, payload: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 1500, temperature: 0.9 } }) });
       code = res.getResponseCode(); try { body = JSON.parse(res.getContentText() || '{}'); } catch (e) { body = {}; }
       last = (body.error && body.error.message) ? String(body.error.message).slice(0, 160) : '';
-      if (code === 503 || code === 500) { Utilities.sleep(1500); continue; }
+      if (code === 503 || code === 500) { Utilities.sleep(800); continue; }
       if (code !== 404) break;
     }
     if (code === 429) throw new Error('Die kostenlose KI ist gerade ausgelastet oder für heute ausgeschöpft. Bitte später noch einmal versuchen.');
