@@ -115,7 +115,23 @@ function mail_(r, u) {
 // Kostenlos: Gemini (Schlüssel von aistudio.google.com) unter Projekteinstellungen > Skripteigenschaften > GEMINI_KEY.
 // Alternativ Claude über die Anthropic-API (kostet Geld): Skripteigenschaft ANTHROPIC_KEY. Ist beides gesetzt, gilt GEMINI_KEY.
 const AI_MODEL = 'claude-sonnet-5-5';
-const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash', 'gemini-2.5-flash-lite'];
+const GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest', 'gemini-2.5-flash'];
+/** Fragt bei Google, welche Flash-Modelle der Schlüssel gerade nutzen darf (neueste zuerst). Merkt sich die Liste 6 Stunden. */
+function geminiModels_(gk) {
+  const cache = CacheService.getScriptCache(), hit = cache.get('gemini_models');
+  if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+  let out = [];
+  try {
+    const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { muteHttpExceptions: true, headers: { 'x-goog-api-key': gk } });
+    if (res.getResponseCode() === 200) {
+      out = (JSON.parse(res.getContentText()).models || []).filter(function (m) { return (m.supportedGenerationMethods || []).indexOf('generateContent') >= 0 && /flash/.test(m.name) && !/image|tts|live|audio|embed|robotics|computer|thinking|exp/.test(m.name); })
+        .map(function (m) { return m.name.replace('models/', ''); })
+        .sort(function (a, b) { const va = parseFloat((/gemini-(\d+(\.\d+)?)/.exec(a) || [0, 0])[1]), vb = parseFloat((/gemini-(\d+(\.\d+)?)/.exec(b) || [0, 0])[1]); return vb - va || (/lite/.test(a) ? 1 : 0) - (/lite/.test(b) ? 1 : 0); });
+      if (out.length) cache.put('gemini_models', JSON.stringify(out), 21600);
+    }
+  } catch (e) {}
+  return out;
+}
 const AI_DAILY_LIMIT = 150;
 function ai_(r, u) {
   if (!u.adm && u.rolle !== 'trainerin' && u.rolle !== 'admin') throw new Error('Das Schreiben mit KI dürfen die Trainerinnen und der Admin.');
@@ -127,7 +143,7 @@ function ai_(r, u) {
   props.setProperty(day, String(n + 1));
   if (gk) {
     // Modellnamen ändern sich bei Google öfter, und einzelne Modelle sind zeitweise überlastet (503). Dann wird der nächste Name probiert.
-    const models = [props.getProperty('GEMINI_MODEL')].concat(GEMINI_MODELS).filter(function (m, i, a) { return m && a.indexOf(m) === i; });
+    const models = [props.getProperty('GEMINI_MODEL')].concat(geminiModels_(gk).slice(0, 4), GEMINI_MODELS).filter(function (m, i, a) { return m && a.indexOf(m) === i; }).slice(0, 8);
     let code = 0, body = {}, last = '';
     for (let i = 0; i < models.length; i++) {
       const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + models[i] + ':generateContent', { method: 'post', contentType: 'application/json', muteHttpExceptions: true,
