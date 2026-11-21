@@ -899,8 +899,9 @@ const ART = {
 const STARS_W = `<path class="l tw" opacity="0.7" transform="translate(300 70) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(430 60) scale(1.3)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(490 110) scale(0.8)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(260 120) scale(0.6)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_R = `<path class="l tw" opacity="0.65" transform="translate(330 100) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(440 170) scale(1.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(500 50) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.5" transform="translate(270 210) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`, STARS_P = `<path class="l tw" opacity="0.7" transform="translate(280 70) scale(1.0)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.75" transform="translate(390 50) scale(1.4)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.7" transform="translate(480 100) scale(1.1)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.55" transform="translate(330 150) scale(0.7)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/><path class="l tw" opacity="0.6" transform="translate(450 190) scale(0.9)" d="M0-10l2.9 6.6 7.1.7-5.4 4.8 1.6 7L0 5.4-6.2 9.1l1.6-7L-10-2.7l7.1-.7z"/>`;
 const bannerArt = k => k === 'none' ? '' : (ART[k] || ART.western).replace('STARS', {
   western:'%W%', rotweiss:'%R%', schlicht:'', planer:'%P%' }[k in ART ? k : 'western'].replace('%W%', STARS_W).replace('%R%', STARS_R).replace('%P%', STARS_P));
-const VERSION = '2.49', BUILD = 79;
+const VERSION = '2.50', BUILD = 80;
 const CHANGELOG = [
+  { v:'2.50', datum:'2026-11-21', punkte:['Vormerken: Kein Verein mehr doppelt. Ein neuer Eintrag zu einem Verein, der schon da ist, wird abgelehnt.','Auftritts-Suche: Ist der Verein schon vorgemerkt, ergänzt „Termin beim Verein ergänzen“ den neuen Termin im bestehenden Eintrag.'] },
   { v:'2.49', datum:'2026-11-20', punkte:['Social Media: Der Knopf „Alles leeren“ löscht Beschreibung, Datum und Ergebnis im Schreibfeld und beendet eine laufende Spracheingabe.'] },
   { v:'2.48', datum:'2026-11-20', punkte:['Die KI schreibt nur noch den Text (Caption, Story-Texte, Beitragstext) und keine Regieanweisungen mehr. Sternchen und Markdown werden entfernt.'] },
   { v:'2.47', datum:'2026-11-20', punkte:['Die KI-Anfrage bricht nach gut anderthalb Minuten mit einer Meldung ab, statt endlos „denkt nach“ anzuzeigen.'] },
@@ -1292,7 +1293,9 @@ function sess() { const m = /^(\d{4})/.exec(D.motto.session || ''); return m ? D
 function nextSess() { const y = parseInt(sess(), 10); return (y + 1) + '/' + String(y + 2).slice(2); }
 function vmYear(mon) { const y = parseInt(sess(), 10); return isNaN(y) || mon === 'offen' ? '' : ' ' + (mon === 'November' || mon === 'Dezember' ? y + 1 : y + 2); }
 const vmToks = s => toks(s).filter(w => !/ballett|turnier|tunier|tanz|sitzung|dance|karneval|meister|verein/.test(w));
-const vmHas = f => { const a = vmToks((f.veranstalter || '') + ' ' + f.name); return D.veranstalter.some(v => vmToks(v.verein + ' ' + (v.veranstaltung || '')).some(w => a.includes(w))); };
+const vmFind = f => { const a = vmToks((f.veranstalter || '') + ' ' + f.name); return D.veranstalter.find(v => vmToks(v.verein + ' ' + (v.veranstaltung || '')).some(w => a.includes(w))); };
+const vmHas = f => !!vmFind(f);
+const vmDate = (v, f) => (v.notiz || '').includes(fmtDate(f.datum));
 function vmText(v) {
   const d = tplData({ inhaber:v.person || '', datum:todayISO(), zeit:'' }), ns = nextSess(), was = v.veranstaltung ? '„' + v.veranstaltung + '“' : 'eurer Veranstaltung';
   return { an:v.email || '', betreff:'Funky Boys – Auftritt in der Session ' + ns + (v.veranstaltung ? ' – ' + v.veranstaltung : ''),
@@ -1508,6 +1511,7 @@ function saveForm() {
     D.sponsoren.push({ id:uid('s'), name:rec.text, betrag:+rec.betrag || 0, abgabe:rec.abgabe === '' ? 0 : +rec.abgabe, datum:rec.datum || todayISO(), art:'Geldspende', status:'Eingegangen', kontakt:'', notiz:'' });
     save(); closeDlg(); render(); return;
   }
+  if (FORM.col === 'veranstalter') { const dup = D.veranstalter.find(v => v.id !== FORM.id && vmToks(v.verein).length && vmToks(rec.verein || '').some(w => vmToks(v.verein).includes(w))); if (dup) { $('fErr').textContent = 'Zu „' + rec.verein + '“ gibt es schon einen Eintrag: ' + dup.verein + '. Bitte dort bearbeiten, damit nichts doppelt ist.'; $('fErr').hidden = false; return; } }
   if (FORM.col === 'buchungen') { delete rec.abgabe; if (!(rec.typ === 'E' && LK_BY_KAT[rec.kat])) rec.gt = ''; }
   if (FORM.col === 'kontakte') { rec.verein = ensureVerein(rec.vereinName); delete rec.vereinName; }
   if (FORM.col === 'kontakte' && FORM.key) { const b = kontakteBase()[FORM.key] || {}; ['name', 'mail', 'url'].forEach(k => { if (rec[k] === (b[k] || '')) rec[k] = ''; }); }
@@ -2250,7 +2254,7 @@ const SEC = {
       <span class="pill vio">${esc(f.art || 'Auftritt')}</span><span class="pill">ca. ${+f.fahrzeit || '?'} Min Fahrt</span>
       ${clash.length && !done ? `<span class="pill warn">am selben Tag: ${esc(clash[0])}</span>` : ''}${done ? `<span class="pill ${done === 'uebernommen' ? 'good' : ''}">${done === 'uebernommen' ? 'übernommen' : 'ausgeblendet'}</span>` : ''}
       ${ok && !done ? `<button class="btn sm pri" data-act="fundAdd" data-id="${esc(f.id)}">In die Auftrittsliste</button><button class="btn sm" data-act="fundHide" data-id="${esc(f.id)}">Nicht interessant</button>` : ''}
-      ${vmHas(f) ? '<span class="pill">für ' + nextSess() + ' vorgemerkt</span>' : ok ? `<button class="btn sm" data-act="fundVm" data-id="${esc(f.id)}">Fürs nächste Jahr vormerken</button>` : ''}
+      ${vmHas(f) ? '<span class="pill">für ' + nextSess() + ' vorgemerkt</span>' + (ok && !vmDate(vmFind(f), f) ? ` <button class="btn sm" data-act="fundVmAdd" data-id="${esc(f.id)}">Termin beim Verein ergänzen</button>` : '') : ok ? `<button class="btn sm" data-act="fundVm" data-id="${esc(f.id)}">Fürs nächste Jahr vormerken</button>` : ''}
       ${ok && done === 'ignoriert' ? `<button class="btn sm" data-act="fundBack" data-id="${esc(f.id)}">Zurückholen</button>` : ''}</div>`; };
     return head('Auftritts-Suche', 'Sucht im Netz nach Turnieren und Auftrittsmöglichkeiten, die höchstens eine Stunde Fahrt entfernt sind und noch nicht in eurer Auftrittsliste stehen.') + evTabs() +
       `<div class="kpis"><div class="kpi"><small>Neue Treffer</small><b>${neu.length}</b><span>noch nicht in der Auftrittsliste</span></div>
@@ -3179,6 +3183,9 @@ const ACT = {
   vmAlle() { if (!can('postfach') || !can('events')) return; const todo = D.veranstalter.filter(v => v.stand === 'Vormerken' && v.email);
     todo.forEach(v => { const m = vmText(v); D.mails.push({ id:uid('ml'), an:m.an, betreff:m.betreff, text:m.text, von:D.me, datum:todayISO() }); v.stand = 'Entwurf fertig'; });
     UI.vmMsg = todo.length + (todo.length === 1 ? ' Entwurf liegt' : ' Entwürfe liegen') + ' jetzt im Postfach.'; save(); render(); },
+  fundVmAdd(d) { const f = SUCHE.funde.find(x => x.id === d.id); if (!f || !can('events')) return; const v = vmFind(f); if (!v || vmDate(v, f)) return;
+    v.notiz = ((v.notiz || '').trim() + ' Neuer Termin: ' + fmtDate(f.datum) + ' (' + f.name + (f.zeit ? ', ab ' + f.zeit + ' Uhr' : '') + ').' + (f.hinweis ? ' ' + f.hinweis : '')).trim();
+    if (f.gebuehr && !v.gebuehr) v.gebuehr = f.gebuehr; if (/^https?:\/\//.test(f.quelle || '') && !v.web) v.web = f.quelle; save(); render(); },
   fundVm(d) { const f = SUCHE.funde.find(x => x.id === d.id); if (!f || !can('events') || vmHas(f)) return; const mo = MON[dObj(f.datum).getMonth()];
     D.veranstalter.push({ id:uid('v'), verein:f.veranstalter || f.name, veranstaltung:f.name, monat:VM_MON.includes(mo) ? mo : 'offen', ort:f.ort || '', art:['Turnier','Gastauftritt'].includes(f.art) ? f.art : 'Showtanz', person:'', email:'', telefon:'',
       web:/^https?:\/\//.test(f.quelle || '') ? f.quelle : '', gebuehr:f.gebuehr || '', stand:'Vormerken', notiz:'Aus der Auftritts-Suche. Termin in dieser Session: ' + fmtDate(f.datum) + '.' + (f.hinweis ? ' ' + f.hinweis : '') });
