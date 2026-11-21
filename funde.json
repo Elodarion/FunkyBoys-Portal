@@ -99,6 +99,20 @@
       "quelle": "https://www.b-v-d-m.de/landesmeisterschaft/nord-west-deutschland",
       "veranstalter": "Bundesverband Deutscher Männerballette e.V.",
       "zeit": ""
+    },
+    {
+      "id": "2027-11-19-rurauenmeisterschaft-tetz",
+      "name": "3. Rurauenmeisterschaft der Showtänze",
+      "datum": "2027-11-19",
+      "zeit": "19:00",
+      "ort": "Rurauenhalle Tetz, Am Vogeldriesch 8, 52441 Linnich-Tetz",
+      "veranstalter": "KG Fidele Brüder Tetz 1926 e.V.",
+      "art": "Turnier",
+      "fahrzeit": 15,
+      "gebuehr": "Eintritt frei",
+      "quelle": "",
+      "hinweis": "Plakat des Vereins: Einlass 19 Uhr, Eintritt frei. Anmeldung für Gruppen über den QR-Code auf dem Plakat. Das Turnier ist erst in der Session 2027/28.",
+      "gefunden": "2026-11-21"
     }
   ]
 }
